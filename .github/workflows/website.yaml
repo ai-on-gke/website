@@ -1,0 +1,22 @@
+name: Build Website
+
+on:
+  push:
+    branches:
+      - website
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build website
+        run: |
+          HOST_UID=$(id -u)
+          HOST_GID=$(id -g)
+          docker run \
+            -v "$(pwd):/src" \
+            -e HOST_UID=${HOST_UID} \
+            -e HOST_GID=${HOST_GID} \
+            -u ${HOST_UID}:${HOST_GID} \
+            floryn90/hugo:ext-alpine build
