@@ -2,9 +2,7 @@
 {{ range $key, $value := .context.Site.Taxonomies.tags }}
 {{ if eq (strings.ToLower $key) (strings.ToLower $section) }}
                     {{ range $value.Pages }}
-                            <a href="{{ .RelPermalink }}"> {{ .Title }} </a>
-                          {{ $pageDict := merge (page.Store.Get "pagesToDisplay") (dict .Permalink .LinkTitle  ) }}
-                          {{ page.Store.Set "pagesToDisplay" $pageDict }}
+                            <a href="{{ .RelPermalink }}" class="use-case-link"> {{ .Title }} </a>
                     {{ end }} 
                 {{ end }}
     {{ end }}

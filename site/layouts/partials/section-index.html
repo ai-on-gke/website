@@ -24,9 +24,9 @@
         {{ range $pages -}}
             {{ $manualLink := cond (isset .Params "manuallink") .Params.manualLink ( cond (isset .Params "manuallinkrelref") (relref . .Params.manualLinkRelref) .RelPermalink) -}}
             <div class="entry">
-                <h5 class="list-item-title">
+                <h2 class="list-item-title">
                     {{ .Title }}
-                </h5>
+                </h2>
                 {{ if .Description }}
                 <p class="description">{{ .Description | markdownify -}}</p>
                 {{ end }}
