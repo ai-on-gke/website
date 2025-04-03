@@ -14,3 +14,18 @@ Please read the [contributing](CONTRIBUTING.md) guide for directions on submitti
 * The use of the assets contained in this repository is subject to compliance with [Google's AI Principles](https://ai.google/responsibility/principles/)
 * See [LICENSE](/LICENSE)
 
+
+## Build & Deploy
+
+### Run website locally
+
+```docker run --rm -it -v $(pwd):/src -p 1313:1313 floryn90/hugo:ext-alpine server```
+
+### Build static files locally:
+- Use `build -e production` in order to get minified source files
+
+```docker run --mount type=bind,src=./,dst=/src floryn90/hugo:ext-alpine build```
+
+### Deployment to AppEngine
+Deployment happens automatically on push to main branch using following github actions workflow [file](/.github/workflows/website.yaml) 
+
