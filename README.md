@@ -1,6 +1,6 @@
-# AI-on-GKE Website
+# GKE AI Labs Website
 
-This repository contains the source code for the [AI on GKE website](https://ai-on-gke.dev).
+This repository contains the source code for the [GKE AI Labs website](https://gke-ai-labs.dev).
 
 
 ## Contributing
