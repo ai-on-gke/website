@@ -1,0 +1,71 @@
+{{ .Store.Set "pagesToDisplay" (dict)}}
+{{ .Store.Set "maxRelativeArticles" .Site.Params.maxRelativeArticlesToDisplay }}
+{{ .Store.Set "allTags" (slice)}}
+{{ $currentPage := . }}
+
+{{ if .Params.tags }}
+  {{ $currentPageTags := .Params.tags }}
+    {{ range $key, $value := .Site.Taxonomies.tags }}
+      {{ range $currentTag := $currentPageTags }}
+                {{ if eq (strings.ToLower $key) (strings.ToLower $currentTag) }}
+                    {{ range $value.Pages }}
+                      {{ $u := urls.Parse $currentPage.Permalink }}
+                      {{ $u2 := urls.Parse .RelPermalink }}
+                      {{ if ne $u.RequestURI $u2.RequestURI }}
+                        {{ if gt (page.Store.Get "maxRelativeArticles") 0 }}
+                          {{ page.Store.Set "maxRelativeArticles" (sub (page.Store.Get "maxRelativeArticles") 1) }}
+
+                          {{ $pageDict := merge (page.Store.Get "pagesToDisplay") (dict .Permalink .LinkTitle  ) }}
+
+                          {{ page.Store.Set "pagesToDisplay" $pageDict }}
+                        {{ end }}
+                      {{ end }}
+                    {{ end }} 
+                {{ end }}
+      {{ end }}
+    {{ end }}
+{{ end }}
+
+
+
+
+<h3>Continue reading:</h3>
+
+<ul>
+  {{ if len (.Store.Get "pagesToDisplay") }}
+    {{ range $key, $value := .Store.Get "pagesToDisplay" }}
+      <li><a href="{{ $key }}"> {{ $value }} </a></li>
+    {{ end }}
+  {{ end }}
+
+
+
+  {{ range $page := (shuffle ((where .Site.RegularPages "Section" "docs")))  }}
+    {{ if len (page.Store.Get "pagesToDisplay") }}
+      {{ range $key, $value := page.Store.Get "pagesToDisplay"}}
+        {{ if eq $page.Permalink $key }}
+          {{ break }}
+        {{ end }}
+        {{ if gt (page.Store.Get "maxRelativeArticles") 0 }}
+          {{ page.Store.Set "maxRelativeArticles" (sub (page.Store.Get "maxRelativeArticles") 1) }}
+          <li><a href="{{ $page.Permalink }}"> {{ $page.LinkTitle }} </a></li>
+          {{ break }}
+        {{ end }}
+      {{ end }}
+
+    {{ else }}
+      {{ range $key, $value := seq (page.Store.Get "maxRelativeArticles")}}
+        {{ if gt (page.Store.Get "maxRelativeArticles") 0 }}
+          {{ page.Store.Set "maxRelativeArticles" (sub (page.Store.Get "maxRelativeArticles") 1) }}
+          <li><a href="{{ $page.Permalink }}"> {{ $page.LinkTitle }} </a></li>
+          {{ break }}
+        {{ end }}
+      {{ end }}
+
+    {{ end }}
+
+    
+  {{ end }}
+</ul>
+
+

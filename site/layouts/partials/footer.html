@@ -1,0 +1,88 @@
+{{ $baseURL := urls.Parse $.Site.Params.Baseurl -}}
+
+<footer class="td-footer row d-print-none bg-light">
+  <div class="col">
+    <div
+      class="container"
+      style="border-top: 1px solid #dadce0; padding-top: 30px"
+    >
+      <div class="row">
+        <div class="col-12 d-none d-sm-none d-md-block col-md-12 col-lg-8">
+          <div
+            class="td-navbar-nav-scroll ms-md-auto"
+            id="main_navbar"
+          >
+            <ul
+              class="navbar-nav"
+              style="
+                flex-direction: row !important;
+                font-size: 14px;
+                color: #202124;
+              "
+            >
+              {{ $p := . -}} {{ range .Site.Menus.main -}}
+              <li class="nav-item">
+                {{ $active := or ($p.IsMenuCurrent "main" .) ($p.HasMenuCurrent
+                "main" .) -}} {{ $href := "" -}} {{ with .Page -}} {{ $active =
+                or $active ( $.IsDescendant .) -}} {{ $href = .RelPermalink -}}
+                {{ else -}} {{ $href = .URL | relLangURL -}} {{ end -}} {{
+                $isExternal := ne $baseURL.Host (urls.Parse .URL).Host -}}
+                <a
+                  class="nav-link {{- if $active }} active {{- end }} nav-item-separator"
+                  href="{{ $href }}"
+                  {{-
+                  if
+                  $isExternal
+                  }}
+                  target="_blank"
+                  rel="noopener"
+                  {{-
+                  end
+                  -}}
+                >
+                  {{- .Pre -}}
+                  <span style="text-wrap: nowrap">{{ .Name }}</span>
+                  {{- .Post -}}
+                </a>
+              </li>
+              {{ end -}} {{ if .Site.Params.versions -}}
+              <li class="nav-item dropdown d-none d-lg-block">
+                {{ partial "navbar-version-selector.html" . -}}
+              </li>
+              {{ end -}} {{ if (gt (len .Site.Home.Translations) 0) -}}
+              <li class="nav-item dropdown d-none d-lg-block">
+                {{ partial "navbar-lang-selector.html" . -}}
+              </li>
+              {{ end -}} {{ if .Site.Params.ui.showLightDarkModeMenu -}}
+              <li class="td-light-dark-menu nav-item dropdown">
+                {{ partial "theme-toggler" . }}
+              </li>
+              {{ end -}}
+              <li class="nav-item">
+                <a
+                  class="nav-link nav-item-separator"
+                  href="https://policies.google.com/terms"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span style="text-wrap: nowrap">Terms</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link nav-item-separator"
+                  href="https://policies.google.com/privacy"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span style="text-wrap: nowrap">Privacy</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p class="col-12 col-md-12 col-lg-4 col-sm-2 terms-privacy">All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>

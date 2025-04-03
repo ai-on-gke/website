@@ -1,0 +1,16 @@
+{{ $col_id := .Get "color" | default .Ordinal -}} {{ $height := .Get "height" |
+default "auto" -}} {{ $type := .Get "type" | default "container" -}} {{ $title
+:= .Get "title" -}} {{ $description := .Get "description" -}}
+
+<section class="row td-box td-box--{{ $col_id }} td-box--height-{{ $height }}">
+  <div class="col">
+    <div class="{{ $type }}">
+      {{/* Do NOT remove this comment! It ends the HTML block above. See
+      https://spec.commonmark.org/0.30/#html-blocks, 7. */}}
+      <p class="section-title">{{ $title }}</p>
+      <p class="section-description">{{ $description }}</p>
+      {{ .Inner -}}
+    </div>
+  </div>
+</section>
+{{/**/ -}}

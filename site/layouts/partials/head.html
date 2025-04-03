@@ -1,9 +1,12 @@
 
 <meta charset="utf-8">
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' 'unsafe-inline' www.google-analytics.com www.googletagmanager.com fonts.googleapis.com maxcdn.bootstrapcdn.com fonts.gstatic.com code.jquery.com unpkg.com www.gstatic.com cdnjs.cloudflare.com;">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 {{ range .AlternativeOutputFormats -}}
 <link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink | safeURL }}">
 {{ end -}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"></link>
 
 {{ $outputFormat := partial "outputformat.html" . -}}
 {{ if and hugo.IsProduction (ne $outputFormat "print") -}}
@@ -40,7 +43,8 @@
 {{ end -}}
 
 {{ if .Site.Params.prism_syntax_highlighting -}}
-<link rel="stylesheet" href="{{ "css/prism.css" | relURL }}"/>
+<link rel="preload" as="style" href="{{ "css/prism.css" | relURL }}" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link rel="stylesheet" href="{{ "css/prism.css" | relURL }}"></noscript>
 {{ end -}}
 
 {{ template "algolia/head" . -}}
@@ -59,10 +63,11 @@
   integrity="sha512-l7pkV1dOURFyHCeH8I4fK9lCkQKuqhlsTCqRl3zktifDlB8oTUJ+mJPgYkK9kHpUut8j1iPquTv32t6hvTPv3g=="
   crossorigin="anonymous" />
 {{ end -}}
-
 {{ if ne .Site.Params.algolia_docsearch nil -}}
 {{ warnf `Config 'params.algolia_docsearch' is deprecated: use 'params.search.algolia'
       For details, see https://www.docsy.dev/docs/adding-content/search/#algolia-docsearch.` -}}
 {{ end -}}
 
 {{ end -}}
+
+

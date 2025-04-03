@@ -1,43 +1,48 @@
 +++
-title = "AI on GKE"
-linkTitle = "AI on GKE"
-description = "AI on GKE"
+title = "GKE AI Labs"
+linkTitle = "GKE AI Labs"
+description = "GKE AI Labs"
 +++
 
-{{< blocks/cover title="AI on GKE" image_anchor="top" height="full" >}}
-  <a class="btn btn-lg btn-primary me-3 mb-4" href="/docs/">
-    Documentation <i class="fas fa-arrow-alt-circle-right ms-2"></i>
-  </a>
-  <a class="btn btn-lg btn-secondary me-3 mb-4" href="https://github.com/GoogleCloudPlatform/ai-on-gke">
-    Repository <i class="fab fa-github ms-2 "></i>
-  </a>
+{{< blocks/cover title="GKE AI Labs" subtitle=`Unlock Scalable and
+Efficient AI Workloads with ` color="primary" height="min" >}}
+<p class="lead">
+  Experiment with the latest tools and practices for deploying and scaling AI on
+  GKE
+</p>
+{{< /blocks/cover >}}
+<div>
+  {{< blocks/section color="light" height="min" title="AI/ML Use Cases"
+  description=`Explore how Google Kubernetes Engine (GKE) empowers the entire AI/ML lifecycle, from initial experimentation to scalable production deployments. Discover practical examples and best practices for leveraging GKE to accelerate your AI/ML initiatives.`>}}
 
-  <p class="lead" style="margin-top: 150px;">Run optimized AI/ML workloads with Google Kubernetes Engine (GKE) platform orchestration capabilities.</p>
-  {{< blocks/link-down color="info" >}}
-  {{< /blocks/cover >}}
+  <div
+    class="row gy-3"
+    style="padding: 0"
+  >
+    <div class="col-sm-12 col-md-6 col-lg-3 me-auto">
+      {{< blocks/card link="docs/use-cases/" icon_path="icons/experimentation.svg" title="Experimentation" description=`Leverage containerized environments to manage dependencies and simplify reproducibility. Explore examples of using GKE for distributed training and hyperparameter tuning, enabling faster experimentation cycles.`>}}
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 me-auto">
+      {{< blocks/card link="docs/use-cases/" icon_path="icons/orchestration.svg" title="Orchestration" description=`Ensure the quality and performance of your AI/ML models with GKE's robust evaluation infrastructure. Deploy evaluation services and dashboards to monitor key metrics and track model performance.`>}}
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 me-auto">
+      {{< blocks/card link="docs/use-cases/" icon_path="icons/evaluation.svg" title="Evaluation"
+      description=`Ensure the quality and performance of your AI/ML models with GKE's robust evaluation infrastructure. Deploy evaluation services and dashboards to monitor key metrics and track model performance.`>}}
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 me-auto">
+      {{< blocks/card link="docs/use-cases/" icon_path="icons/serving.svg" title="Serving"
+      description=`Deploy and scale your trained AI/ML models with GKE's production-ready serving infrastructure. Leverage containerized serving solutions to deliver low-latency predictions and handle high traffic volumes.`>}}
+    </div>
+  </div>
 
-  {{% blocks/lead color="secondary" %}}
-  <p><strong>What is AI on GKE?</strong></p>
-
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In feugiat mauris vel rhoncus aliquam. 
-    Pellentesque consequat, lectus eget blandit sodales, nisl velit lobortis nibh, quis cursus augue est sed libero. 
-    Pellentesque gravida dictum est, eget blandit quam maximus quis. Integer aliquet sagittis ante sed imperdiet. 
-    Ut id aliquet sapien.</p>
-    {{% /blocks/lead %}}
-
-
-    {{< blocks/section color="dark" type="row" >}}
-    {{< blocks/feature icon="fas fa-file-code" title="Orchestrate" url="./docs/getting-started/" >}}
-    <p>Infrastructure orchestration that support GPUs and TPUs for training and serving workloads at scale</p> 
-    {{% /blocks/feature %}}
-    
-    {{< blocks/feature icon="fas fa-wrench" title="Integrate" url="./docs/guides/client-sdks/" >}}
-    <p>Flexible integration with distributed computing and data processing frameworks</p>
-    {{< /blocks/feature >}}
-    
-    
-    {{< blocks/feature icon="fas fa-chart-area" title="Multiple teams" url="./docs/guides/metrics/" >}}
-    <p>Support for multiple teams on the same infrastructure to maximize utilization of resources</p>
-    {{< /blocks/feature >}}
-    
-    {{< /blocks/section >}}
+  {{< /blocks/section >}} {{< blocks/section color="light" title=`Community &
+  feedback` description=`Explore a curated selection of impactful AI/ML projects and groundbreaking research from our community. These innovative contributions are shaping the future of AI. Explore a curated selection of impactful AI/ML projects and groundbreaking research from our community. These innovative contributions are shaping the future of AI.Explore a curated selection of impactful AI/ML projects and groundbreaking research from our community. These innovative contributions are shaping the future of AI.`>}}
+  <div
+    class="row gy-3"
+    style="padding: 0"
+  >
+    <p class="section-description">Share your knowledge and help us improve our learning materials.</p>
+    <a class="mt-auto" href="/community/"><button class="btn btn-primary">Contribute</button></a>
+  </div>
+  {{< /blocks/section >}}
+</div>

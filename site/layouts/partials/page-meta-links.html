@@ -1,0 +1,63 @@
+{{/* cSpell:ignore querify subdir */ -}}
+{{/* Class names ending with `--KIND` are deprecated in favor of `__KIND`, but we're keeping them for a few releases after 0.9.0 */ -}}
+
+{{ if .File -}}
+{{ $path := strings.TrimPrefix (add hugo.WorkingDir "/") $.File.Filename -}}
+{{ $gh_repo := $.Param "github_repo" -}}
+{{ $gh_url := $.Param "github_url" -}}
+{{ $gh_subdir := $.Param "github_subdir" | default "" -}}
+{{ $gh_project_repo := $.Param "github_project_repo" -}}
+{{ $gh_branch := $.Param "github_branch" | default "main" -}}
+<div class="td-page-meta ms-2 pb-1 pt-2 mb-0">
+{{ if $gh_url -}}
+  {{ warnf "Warning: use of `github_url` is deprecated. For details, see https://www.docsy.dev/docs/adding-content/repository-links/#github_url-optional" -}}
+  <a href="{{ $gh_url }}" target="_blank"><i class="fa-solid fa-pen-to-square fa-fw"></i> {{ T "post_edit_this" }}</a>
+{{ else if $gh_repo -}}
+
+  {{/* Adjust $path based on path_base_for_github_subdir */ -}}
+  {{ $ghs_base := $.Param "path_base_for_github_subdir" -}}
+  {{ $ghs_rename := "" -}}
+  {{ if reflect.IsMap $ghs_base -}}
+    {{ $ghs_rename = $ghs_base.to -}}
+    {{ $ghs_base = $ghs_base.from -}}
+  {{ end -}}
+  {{ with $ghs_base -}}
+    {{ $path = replaceRE . $ghs_rename $path -}}
+  {{ end -}}
+
+  {{ $gh_repo_path := printf "%s/%s/%s" $gh_branch $gh_subdir $path -}}
+  {{ $gh_repo_path = replaceRE "//+" "/" $gh_repo_path -}}
+
+  {{ $viewURL := printf "%s/tree/%s" $gh_repo $gh_repo_path -}}
+  {{ $editURL := printf "%s/edit/%s" $gh_repo $gh_repo_path -}}
+  {{ $issuesURL := printf "%s/issues/new?title=%s" $gh_repo (safeURL $.Title ) -}}
+  {{ $newPageStub := resources.Get "stubs/new-page-template.md" -}}
+  {{ $newPageQS := querify "value" $newPageStub.Content "filename" "change-me.md" | safeURL -}}
+  {{ $newPageURL := printf "%s/new/%s?%s" $gh_repo (path.Dir $gh_repo_path) $newPageQS -}}
+
+  <a href="{{ $viewURL }}" class="td-page-meta--view td-page-meta__view" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 13.5H12V12H6V13.5ZM6 10.5H12V9H6V10.5ZM4.5 16.5C4.0875 16.5 3.73438 16.3531 3.44063 16.0594C3.14687 15.7656 3 15.4125 3 15V3C3 2.5875 3.14687 2.23438 3.44063 1.94063C3.73438 1.64687 4.0875 1.5 4.5 1.5H10.5L15 6V15C15 15.4125 14.8531 15.7656 14.5594 16.0594C14.2656 16.3531 13.9125 16.5 13.5 16.5H4.5ZM9.75 6.75V3H4.5V15H13.5V6.75H9.75Z" fill="#CA7B47"/>
+    </svg>
+     {{ T "post_view_this" }}</a>
+  <a href="{{ $editURL }}" class="td-page-meta--edit td-page-meta__edit" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3.5 14H4.56875L11.9 6.66875L10.8313 5.6L3.5 12.9313V14ZM2 15.5V12.3125L11.9 2.43125C12.05 2.29375 12.2156 2.1875 12.3969 2.1125C12.5781 2.0375 12.7688 2 12.9688 2C13.1688 2 13.3625 2.0375 13.55 2.1125C13.7375 2.1875 13.9 2.3 14.0375 2.45L15.0688 3.5C15.2188 3.6375 15.3281 3.8 15.3969 3.9875C15.4656 4.175 15.5 4.3625 15.5 4.55C15.5 4.75 15.4656 4.94063 15.3969 5.12188C15.3281 5.30313 15.2188 5.46875 15.0688 5.61875L5.1875 15.5H2ZM11.3563 6.14375L10.8313 5.6L11.9 6.66875L11.3563 6.14375Z" fill="#CA7B47"/>
+    </svg>
+     {{ T "post_edit_this" }}</a>
+  <a href="{{ $issuesURL }}" class="td-page-meta--issue td-page-meta__issue" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 6V1H7V3H4V6H2ZM20 6V3H17V1H22V6H20ZM2 23V18H4V21H7V23H2ZM17 23V21H20V18H22V23H17ZM7 18H17V6H7V18ZM7 20C6.45 20 5.97917 19.8042 5.5875 19.4125C5.19583 19.0208 5 18.55 5 18V6C5 5.45 5.19583 4.97917 5.5875 4.5875C5.97917 4.19583 6.45 4 7 4H17C17.55 4 18.0208 4.19583 18.4125 4.5875C18.8042 4.97917 19 5.45 19 6V18C19 18.55 18.8042 19.0208 18.4125 19.4125C18.0208 19.8042 17.55 20 17 20H7ZM9 10H15V8H9V10ZM9 13H15V11H9V13ZM9 16H15V14H9V16Z" fill="#CA7B47"/>
+    </svg>
+     {{ T "post_create_issue" }}</a>
+  {{ with $gh_project_repo -}}
+    {{ $project_issueURL := printf "%s/issues/new?labels=overall" . -}}
+    <a href="{{ $project_issueURL }}" class="td-page-meta--project td-page-meta__project-issue" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.875 23L1 18.05L3.875 13H9.6L12.5 18.05L9.625 23H3.875ZM3.875 11L1 6.05L3.875 1H9.6L12.5 6.05L9.6 11H3.875ZM5.025 21H8.45L10.175 18.05L8.45 15H5.025L3.3 18.05L5.025 21ZM5.025 9H8.45L10.175 6.05L8.45 3H5.025L3.3 6.05L5.025 9ZM14.375 17L11.475 12.05L14.35 7H20.1L23 12.05L20.125 17H14.375ZM15.5 15H18.95L20.675 12.05L18.95 9H15.525L13.8 12.05L15.5 15Z" fill="#CA7B47"/>
+        </svg>
+         {{ T "post_create_project_issue" }}</a>
+  {{ end -}}
+
+{{ end -}}
+{{ with .CurrentSection.AlternativeOutputFormats.Get "print" -}}
+  <a id="print" href="{{ .RelPermalink | safeURL }}"><i class="fa-solid fa-print fa-fw"></i> {{ T "print_entire_section" }}</a>
+{{ end }}
+</div>
+{{ end -}}

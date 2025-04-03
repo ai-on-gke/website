@@ -1,0 +1,7 @@
+{{ $icon_path := .Get "icon_path" -}} {{ $title := .Get "title"  -}}
+
+<div class="community-card">
+  {{ with resources.Get $icon_path -}} {{ ( . | minify).Content | safeHTML -}}
+  {{ end -}}
+  <div class="title">{{ $title }}</div>
+</div>

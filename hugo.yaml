@@ -14,43 +14,47 @@
 # limitations under the License.
 
 languageCode: en-us
-title: AI on GKE
+title: GKE AI Labs
 
-docsDir: docs/site
+docsDir: site
 
-contentDir: docs/site/content
-publishDir: docs/site/public
-layoutDir: docs/site/layouts
-dataDir: docs/site/data
-resourceDir: docs/site/resources
-assetDir: docs/site/assets
+contentDir: site/content
+publishDir: site/public
+layoutDir: site/layouts
+dataDir: site/data
+resourceDir: site/resources
+assetDir: site/assets
+i18nDir: site/i18n
+staticDir: site/static
 
+markup:
+  goldmark:
+    parser:
+      attribute:
+        block: true
 
-menu:
-  main:
-    - name: GitHub
-      weight: 50
-      url: 'https://github.com/GoogleCloudPlatform/ai-on-gke'
-      pre: <i class='fa-brands fa-github'></i>
 
 module:
   imports:
     - path: github.com/google/docsy
 params:
-  github_repo: https://github.com/GoogleCloudPlatform/ai-on-gke
-  github_project_repo: https://github.com/GoogleCloudPlatform/ai-on-gke
+  github_repo: https://github.com/akvelon/gkeaiwebsite
+  prism_syntax_highlighting: true
+  path_base_for_github_subdir: /site
+  github_branch: main
+  github_project_repo: https://github.com/akvelon/gkeaiwebsite
   copyright:
     authors: Website Authors | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) |
     from_year: 2018
-  version_menu: Releases
-  url_latest_version: https://akvelon-gke-aieco.uc.r.appspot.com/
-  versions:
-    - version: master
-      url: ''
-    - version: v0.2
-      url: ''
-    - version: v0.3
-      url: ''
+  # version_menu: Releases
+  # url_latest_version: https://akvelon-gke-aieco.uc.r.appspot.com/
+  # versions:
+  #   - version: master
+  #     url: ''
+  #   - version: v0.2
+  #     url: ''
+  #   - version: v0.3
+  #     url: ''
   links:
     # End user relevant links. These will show up on left side of footer and in the community page if you have one.
     user:
@@ -80,12 +84,28 @@ params:
         url: https://example.org/mail
         icon: fa fa-envelope
         desc: Discuss development issues around the project
+  taxonomy:
+    taxonomyCloud: [tags, categories]
+    taxonomyCloudTitle: 
+      - Categories
+    taxonomyPageHeader: [tags]
+  maxRelativeArticlesToDisplay: 5
 
+  
   offlineSearch: true
   ui:
     sidebar_menu_compact: true
-    sidebar_menu_foldable: true
-    showLightDarkModeMenu: true
-services:
-  googleAnalytics:
-    id: G-1TVCQM7DWD
+    sidebar_search_disable: false
+    sidebar_menu_foldable: false
+    ul_show: 2
+    navbar_translucent_over_cover_disable: true
+    breadcrumb_disable: false
+    
+    # showLightDarkModeMenu: true
+    feedback:
+          enable: false
+          # The responses that the user sees after clicking "yes" (the page was helpful) or "no" (the page was not helpful).
+          'yes': >-
+            Glad to hear it! Please <a href="https://github.com/GoogleCloudPlatform/ai-on-gke/issues/new">tell us how we can improve</a>.
+          'no': >-
+            Sorry to hear that. Please <a href="https://github.com/GoogleCloudPlatform/ai-on-gke/issues/new">tell us how we can improve</a>.

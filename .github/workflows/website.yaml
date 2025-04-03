@@ -19,14 +19,17 @@ name: Build Website
 on:
   push:
     branches:
-      - website
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
-      - uses: actions/checkout@v3
-      - name: Build website
+      - uses: actions/checkout@v4
+      - name: Build sourcefiles
         run: |
           HOST_UID=$(id -u)
           HOST_GID=$(id -g)
@@ -35,4 +38,27 @@ jobs:
             -e HOST_UID=${HOST_UID} \
             -e HOST_GID=${HOST_GID} \
             -u ${HOST_UID}:${HOST_GID} \
-            floryn90/hugo:ext-alpine build
+            floryn90/hugo:ext-alpine build -e production
+      - name: Move 404
+        run: | 
+          cp docs/site/public/404.html docs/site/404.html
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          token_format: "access_token"
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+
+      - name: Deploy to App Engine
+        id: deploy
+        env: 
+         ACTIONS_STEP_DEBUG: true
+        uses: google-github-actions/deploy-appengine@v2
+        with:
+          deliverables: docs/site/app.yaml
+          project_id: ${{ secrets.GCP_PROJECT }}
+
+      - name: Test
+        run: curl "${{ steps.deploy.outputs.url }}"
+

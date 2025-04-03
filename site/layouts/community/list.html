@@ -1,0 +1,28 @@
+{{ define "main" -}}
+<section
+  class="row td-box td-box--primary position-relative td-box--height-auto"
+>
+  <div class="col-12">
+    <div class="container text-center td-arrow-down">
+      <span class="h4 mb-0">
+        <h1>{{ T "community_join" . }}</h1>
+        <p>{{ T "community_introduce" . }}</p>
+      </span>
+    </div>
+  </div>
+  </section>
+<div class="container td-outer">
+  
+  <section class="row position-relative td-box--height-auto">
+    {{ with .Content -}}
+    <div
+      class="td-content"
+      style="margin-top: 60px"
+    >
+      {{ . }}
+    </div>
+    {{- end -}}
+  </section>
+</div>
+
+{{ end }}

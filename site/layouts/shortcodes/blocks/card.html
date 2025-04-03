@@ -1,0 +1,22 @@
+{{ $icon_path := .Get "icon_path" -}} {{ $title := .Get "title" -}} {{
+$description := .Get "description" -}} {{ $col_id := .Get "col_id" -}} {{ $link
+:= .Get "link" -}}
+
+<div class="option-primary-l -bg-primary-light">
+  <div>
+    {{ with resources.Get $icon_path -}} {{ ( . | minify).Content | safeHTML -}}
+    {{ end -}}
+  </div>
+
+  <div class="title">{{ $title }}</div>
+
+  {{ if $description -}}
+  <div class="title2">{{ $description }}</div>
+  {{ end -}}
+
+  <a
+    href="{{ $link }}"
+    style="text-decoration: none"
+    ><button class="btn btn-primary">Explore</button></a
+  >
+</div>
