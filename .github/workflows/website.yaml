@@ -25,8 +25,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: "read"
+      id-token: "write"
     steps:
       - uses: actions/checkout@v4
       - name: Build sourcefiles
@@ -39,26 +39,29 @@ jobs:
             -e HOST_GID=${HOST_GID} \
             -u ${HOST_UID}:${HOST_GID} \
             floryn90/hugo:ext-alpine build -e production
-      - name: Move 404
-        run: | 
-          cp docs/site/public/404.html docs/site/404.html
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
+      - id: "auth"
+        uses: "google-github-actions/auth@v2"
         with:
           project_id: ${{ secrets.GCP_PROJECT }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           token_format: "access_token"
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      # - name: lighthouse
+      #   uses: actions/setup-node@v3
+      
+      #   with:
+      #     node-version: 18
+      # - run: npm install && npm install -g @lhci/cli@0.14.x
+      # - run: lhci autorun --collect.numberOfRuns=1 --collect.staticDirFileDiscoveryDepth=1 --collect.staticDistDir=site/public --collect.url=http://localhost/index.html
 
       - name: Deploy to App Engine
         id: deploy
-        env: 
-         ACTIONS_STEP_DEBUG: true
+        env:
+          ACTIONS_STEP_DEBUG: true
         uses: google-github-actions/deploy-appengine@v2
         with:
-          deliverables: docs/site/app.yaml
+          deliverables: site/app.yaml
           project_id: ${{ secrets.GCP_PROJECT }}
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
-
