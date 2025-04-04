@@ -6,6 +6,11 @@ handlers:
     upload: public/*
     require_matching_file: true
 
+  - url: /(.*)
+    static_files: public/\1/index.html
+    upload: public/*
+    require_matching_file: true
+  
   - url: /(.*)/
     static_files: public/\1/index.html
     upload: public/*
