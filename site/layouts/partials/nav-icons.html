@@ -1,7 +1,7 @@
 {{ $gh_repo := $.Param "github_repo" -}}
 <div class="nav-icons">
   <a href="https://console.cloud.google.com/kubernetes"
-    ><div
+  aria-label="Read more about google cloud kubernetes"><div
       style="
         background-color: black;
         border-radius: 50%;
@@ -17,7 +17,7 @@
       | safeHTML -}} {{ end -}}
     </div>
   </a>
-  <a href="{{ $gh_repo }}"
+  <a href="{{ $gh_repo }}" aria-label="Navigate to github repository"
     ><div
       style="
         border-radius: 50%;
