@@ -37,3 +37,4 @@ terraform.tfvars
 tfplan
 
 .hugo_build.lock
+go.sum
