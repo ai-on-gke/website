@@ -1,7 +1,11 @@
 {{ $gh_repo := $.Param "github_repo" -}}
 <div class="nav-icons">
-  <a href="https://console.cloud.google.com/kubernetes"
-  aria-label="Read more about google cloud kubernetes"><div
+  <a
+    href="https://console.cloud.google.com/kubernetes"
+    aria-label="Read more about google cloud kubernetes"
+    ><div
+      role="button"
+      tabindex="0"
       style="
         background-color: black;
         border-radius: 50%;
@@ -17,8 +21,12 @@
       | safeHTML -}} {{ end -}}
     </div>
   </a>
-  <a href="{{ $gh_repo }}" aria-label="Navigate to github repository"
+  <a
+    href="{{ $gh_repo }}"
+    aria-label="Navigate to github repository"
     ><div
+      role="button"
+      tabindex="0"
       style="
         border-radius: 50%;
         height: 20px;
@@ -29,8 +37,8 @@
         cursor: pointer;
       "
     >
-      {{ with resources.Get "icons/github.svg" -}} {{ ( . | minify).Content
-      | safeHTML -}} {{ end -}}
+      {{ with resources.Get "icons/github.svg" -}} {{ ( . | minify).Content |
+      safeHTML -}} {{ end -}}
     </div>
   </a>
 </div>
