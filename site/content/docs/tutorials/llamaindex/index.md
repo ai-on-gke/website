@@ -4,6 +4,9 @@ title: "Llamaindex in GKE cluster"
 description: "This tutorial will guide you through creating a robust Retrieval-Augmented Generation (RAG) system using LlamaIndex and deploying it on Google Kubernetes Engine (GKE). "
 weight: 30
 type: docs
+tags:
+ - Serving
+ - Experimentation
 ---
 [LlamaIndex](https://docs.llamaindex.ai/en/stable/) bridges the gap between LLMs and domain-specific datasets, enabling efficient indexing and querying of unstructured data for intelligent, data-driven responses. When deployed on a [GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview) cluster, it ensures scalability and security by leveraging containerized workloads, GPU-based nodes, and seamless cloud-native integrations, making it ideal for ML-powered applications like RAG systems.
 

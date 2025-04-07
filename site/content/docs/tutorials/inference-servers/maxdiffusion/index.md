@@ -4,6 +4,9 @@ title: "MaxDiffusion"
 description: "MaxDiffusion provides high-performance implementations of core components of diffusion models such as cross attention, convolutions, and high-throughput image data loading."
 weight: 30
 type: docs
+tags:
+ - Serving
+ - Experimentation
 ---
 ## About MaxDiffusion
 Just as LLMs have revolutionized natural language processing, diffusion models are transforming the field of computer vision. To reduce our customers’ costs of deploying these models, Google created MaxDiffusion: a collection of open-source diffusion-model reference implementations. These implementations are written in JAX and are highly performant, scalable, and customizable – think MaxText for computer vision. 

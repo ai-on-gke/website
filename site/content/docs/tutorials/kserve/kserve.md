@@ -4,6 +4,9 @@ title: "Kserve"
 description: "This tutorial will guide you step by step through the process of installing KServe in a GKE Autopilot cluster."
 weight: 30
 type: docs
+tags:
+ - Serving
+ - Orchestration
 ---
 KServe is a highly scalable, standards-based platform for model inference on Kubernetes. Installing KServe on GKE Autopilot can be challenging due to the security policies enforced by Autopilot. This tutorial will guide you step by step through the process of installing KServe in a GKE Autopilot cluster.
 

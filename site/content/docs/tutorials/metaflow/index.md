@@ -4,6 +4,10 @@ title: "Fine-Tuning Gemma 2-9B on GKE using Metaflow and Argo Workflows"
 description: "This tutorial will provide instructions on how to deploy and use the [Metaflow](https://docs.metaflow.org/) framework on GKE (Google Kubernetes Engine) and operate AI/ML workloads using [Argo-Workflows](https://argo-workflows.readthedocs.io/en/latest/)."
 weight: 30
 type: docs
+tags:
+ - Evaluation
+ - Experimentation
+ - Orchestration
 ---
 This tutorial will provide instructions on how to deploy and use the [Metaflow](https://docs.metaflow.org/) framework on GKE (Google Kubernetes Engine) and operate AI/ML workloads using [Argo-Workflows](https://argo-workflows.readthedocs.io/en/latest/). 
 The tutorial is designed for ML Platform engineers who plan to use Metaflow for ML workloads on top of GKE by offloading resource-intensive tasks to a managed cluster.

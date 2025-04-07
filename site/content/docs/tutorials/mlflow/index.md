@@ -4,6 +4,10 @@ title: "Fine-tune gemma-2-9b and track as an experiment in MLFlow"
 description: "In this tutorial we will fine-tune gemma-2-9b using LoRA as an experiment in MLFlow. We will deploy MLFlow on a GKE cluster and set up MLFlow to store artifacts inside a GCS bucket. In the end, we will deploy a fine-tuned model using KServe."
 weight: 30
 type: docs
+tags:
+ - Evaluation
+ - Experimentation
+ - Orchestration
 ---
 Data scientists often run a lot of experiments and it's essential to be sure that the best run won't be lost in numerous experiments. MLFlow helps to track experiments, datasets, metrics, and other data. GKE clusters can provide a lot of resources on demand.
 
