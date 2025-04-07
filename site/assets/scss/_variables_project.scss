@@ -594,3 +594,17 @@ aside {
 .language-jupyter {
   background-color: rgb(248, 249, 250) !important;
 }
+
+.td-toc {
+  a {
+    font-size: 14px !important;
+  }
+}
+
+h2.side-bar-title {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  margin-bottom: 10px !important;
+  border-bottom: 1px solid #dadce0 !important;
+  padding-bottom: 6px !important;
+}
