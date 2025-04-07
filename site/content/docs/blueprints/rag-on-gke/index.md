@@ -1,3 +1,4 @@
+
 ---
 linkTitle: "RAG on GKE"
 title: "RAG on GKE"
@@ -8,11 +9,13 @@ tags:
     - RAG on GKE
     - Blueprints
 ---
+
 This is a sample to deploy a Retrieval Augmented Generation (RAG) application on GKE. 
 
-The latest recommended release is branch release-1.1.
+> [!NOTE]
+> The latest recommended release is branch release-1.1.
 
-# What is RAG?
+## What is RAG?
 
 [RAG](https://cloud.google.com/blog/products/ai-machine-learning/rag-with-databases-on-google-cloud) is a popular approach for boosting the accuracy of LLM responses, particularly for domain specific or private data sets.
 
@@ -61,11 +64,12 @@ If you prefer to use your own VPC, set `create_network = false` in the in the [I
 
 2. [Create a private connection](https://cloud.google.com/vpc/docs/configure-private-services-access#creating-connection).
 
-# Installation
+## Installation
 
 This section sets up the RAG infrastructure in your GCP project using Terraform.
 
-**NOTE:** Terraform keeps state metadata in a local file called `terraform.tfstate`. Deleting the file may cause some resources to not be cleaned up correctly even if you delete the cluster. We suggest using `terraform destroy` before reapplying/reinstalling.
+> [!NOTE]
+> Terraform keeps state metadata in a local file called `terraform.tfstate`. Deleting the file may cause some resources to not be cleaned up correctly even if you delete the cluster. We suggest using `terraform destroy` before reapplying/reinstalling.
 
 1. `cd ai-on-gke/applications/rag`
 
@@ -80,7 +84,7 @@ This section sets up the RAG infrastructure in your GCP project using Terraform.
 
 4. Run `terraform apply --var-file workloads.tfvars`
 
-# Generate vector embeddings for the dataset
+## Generate vector embeddings for the dataset
 
 This section generates the vector embeddings for your input dataset. Currently, the default dataset is [Netflix shows](https://www.kaggle.com/datasets/shivamb/netflix-shows). We will use a Jupyter notebook to run a Ray job that generates the embeddings & populates them into the `pgvector` instance created above.
 
@@ -141,7 +145,7 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=${CLUSTER_L
             - Once the domain status is Active, go to the domain in a browser and login with your Google credentials.
             - To add additional users to your frontend application, go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the `rag/ray-cluster-kuberay-head-svc` service and add principals with the role `IAP-secured Web App User`.
 
-# Launch the frontend chat interface
+## Launch the frontend chat interface
 
 1. Connect to the frontend:
     * If IAP is disabled (`frontend_add_auth = false`):
@@ -158,7 +162,7 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=${CLUSTER_L
 2. Prompt the LLM
     * Start chatting! This will fetch context related to your prompt from the vector embeddings in the `pgvector` CloudSQL instance, augment the original prompt with the context & query the inference model (`mistral-7b`) with the augmented prompt.
 
-# Configure authenticated access via IAP (recommended)
+## Configure authenticated access via IAP (recommended)
 
 We recommend you configure authenticated access via IAP for your services.
 
@@ -180,12 +184,12 @@ We recommend you configure authenticated access via IAP for your services.
         1. Go to https://console.cloud.google.com/net-services/dns/zones, select the zone and click ADD STANDARD, fill in your domain name and public IP address.
         2. Run `gcloud dns record-sets create <domain address>. --zone=<zone name> --type="A" --ttl=<ttl in seconds> --rrdatas="<public ip address>"`
 
-# Cleanup
+## Cleanup
 
 1. Run `terraform destroy --var-file="workloads.tfvars"`
     - Network deletion issue: `terraform destroy` fails to delete the network due to a known issue in the GCP provider. For now, the workaround is to manually delete it.
 
-# Troubleshooting
+## Troubleshooting
 
 Set your the namespace, cluster name and location from `workloads.tfvars`:
 
@@ -241,12 +245,9 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=${CLUSTER_L
     - Add the following entry to `env` within the deployment `mistral-7b-instruct` via `kubectl edit`.
 
 ```yaml
-        - name: HUGGING_FACE_HUB_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: hf-secret
+- name: HUGGING_FACE_HUB_TOKEN
+	  valueFrom:
+		  secretKeyRef:
+	          name: hf-secret
               key: hf_api_token
 ```
-
-
-
