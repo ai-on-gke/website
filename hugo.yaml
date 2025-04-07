@@ -38,52 +38,14 @@ module:
   imports:
     - path: github.com/google/docsy
 params:
-  github_repo: https://github.com/akvelon/gkeaiwebsite
+  github_repo: https://github.com/ai-on-gke/website
   prism_syntax_highlighting: true
   path_base_for_github_subdir: /site
   github_branch: main
-  github_project_repo: https://github.com/akvelon/gkeaiwebsite
+  github_project_repo: https://github.com/ai-on-gke/website
   copyright:
     authors: Website Authors | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) |
     from_year: 2018
-  # version_menu: Releases
-  # url_latest_version: https://akvelon-gke-aieco.uc.r.appspot.com/
-  # versions:
-  #   - version: master
-  #     url: ''
-  #   - version: v0.2
-  #     url: ''
-  #   - version: v0.3
-  #     url: ''
-  links:
-    # End user relevant links. These will show up on left side of footer and in the community page if you have one.
-    user:
-      - name: User mailing list
-        url: https://example.org/mail
-        icon: fa fa-envelope
-        desc: Discussion and help from your fellow users
-      - name: Twitter
-        url: https://example.org/twitter
-        icon: fab fa-twitter
-        desc: Follow us on Twitter to get the latest news!
-      - name: Stack Overflow
-        url: https://example.org/stack
-        icon: fab fa-stack-overflow
-        desc: Practical questions and curated answers
-    # Developer relevant links. These will show up on right side of footer and in the community page if you have one.
-    developer:
-      - name: GitHub
-        url: https://github.com/GoogleCloudPlatform/ai-on-gke
-        icon: fab fa-github
-        desc: Development takes place here!
-      - name: Slack
-        url: https://example.org/slack
-        icon: fab fa-slack
-        desc: Chat with other project developers
-      - name: Developer mailing list
-        url: https://example.org/mail
-        icon: fa fa-envelope
-        desc: Discuss development issues around the project
   taxonomy:
     taxonomyCloud: [tags, categories]
     taxonomyCloudTitle: 
@@ -103,9 +65,9 @@ params:
     
     # showLightDarkModeMenu: true
     feedback:
-          enable: false
+          enable: true
           # The responses that the user sees after clicking "yes" (the page was helpful) or "no" (the page was not helpful).
           'yes': >-
-            Glad to hear it! Please <a href="https://github.com/GoogleCloudPlatform/ai-on-gke/issues/new">tell us how we can improve</a>.
+            Glad to hear it!
           'no': >-
-            Sorry to hear that. Please <a href="https://github.com/GoogleCloudPlatform/ai-on-gke/issues/new">tell us how we can improve</a>.
+            Sorry to hear that. Please <a href="https://github.com/ai-on-gke/website/issues/new">tell us how we can improve</a>.
