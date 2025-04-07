@@ -125,7 +125,7 @@ kubectl port-forward --namespace default svc/my-mlflow-release-tracking 8080:80 
 ```
 
 Check your MLFlow UI at `http://127.0.0.1:8080`. You should be able to see the MLFlow UI like this:
-![alt text](./imgs/img0.png)
+![alt text](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/mlflow/finetune-gemma/imgs/img0.png)
 
 ## Fine-tune gemma2-9b using LoRA
 Go to the `finetune` directory. Before we start our fine-tuning job, we need to create a kubernetes secret with a huggingface API token and accept the Google license to be able to download the model weights. Go to the [google/gemma-2-9b](https://huggingface.co/google/gemma-2-9b) and accept the license. Then run the commands below to create huggingface secret:
@@ -234,16 +234,16 @@ Or you can go to your MLFlow and check metrics.The whole fine-tuning experiment 
 
 ## Model registry
 After the fine-tuning job is finished, you can check the result in MLFlow UI.
-![alt text](./imgs/img1.png)
+![alt text](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/mlflow/finetune-gemma/imgs/img1.png)
 
 Find your experiment and go to the artifacts tab.
-![alt text](./imgs/img2.png)
+![alt text](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/mlflow/finetune-gemma/imgs/img2.png)
 
 Here you can register your model.
-![alt text](./imgs/img3.png)
+![alt text](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/mlflow/finetune-gemma/imgs/img3.png)
 
 Now you have registered an ML model in MLFlow!
-![alt text](./imgs/img4.png)
+![alt text](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/mlflow/finetune-gemma/imgs/img4.png)
 
 ## Deployment
 

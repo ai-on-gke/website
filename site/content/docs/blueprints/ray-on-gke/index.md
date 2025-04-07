@@ -39,7 +39,7 @@ NAME                  DESIRED WORKERS   AVAILABLE WORKERS   STATUS   AGE
 ray-cluster-kuberay   1                 1                   ready    3m41s
 ```
 
-See [tfvars examples](./examples/tfvars/) to explore different configuration options for the Ray cluster using the [terraform templates](./templates).
+See [tfvars examples](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/ray-on-gke/examples/tfvars) to explore different configuration options for the Ray cluster using the [terraform templates](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/ray-on-gke/templates).
 
 ### Install Ray
 
@@ -120,14 +120,14 @@ $ python cluster_resources.py
 See the following guides and tutorials for running Ray applications on GKE:
 * [Getting Started with KubeRay](https://docs.ray.io/en/latest/cluster/kubernetes/getting-started.html)
 * [Serve an LLM on L4 GPUs with Ray](https://cloud.google.com/kubernetes-engine/docs/how-to/serve-llm-l4-ray)
-* [Logging & Monitoring for Ray clusters](./guides/observability)
-* [TPU Guide](./guides/tpu/)
+* [Logging & Monitoring for Ray clusters](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/guides/observability)
+* [TPU Guide](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/guides/tpu)
 * [Priority Scheduling with RayJob and Kueue](https://docs.ray.io/en/master/cluster/kubernetes/examples/rayjob-kueue-priority-scheduling.html)
 * [Gang Scheduling with RayJob and Kueue](https://docs.ray.io/en/master/cluster/kubernetes/examples/rayjob-kueue-gang-scheduling.html)
-* [RayTrain with GCSFuse CSI driver](./guides/raytrain-with-gcsfusecsi/)
+* [RayTrain with GCSFuse CSI driver](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/guides/raytrain-with-gcsfusecsi)
 * [Configuring KubeRay to use Google Cloud Storage Buckets in GKE](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/gke-gcs-bucket.html)
-* [Example Notebooks with Ray](./examples/notebooks/)
-* [Example templates for Ray clusterse](./examples/tfvars/)
+* [Example Notebooks with Ray](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/examples/notebooks)
+* [Example templates for Ray clusterse](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/ray-on-gke/examples/tfvars)
 
 ## Blogs & Best Practices
 

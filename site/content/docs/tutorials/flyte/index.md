@@ -31,7 +31,7 @@ This guide illustrates the deployment of Flyte on Google Kubernetes Engine (GKE)
 
 ## Architecture overview
 
-![Architecture overview](./img/architecture-overview.png)
+![Architecture overview](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/flyte/img/architecture-overview.png)
 
 ## Setting up your GKE cluster with Terraform
 
@@ -126,7 +126,7 @@ At this point, the Flyte dashboard is not exposed to the internet. Let's access 
 
 3. Open <http://localhost:8088/console> in your browser to access the Flyte dashboard.
    You should see the following screen:
-   ![alt text](./img/flyte_dashboard.png)
+   ![alt text](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/flyte/img/flyte_dashboard.png)
 
    If you experience issues accessing the dashboard, make sure the pods are running and the port forwarding is set up correctly.
 

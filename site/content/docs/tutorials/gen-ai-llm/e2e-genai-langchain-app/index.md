@@ -50,7 +50,7 @@ Create or select an existing GCP project and open Cloud Shell. You can use [thes
 
 Experiment with the model in Jupyter Notebook:
 1. Get the address of your Jupyter hub:
-![Jupyter Hub IP](./open_jupyter.png)
+![Jupyter Hub IP](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/genAI-LLM/e2e-genai-langchain-app/open_jupyter.png)
     ```bash
     kubectl get service proxy-public -n <namespace name> -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
     ```
@@ -80,7 +80,7 @@ Experiment with the model in Jupyter Notebook:
         ```bash
         kubectl apply -f deploy.yaml -n <YOUR_NAMESPACE>
         ```
-    1. Find backend IP on the services page: `hf-lc-ray-service`: ![Backend IP](./backend_ip.png)
+    1. Find backend IP on the services page: `hf-lc-ray-service`: ![Backend IP](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/genAI-LLM/e2e-genai-langchain-app/backend_ip.png)
         ```bash
         kubectl get service hf-lc-ray-service -n <namespace name> -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
         ```
@@ -112,6 +112,6 @@ Experiment with the model in Jupyter Notebook:
         ```bash
         kubectl apply -f deploy.yaml -n <YOUR_NAMESPACE>
         ```
-    1. Find frontend IP on the services page: `hf-lc-ray-fe-service`: ![Frontend IP](./frontend_ip.png)
-    1. Click to navigate and give it a try! ![Frontend App](./frontend_app.png)
+    1. Find frontend IP on the services page: `hf-lc-ray-fe-service`: ![Frontend IP](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/genAI-LLM/e2e-genai-langchain-app/frontend_ip.png)
+    1. Click to navigate and give it a try! ![Frontend App](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/genAI-LLM/e2e-genai-langchain-app/frontend_app.png)
 
