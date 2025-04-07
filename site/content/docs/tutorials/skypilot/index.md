@@ -18,7 +18,7 @@ In this tutorial, we will demonstrate how to leverage the open-source software [
 
 SkyPilot is a framework for running AI and batch workloads on any infra, offering unified execution, high cost savings, and high GPU availability. By combining SkyPilot with GKE's solutions (such as [Kueue + Dynamic Workload Scheduler](https://cloud.google.com/kubernetes-engine/docs/how-to/provisioningrequest), [Custom compute class](https://cloud.google.com/kubernetes-engine/docs/concepts/about-custom-compute-classes), [GCS FUSE](https://cloud.google.com/storage/docs/cloud-storage-fuse/overview)), users can effectively address capacity challenges while optimizing costs.
 
-## The tutorial overview 
+## Overview
 In this tutorial, our persona is an ML scientist planning to run a batch workload for hyperparameter tuning. This workload involves two experiments, with each experiment requiring 4 GPUs to execute. 
 
 We have two GKE clusters in different regions: one in us-central1 with 4\*A100 and another in us-west1 with 4\*L4.
@@ -37,110 +37,109 @@ SkyPilot supports GKE's cluster autoscaling for dynamic resource management. How
 ## Set up your GKE Cluster
 Create two clusters, you can create  the clusters in parrallel to reduce time.
 1. Set the default environment variables:
-```bash
-export PROJECT_ID=$(gcloud config get project)
-```
+	```bash
+	export PROJECT_ID=$(gcloud config get project)
+	```
+	
 2. Create a GKE cluster in us-central1-c with 4*A100
-```bash
-gcloud container clusters create demo-us-central1 \
-    --location=us-central1-c \
-    --project=$PROJECT_ID 
-```
-```bash
-gcloud container node-pools create gpu-node-pool \
-  --accelerator type=nvidia-tesla-a100,count=4 \
-  --machine-type a2-highgpu-4g \
-  --region us-central1-c \
-  --cluster=demo-us-central1 \
-  --num-nodes=1
-```
-
-```bash
-gcloud container clusters get-credentials demo-us-central1 \
---region us-central1-c \
---project ${PROJECT_ID}
-```
+	```bash
+	gcloud container clusters create demo-us-central1 \
+	    --location=us-central1-c \
+	    --project=$PROJECT_ID 
+	```
+	```bash
+	gcloud container node-pools create gpu-node-pool \
+	  --accelerator type=nvidia-tesla-a100,count=4 \
+	  --machine-type a2-highgpu-4g \
+	  --region us-central1-c \
+	  --cluster=demo-us-central1 \
+	  --num-nodes=1
+	```
+	```bash
+	gcloud container clusters get-credentials demo-us-central1 \
+	--region us-central1-c \
+	--project ${PROJECT_ID}
+	```
 
 3. Create a GKE cluster in us-west1-a with 4*L4
-```bash
-gcloud container clusters create demo-us-west1 \
-    --location=us-west1-a \
-    --project=$PROJECT_ID 
-```
-```bash
-gcloud container node-pools create gpu-node-pool \
-  --accelerator type=nvidia-l4,count=4 \
-  --machine-type g2-standard-48 \
-  --region us-west1-a \
-  --cluster=demo-us-west1 \
-  --num-nodes=1
-```
-
-```bash
-gcloud container clusters get-credentials demo-us-west1 \
---region us-west1-a \
---project ${PROJECT_ID}
-```
+	```bash
+	gcloud container clusters create demo-us-west1 \
+	    --location=us-west1-a \
+	    --project=$PROJECT_ID 
+	```
+	```bash
+	gcloud container node-pools create gpu-node-pool \
+	  --accelerator type=nvidia-l4,count=4 \
+	  --machine-type g2-standard-48 \
+	  --region us-west1-a \
+	  --cluster=demo-us-west1 \
+	  --num-nodes=1
+	```
+	```bash
+	gcloud container clusters get-credentials demo-us-west1 \
+	--region us-west1-a \
+	--project ${PROJECT_ID}
+	```
 
 ## Install SkyPilot
 1. Create a virtual environment.
-```bash
-cd ~
-python3 -m venv skypilot-test
-cd skypilot-test
-source bin/activate
+	```bash
+	cd ~
+	python3 -m venv skypilot-test
+	cd skypilot-test
+	source bin/activate
 
-git clone https://github.com/GoogleCloudPlatform/ai-on-gke.git
-cd ai-on-gke/tutorials-and-examples/skypilot
-```
+	git clone https://github.com/GoogleCloudPlatform/ai-on-gke.git
+	cd ai-on-gke/tutorials-and-examples/skypilot
+	```
 
 2. Install SkyPilot
-```bash
-pip install -U "skypilot[kubernetes,gcp]"
-```
+	```bash
+	pip install -U "skypilot[kubernetes,gcp]"
+	```
 
-Verify the installation:
-```bash
-sky check
-```
+	Verify the installation:
+	```bash
+	sky check
+	```
 
-This will produce a summary like:
-```
-Checking credentials to enable clouds for SkyPilot.
-  GCP: enabled
-  Kubernetes: enabled
+	This will produce a summary like:
+	```
+	Checking credentials to enable clouds for SkyPilot.
+	  GCP: enabled
+	  Kubernetes: enabled
 
-SkyPilot will use only the enabled clouds to run tasks. To change this, configure cloud credentials, and run sky check.
-```
-If you encounter an error, please consult the [offical documentation](https://docs.skypilot.co/en/latest/getting-started/installation.html). 
+	SkyPilot will use only the enabled clouds to run tasks. To change this, configure cloud credentials, and run sky check.
+	```
+	If you encounter an error, please consult the [offical documentation](https://docs.skypilot.co/en/latest/getting-started/installation.html). 
 
-You can find the available GPUs in a GKE cluster.
-```bash
-sky show-gpus
-```
+	You can find the available GPUs in a GKE cluster.
+	```bash
+	sky show-gpus
+	```
 
 3. Find the context names
-```bash
-kubectl config get-contexts
+	```bash
+	kubectl config get-contexts
 
-# Find the context name, for example: 
-gke_${PROJECT_NAME}_us-central1-c_demo-us-central1
-gke_${PROJECT_NAME}_us-west1-a_demo-us-west1
-```
+	# Find the context name, for example: 
+	gke_${PROJECT_NAME}_us-central1-c_demo-us-central1
+	gke_${PROJECT_NAME}_us-west1-a_demo-us-west1
+	```
 
-4. Copy the following yaml to ~/.sky/config.yaml with context name replaced.
+4. Copy the following yaml to `~/.sky/config.yaml` with context name replaced.
 SkyPilot will evaludate the contexts by the order specified until it finds a cluster that provides enough capacity to deploy the workload.
-```yaml
-allowed_clouds:
-  - gcp
-  - kubernetes
-kubernetes:
-  # Use the context's name
-  allowed_contexts:
-    - gke_${PROJECT_NAME}_us-central1-c_demo-us-central1
-    - gke_${PROJECT_NAME}_us-west1-a_demo-us-west1
-  provision_timeout: 30
-```
+	```yaml
+	allowed_clouds:
+	  - gcp
+	  - kubernetes
+	kubernetes:
+	  # Use the context's name
+	  allowed_contexts:
+	    - gke_${PROJECT_NAME}_us-central1-c_demo-us-central1
+	    - gke_${PROJECT_NAME}_us-west1-a_demo-us-west1
+	  provision_timeout: 30
+	```
 
 ## Launch the jobs
 Under `~/skypilot-test/ai-on-gke/tutorials-and-examples/skypilot`, you’ll find a file named `train.yaml`, which uses SkyPilot's syntax to define a job. 
