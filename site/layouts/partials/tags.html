@@ -34,7 +34,7 @@
 <ul>
   {{ if len (.Store.Get "pagesToDisplay") }}
     {{ range $key, $value := .Store.Get "pagesToDisplay" }}
-      <li><a href="{{ $key }}" class="use-case-link"> {{ $value }} </a></li>
+      <li><a href="{{ $key }}" class="continue-reading-link"> {{ $value }} </a></li>
     {{ end }}
   {{ end }}
 
@@ -48,7 +48,7 @@
         {{ end }}
         {{ if gt (page.Store.Get "maxRelativeArticles") 0 }}
           {{ page.Store.Set "maxRelativeArticles" (sub (page.Store.Get "maxRelativeArticles") 1) }}
-          <li><a href="{{ $page.Permalink }}" class="use-case-link"> {{ $page.LinkTitle }} </a></li>
+          <li><a href="{{ $page.Permalink }}" class="continue-reading-link"> {{ $page.LinkTitle }} </a></li>
           {{ break }}
         {{ end }}
       {{ end }}
@@ -57,7 +57,7 @@
       {{ range $key, $value := seq (page.Store.Get "maxRelativeArticles")}}
         {{ if gt (page.Store.Get "maxRelativeArticles") 0 }}
           {{ page.Store.Set "maxRelativeArticles" (sub (page.Store.Get "maxRelativeArticles") 1) }}
-          <li><a href="{{ $page.Permalink }}" class="use-case-link"> {{ $page.LinkTitle }} </a></li>
+          <li><a href="{{ $page.Permalink }}" class="continue-reading-link"> {{ $page.LinkTitle }} </a></li>
           {{ break }}
         {{ end }}
       {{ end }}
