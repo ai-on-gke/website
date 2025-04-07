@@ -183,28 +183,28 @@ In this tutorial, you use [Cloud Shell](https://cloud.google.com/shell) to manag
 
 To set up your environment with Cloud Shell, follow these steps:
 
-1\. In the [Google Cloud console](http://console.cloud.google.com), launch a Cloud Shell session by clicking *Activate Cloud Shell*. This launches a session in the bottom pane of the Google Cloud console.
+1.  In the [Google Cloud console](http://console.cloud.google.com), launch a Cloud Shell session by clicking *Activate Cloud Shell*. This launches a session in the bottom pane of the Google Cloud console.
 
-2\. Set environment variables.
+2. Set environment variables.
 
-```bash
-export PROJECT_ID=YOUR_PROJECT_ID
-export REGION=europe-west3 
-```
+	```bash
+	export PROJECT_ID=YOUR_PROJECT_ID
+	export REGION=europe-west3 
+	```
+	>[!NOTE]
+	>Replace *YOUR_PROJECT_ID* with your Google Cloud [project ID](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
 
-Replace *YOUR_PROJECT_ID* with your Google Cloud [project ID](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
+3. Set the default environment variables.
 
-3\. Set the default environment variables.
+	```bash
+	gcloud config set project ${PROJECT_ID}
+	```
 
-```bash
-gcloud config set project ${PROJECT_ID}
-```
+4. Clone the code repository.
 
-4\. Clone the code repository.
-
-```bash
-git clone https://github.com/GoogleCloudPlatform/ai-on-gke
-```
+	```bash
+	git clone https://github.com/GoogleCloudPlatform/ai-on-gke
+	```
 
 ### Create your cluster infrastructure
 
@@ -212,57 +212,58 @@ In this section, you run a Terraform script to create a private, highly availabl
 
 The Terraform module will also create a new project and anything that might be needed to set up the environment described in this guide. If you already have a GKE cluster where you can test the Slurm installation, you can skip this step.
 
-5\. Initialize Terraform.
+5. Initialize Terraform.
 
-```bash
-cd slurm-on-gke
-cd infrastructure 
-terraform init
-```
+	```bash
+	cd slurm-on-gke
+	cd infrastructure 
+	terraform init
+	```
 
-6\. Create the `terraform.tfvars` file with your own values.
+6. Create the `terraform.tfvars` file with your own values.
 
-A `terraform.tfvars` file should be provided with all the values for the required variables. In the file, enter your own values as follows:
+	A `terraform.tfvars` file should be provided with all the values for the required variables. In the file, enter your own values as follows:
 
-```HCL
-impersonate_service_account = "YOUR_SERVICE_ACCOUNT_ID" <-- if you are using one
-region                      = "europe-west3"
-project_id                  = "YOUR_PROJECT_ID"
-billing_account_id          = "YOUR_BILLING_ACCOUNT_ID"
-folder_id                   = "folders/FOLDER_ID"
-```
+	```HCL
+	impersonate_service_account = "YOUR_SERVICE_ACCOUNT_ID" <-- if you are using one
+	region                      = "europe-west3"
+	project_id                  = "YOUR_PROJECT_ID"
+	billing_account_id          = "YOUR_BILLING_ACCOUNT_ID"
+	folder_id                   = "folders/FOLDER_ID"
+	```
 
-**Note:** Ensure your selected region or zone offers GPU availability. Consult the [Google Cloud documentation for a complete list](https://cloud.google.com/compute/docs/gpus/gpu-regions-zones).
+	>[!NOTE]
+	>Ensure your selected region or zone offers GPU availability. Consult the [Google Cloud documentation for a complete list](https://cloud.google.com/compute/docs/gpus/gpu-regions-zones).
 
-7\. After you fill out the file, use the following command to apply the Terraform configuration and create the infrastructure.
+7. After you fill out the file, use the following command to apply the Terraform configuration and create the infrastructure.
 
-```bash
-terraform apply
-```
+	```bash
+	terraform apply
+	```
 
-When you are prompted, type `yes`. It might take several minutes for this command to complete and for the cluster to show a ready status.
+	When you are prompted, type `yes`. It might take several minutes for this command to complete and for the cluster to show a ready status.
 
-Terraform creates the following resources:
+	Terraform creates the following resources:
 
-* A Google Cloud project.  
-* A VPC network, a private subnet for the Kubernetes nodes, and a proxy-only subnet for the load balancers.  
-* A firewall rule to open the SSH protocol from the Identity-Aware Proxy (IAP) ranges.  
-* A router to access the internet through NAT.  
-* An Artifact Registry repository to host the Slurm image.  
-* A private GKE cluster in the `europe-west3` region.  
-* One node pool with autoscaling enabled (1-2 nodes per zone, 1 node per zone minimum)  
-* One node pool with enabled autoscaling and GPUs (1-2 nodes per zone, 1 node per zone minimum)  
-* Two ServiceAccount with logging, monitoring permissions, and Artifact Registry read permissions.  
-* Google Cloud Managed Service for Prometheus configuration for cluster monitoring.
+	* A Google Cloud project.  
+	* A VPC network, a private subnet for the Kubernetes nodes, and a proxy-only subnet for the load balancers.  
+	* A firewall rule to open the SSH protocol from the Identity-Aware Proxy (IAP) ranges.  
+	* A router to access the internet through NAT.  
+	* An Artifact Registry repository to host the Slurm image.  
+	* A private GKE cluster in the `europe-west3` region.  
+	* One node pool with autoscaling enabled (1-2 nodes per zone, 1 node per zone minimum)  
+	* One node pool with enabled autoscaling and GPUs (1-2 nodes per zone, 1 node per zone minimum)  
+	* Two ServiceAccount with logging, monitoring permissions, and Artifact Registry read permissions.  
+	* Google Cloud Managed Service for Prometheus configuration for cluster monitoring.
 
-The output is similar to the following:
+	The output is similar to the following:
 
-```bash
-...
-Apply complete! Resources: 39 added, 0 changed, 0 destroyed.
-```
+	```bash
+	...
+	Apply complete! Resources: 39 added, 0 changed, 0 destroyed.
+	```
 
-An additional, commented-out Terraform configuration is already written over the `infrastructure/slurm.tf` file. The additional configuration is an example configuration for a  `g2-standard-4 node` pool.
+	An additional, commented-out Terraform configuration is already written over the `infrastructure/slurm.tf` file. The additional configuration is an example configuration for a  `g2-standard-4 node` pool.
 
 ### Create the image
 
@@ -296,7 +297,7 @@ ddcaaa531045: Pushed
 size: 2632
 ```
 
-Note the address of your container image because it will be requested in the following  steps.t The address should be similar to the following:
+Note the address of your container image because it will be requested in the following  steps. The address should be similar to the following:
 
 ```bash
 europe-west3-docker.pkg.dev/$PROJECT_ID/slurm/slurmd:535
@@ -306,102 +307,101 @@ europe-west3-docker.pkg.dev/$PROJECT_ID/slurm/slurmd:535
 
 In this section, you deploy the Slurm cluster over the newly created or provided GKE cluster.
 
-1\. Return to the repository root directory.
+1. Return to the repository root directory.
 
-```bash
-cd .. # (we were in the image directory)
-```
+	```bash
+	cd .. # (we were in the image directory)
+	```
 
-2\. Create the `terraform.tfvars` file with your own values.
+2. Create the `terraform.tfvars` file with your own values.
 
-A `terraform.tfvars` file should be provided with all the values for the required variables. In the file, enter your own values as follows:
+	A `terraform.tfvars` file should be provided with all the values for the required variables. In the file, enter your own values as follows:
 
-```HCL
-region       = "europe-west3"
-project_id   = "YOUR_PROJECT_ID"
-cluster_name = "cluster-1"
+	```HCL
+	region       = "europe-west3"
+	project_id   = "YOUR_PROJECT_ID"
+	cluster_name = "cluster-1"
 
-config = {
-  name  = "linux"
-  image = "europe-west3-docker.pkg.dev/YOUR_PROJECT_ID/slurm/slurmd:535"
-  database = {
-    create          = true
-    storage_size_gb = 1
-    host            = "mysql"
-    password        = "SET_HERE_A_BASE64_ENCODED_PASSWORD"
-  }
-  storage = {
-    size_gb    = 100
-    type       = "filestore"
-    mount_path = "/home"
-  }
-  munge = {
-    key = "PUT_HERE_YOUR_KEY"
-  }
-}
+	config = {
+	  name  = "linux"
+	  image = "europe-west3-docker.pkg.dev/YOUR_PROJECT_ID/slurm/slurmd:535"
+	  database = {
+	    create          = true
+	    storage_size_gb = 1
+	    host            = "mysql"
+	    password        = "SET_HERE_A_BASE64_ENCODED_PASSWORD"
+	  }
+	  storage = {
+	    size_gb    = 100
+	    type       = "filestore"
+	    mount_path = "/home"
+	  }
+	  munge = {
+	    key = "PUT_HERE_YOUR_KEY"
+	  }
+	}
 
-impersonate_service_account = "YOUR_SERVICE_ACCOUNT_ID" <-- if you are using one
+	impersonate_service_account = "YOUR_SERVICE_ACCOUNT_ID" <-- if you are using one
+	```
 
-```
+3. Gather the credentials for the GKE cluster.
 
-3\. Gather the credentials for the GKE cluster.
+	```bash
+	gcloud container clusters get-credentials cluster-1 --region europe-west3
+	```
 
-```bash
-gcloud container clusters get-credentials cluster-1 --region europe-west3
-```
+4. Initialize the Terraform configuration and apply it.
 
-4\. Initialize the Terraform configuration and apply it.
+	```bash
+	terraform init 
+	terraform apply 
+	```
 
-```bash
-terraform init 
-terraform apply 
-```
+	When you are prompted, type `yes`. It might take several seconds for this command to complete and for the cluster to show a ready status.
 
-When you are prompted, type `yes`. It might take several seconds for this command to complete and for the cluster to show a ready status.
+	The output is similar to the following:
 
-The output is similar to the following:
+	```bash
+	...
+	Apply complete! Resources: 17 added, 0 changed, 0 destroyed.
+	```
 
-```bash
-...
-Apply complete! Resources: 17 added, 0 changed, 0 destroyed.
-```
+5. Check that the Slurm cluster is being deployed.
 
-5\. Check that the Slurm cluster is being deployed.
+	```bash
+	kubectl get pods -n slurm -w 
+	NAME                        READY   STATUS              RESTARTS   AGE
+	login-96bffd678-nbqwp       0/1     Pending             0          32s
+	mysql-746bcd47c6-mxd4f      1/1     Running             0          2m28s
+	slurmctld-0                 0/1     Pending             0          2m29s
+	slurmd1-0                   0/1     Pending             0          2m27s
+	slurmdbd-7b67cf9b54-dj7p4   0/1     ContainerCreating   0          31s
+	```
 
-```bash
-kubectl get pods -n slurm -w 
-NAME                        READY   STATUS              RESTARTS   AGE
-login-96bffd678-nbqwp       0/1     Pending             0          32s
-mysql-746bcd47c6-mxd4f      1/1     Running             0          2m28s
-slurmctld-0                 0/1     Pending             0          2m29s
-slurmd1-0                   0/1     Pending             0          2m27s
-slurmdbd-7b67cf9b54-dj7p4   0/1     ContainerCreating   0          31s
-```
+	After deployment is complete, the output is similar to the following:
 
-After deployment is complete, the output is similar to the following:
+	```bash
+	kubectl get pods -n slurm 
+	NAME                        READY   STATUS    RESTARTS   AGE
+	login-96bffd678-nbqwp       1/1     Running   0          4m12s 
+	mysql-746bcd47c6-mxd4f      1/1     Running   0          6m8s 
+	slurmctld-0                 1/1     Running   0          4s
+	slurmd1-0                   0/1     Running   0          19s 
+	slurmdbd-7b67cf9b54-dj7p4   1/1     Running   0          4m11s
+	```
 
-```bash
-kubectl get pods -n slurm 
-NAME                        READY   STATUS    RESTARTS   AGE
-login-96bffd678-nbqwp       1/1     Running   0          4m12s 
-mysql-746bcd47c6-mxd4f      1/1     Running   0          6m8s 
-slurmctld-0                 1/1     Running   0          4s
-slurmd1-0                   0/1     Running   0          19s 
-slurmdbd-7b67cf9b54-dj7p4   1/1     Running   0          4m11s
-```
+6. Verify that the Slurm cluster is working properly by logging in to the login pod.
 
-6\. Verify that the Slurm cluster is working properly by logging in to the login pod.
-
-```bash
-kubectl -n slurm exec -it login-96bffd678-nbqwp -- bash 
-root@login:/opt# sinfo 
-PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST 
-all\*         up   infinite     79  idle~ slurmd-[0-39],slurmd1-[1-39] 
-all\*         up   infinite      1   idle slurmd1-0 
-1gpunodes    up   infinite     40  idle slurmd-[0-39] 
-2gpunodes    up   infinite     39  idle~ slurmd1-[1-39] 
-2gpunodes    up   infinite      1   idle slurmd1-0 root@login:/opt
-```
+	```bash
+	kubectl -n slurm exec -it login-96bffd678-nbqwp -- bash 
+	root@login:/opt# sinfo 
+	PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST 
+	all\*         up   infinite     79  idle~ slurmd-[0-39],slurmd1-[1-39] 
+	all\*         up   infinite      1   idle slurmd1-0 
+	1gpunodes    up   infinite     40  idle slurmd-[0-39] 
+	2gpunodes    up   infinite     39  idle~ slurmd1-[1-39] 
+	2gpunodes    up   infinite      1   idle slurmd1-0 root@login:/opt
+	```
 
 ## Clean up
 
@@ -428,22 +428,23 @@ If you plan to explore multiple architectures, tutorials, or quickstarts, reusin
 If you used an existing project and you don't want to delete it entirely, delete the  
 individual resources.
 
-1\. Run the terraform destroy command to delete all the Slurm resources that you created in the previous steps:
+1. Run the terraform destroy command to delete all the Slurm resources that you created in the previous steps:
 
-```bash
-cd slurm-on-gke terraform destroy
-```
+	```bash
+	cd slurm-on-gke terraform destroy
+	```
 
-If you used an existing cluster, you can skip the following step.
+	If you used an existing cluster, you can skip the following step.
 
-2\. Run the terraform destroy command on the infrastructure directory:
+2. Run the terraform destroy command on the infrastructure directory:
 
-```bash
-cd infrastructure
-terraform  destroy
-```
+	```bash
+	cd infrastructure
+	terraform  destroy
+	```
 
-This step deletes all the resources that you created previously: the GKE cluster, the VPC network, the firewall rules, and the Google Cloud project.
+	>![IMPORTANT]
+	>This step deletes all the resources that you created previously: the GKE cluster, the VPC network, the firewall rules, and the Google Cloud project.
 
 ## License
 
