@@ -22,9 +22,9 @@ This module deploys the following resources, once per user:
 ## Prerequisites
 
 1. GCP Project with following APIs enabled
-    - container.googleapis.com
-    - gkehub.googleapis.com (required when using private clusters with Anthos Connect Gateway)
-    - iap.googleapis.com (required when using authentication with Identity Aware Proxy)
+    - *container.googleapis.com*
+    - *gkehub.googleapis.com* (required when using private clusters with Anthos Connect Gateway)
+    - *iap.googleapis.com* (required when using authentication with Identity Aware Proxy)
 
 2. A functional GKE cluster.
     - To create a new standard or autopilot cluster, follow the instructions in [`infrastructure/README.md`](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/infrastructure/README.md)
@@ -32,13 +32,14 @@ This module deploys the following resources, once per user:
 
 3. This module is configured to use Identity Aware Proxy (IAP) as default authentication method for JupyterHub. It expects the brand & the OAuth consent configured in your org. You can check the details here: [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
 
-This code can also perform auto brand creation. Please check the details [below](#auto-brand-creation-and-iap-enablement)
+	This code can also perform auto brand creation. Please check the details [below](#auto-brand-creation-and-iap-enablement)
 
 4. Preinstall the following on your computer:
     * Terraform
     * Gcloud CLI
 
-JupyterHub server can use either local storage or GCS to store notebooks and other artifcts. 
+> [!NOTE]
+> JupyterHub server can use either local storage or GCS to store notebooks and other artifcts. 
 To use GCS, create a bucket with your username. For example, when authenticating with IAP as username@domain.com, ensure your bucket name is `gcsfuse-<username>`
 
 ## Installation
@@ -52,10 +53,8 @@ To use GCS, create a bucket with your username. For example, when authenticating
 	 ```
 
 2. Edit `workloads.tfvars` with your GCP settings. The `namespace` that you specify will become a K8s namespace for your JupyterHub services. For more information about what the variables do visit [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/applications/jupyter/variable_definitions.md)
-
-	> [!NOTE]
-	>If using this with the Ray module (`applications/ray/`), it is recommended to use the same k8s namespace
-	for both i.e. set this to the same namespace as `applications/ray/workloads.tfvars`.
+  > [!NOTE]
+  > If using this with the Ray module (`applications/ray/`), it is recommended to use the same k8s namespace for both i.e. set this to the same namespace as `applications/ray/workloads.tfvars`.
 
 	| Variable                    | Description                                                                                                    | Required |
 	|-----------------------------|----------------------------------------------------------------------------------------------------------------|:--------:|
@@ -72,7 +71,8 @@ To use GCS, create a bucket with your username. For example, when authenticating
 
 ### Secure endpoint with IAP
 
-> **_NOTE:_** To secure the Jupyter endpoint, this module enables IAP by default. It is _strongly recommended_ to keep this configuration. If you wish to disable it, do the following: set the `add_auth` flag to false in the `workloads.tf` file.
+> [!NOTE]
+> To secure the Jupyter endpoint, this module enables IAP by default. It is _strongly recommended_ to keep this configuration. If you wish to disable it, do the following: set the `add_auth` flag to false in the `workloads.tf` file.
 
 3. If you already have a brand setup for your project, use the existing values to fill in the variable values in workloads.tf
 
@@ -142,8 +142,8 @@ Please note there may be some propagation delay after adding IAP principals (5-1
 
 4. Select profile and open a Jupyter Notebook
 
-	>[!NOTE]
-	>Domain specific managed certificate may take some time to finish provisioning. This can take between 10-15 minutes. The browser may not display the login page correctly until the certificate provisioning is complete.
+  >[!NOTE]
+  >Domain specific managed certificate may take some time to finish provisioning. This can take between 10-15 minutes. The browser may not display the login page correctly until the certificate provisioning is complete.
 
 ### Setup Access
 
