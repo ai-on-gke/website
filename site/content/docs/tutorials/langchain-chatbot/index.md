@@ -7,6 +7,8 @@ type: docs
 tags:
  - Serving
  - Experimentation
+ - Langchain
+ - Tutorials
 ---
 - [Introduction](#introduction)
   - [Architecture overview](#architecture-overview)

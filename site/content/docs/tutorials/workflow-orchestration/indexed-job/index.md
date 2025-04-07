@@ -6,6 +6,7 @@ weight: 30
 type: docs
 tags:
  - Orchestration
+ - Tutorials
 ---
 In this guide you will run a distributed ML training workload on GKE using an [Indexed Job](https://kubernetes.io/blog/2021/04/19/introducing-indexed-jobs/).
 

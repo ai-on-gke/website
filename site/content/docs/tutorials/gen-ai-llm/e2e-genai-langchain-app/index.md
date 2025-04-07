@@ -6,6 +6,8 @@ description: "This guide demonstrates deploying an end-to-end Generative AI appl
 type: docs
 tags:
  - Experimentation
+ - Tutorials
+ - Langchain
 ---
 In this tutorial you will deploy a end-to-end application that will use GenAI model from Hugging Face on the backend, Ray Serve for inference, Flask API backend, and simple React frontend.
 

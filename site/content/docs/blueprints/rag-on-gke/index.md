@@ -6,7 +6,7 @@ weight: 30
 type: docs
 tags: 
     - RAG on GKE
-    - GKE AI Labs
+    - Blueprints
 ---
 This is a sample to deploy a Retrieval Augmented Generation (RAG) application on GKE. 
 

@@ -7,6 +7,7 @@ type: docs
 tags: 
     - Experimentation
     - Orchestration
+    - Tutorials
 ---
 1. Set env vars
 ```bash

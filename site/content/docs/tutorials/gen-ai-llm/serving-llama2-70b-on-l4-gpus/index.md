@@ -6,6 +6,7 @@ weight: 30
 type: docs
 tags:
  - Serving
+ - Llama
 ---
 Learn how to serve Llama 2 70b chat model on GKE using just 2 x L4 GPUs. For
 this post the text-generation-inference project is used for serving.

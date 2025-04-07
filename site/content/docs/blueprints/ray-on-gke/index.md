@@ -6,7 +6,7 @@ weight: 30
 type: docs
 tags: 
     - Ray on GKE
-    - GKE AI Labs
+    - Blueprints
 ---
 This directory contains examples, guides and best practices for running [Ray](https://www.ray.io/) on Google Kubernetes Engine.
 Most examples use the [`applications/ray`](/applications/ray) terraform module to install KubeRay and deploy RayCluster resources.

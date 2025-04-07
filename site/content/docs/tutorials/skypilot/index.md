@@ -7,6 +7,7 @@ type: docs
 tags:
  - Serving
  - Orchestration
+ - Tutorials
 ---
 Due to the limited availability of accelerator resources, customers face significant challenges in securing sufficient capacity to run their AI/ML workloads. They often require:
 

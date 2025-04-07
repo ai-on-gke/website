@@ -4,6 +4,9 @@ title: "Hyperdisk ML"
 description: "This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in Cloud Storage and then use it in a GKE cluster."
 weight: 30
 type: docs
+tags:
+ - Storage
+ - Tutorials
 ---
 ## Populate a Hyperdisk ML Disk from Google Cloud Storage
 

@@ -6,6 +6,8 @@ weight: 30
 type: docs
 tags:
     - Experimentation
+    - Tutorials
+    - Inference Servers
 ---
 The `checkpoint_entrypoint.sh` script overviews how to convert your inference checkpoint for various model servers.
 

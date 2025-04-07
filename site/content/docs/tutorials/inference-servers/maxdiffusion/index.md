@@ -7,6 +7,8 @@ type: docs
 tags:
  - Serving
  - Experimentation
+ - Tutorials
+ - Inference Servers
 ---
 ## About MaxDiffusion
 Just as LLMs have revolutionized natural language processing, diffusion models are transforming the field of computer vision. To reduce our customers’ costs of deploying these models, Google created MaxDiffusion: a collection of open-source diffusion-model reference implementations. These implementations are written in JAX and are highly performant, scalable, and customizable – think MaxText for computer vision. 
