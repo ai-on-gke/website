@@ -52,22 +52,24 @@ To use GCS, create a bucket with your username. For example, when authenticating
 	 cd ai-on-gke/applications/jupyter
 	 ```
 
-2. Edit `workloads.tfvars` with your GCP settings. The `namespace` that you specify will become a K8s namespace for your JupyterHub services. For more information about what the variables do visit [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/applications/jupyter/variable_definitions.md)
-  > [!NOTE]
-  > If using this with the Ray module (`applications/ray/`), it is recommended to use the same k8s namespace for both i.e. set this to the same namespace as `applications/ray/workloads.tfvars`.
+2. Edit `workloads.tfvars` with your GCP settings. The `namespace` that you specify will become a K8s namespace for your JupyterHub services. For more information about what the variables do, visit [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/applications/jupyter/variable_definitions.md).
+   
+    | Variable                  | Description                                                                                                     | Required |
+    | :------------------------ | :-------------------------------------------------------------------------------------------------------------- | :------: |
+    | `project_id`              | GCP Project Id                                                                                                  | Yes      |
+    | `cluster_name`            | GKE Cluster Name                                                                                                | Yes      |
+    | `cluster_location`        | GCP Region                                                                                                      | Yes      |
+    | `cluster_membership_id`   | Fleet membership name for GKE cluster. <br /> Required when using private clusters with Anthos Connect Gateway |          |
+    | `namespace`               | The namespace that JupyterHub and rest of the other resources will be installed in.                             | Yes      |
+    | `gcs_bucket`              | GCS bucket to be used for Jupyter storage                                                                       |          |
+    | `create_service_account`  | Create service accounts used for Workload Identity mapping                                                      | Yes      |
+    | `gcp_and_k8s_service_account` | GCP service account used for Workload Identity mapping and k8s sa attached with workload                      | Yes      |
 
-	| Variable                    | Description                                                                                                    | Required |
-	|-----------------------------|----------------------------------------------------------------------------------------------------------------|:--------:|
-	| project_id                  | GCP Project Id                                                                                                 | Yes      |
-	| cluster_name                | GKE Cluster Name                                                                                               | Yes      |
-	| cluster_location            | GCP Region                                                                                                     | Yes      |
-	| cluster_membership_id       | Fleet membership name for GKE cluster. <br /> Required when using private clusters with Anthos Connect Gateway | |
-	| namespace                   | The namespace that JupyterHub and rest of the other resources will be installed in.                            | Yes      |
-	| gcs_bucket                  | GCS bucket to be used for Jupyter storage                                                                      |       |
-	| create_service_account      | Create service accounts used for Workload Identity mapping                                                     | Yes      |
-	| gcp_and_k8s_service_account | GCP service account used for Workload Identity mapping and k8s sa attached with workload                       | Yes      |
+ > [!NOTE]
+ > If using this with the Ray module (`applications/ray/`), it is recommended to use the same k8s namespace for both, i.e., set this to the same namespace as `applications/ray/workloads.tfvars`.
+ 
+ For variables under `JupyterHub with IAP`, please see the section below.
 
-	For variables under `JupyterHub with IAP`, please see the section below 
 
 ### Secure endpoint with IAP
 
