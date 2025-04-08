@@ -8,6 +8,7 @@ New contributors should review the raw code and documentation of existing conten
 >The use of the assets contained in this repository is subject to compliance with [Google's AI Principles](https://ai.google/responsibility/principles/).
 
 ## Getting started
+
 Anyone can open an issue about documentation, or contribute a change with a pull request (PR) to the [ai-on-gke/website](https://github.com/ai-on-gke/website/) GitHub repository. You need to be comfortable with git and GitHub to work effectively in the GKE AI Labs community.
 
 ### Contributor License Agreement
@@ -30,14 +31,15 @@ This project follows [Google's Open Source Community
 Guidelines](https://opensource.google/conduct/).
 
 ### Your first contribution
+
 You can prepare for your first contribution by reviewing several steps beforehand.
 1. Ensure to review the repository [License](https://github.com/ai-on-gke/website/blob/main/LICENSE).
-2. Check [ai-on-gke/website](https://github.com/ai-on-gke/website/issues) issues list for issues that make good entry points.
-3. [Open a pull request using GitHub](https://github.com/ai-on-gke/website/pulls) to existing documentation and learn more about filing issues in GitHub.
-4. Review pull requests from other GKE AI Labs community members for accuracy and language.
-5. Read the GKE AI Labs [Contribution process](#Contribution_process) so you can leave informed comments.
-6. Learn about page content types and [Hugo shortcodes](https://kubernetes.io/docs/contribute/style/hugo-shortcodes/).
-
+2. Ensure to sign the [Google CLA](https://cla.developers.google.com/clas). For more information, check [Contributor License Agreements](https://opensource.google/documentation/reference/cla).
+3. Check [ai-on-gke/website](https://github.com/ai-on-gke/website/issues) issues list for issues that make good entry points.
+4. [Open a pull request using GitHub](https://github.com/ai-on-gke/website/pulls) to existing documentation and learn more about filing issues in GitHub.
+5. Review pull requests from other GKE AI Labs community members for accuracy and language.
+6. Read the GKE AI Labs [Contribution process](#Contribution_process) so you can leave informed comments.
+7. Learn about page content types and [Hugo shortcodes](https://kubernetes.io/docs/contribute/style/hugo-shortcodes/).
 
 ## Contribution process
 
