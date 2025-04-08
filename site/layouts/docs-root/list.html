@@ -11,7 +11,6 @@
 	{{ .Render "td-content-after-header" -}}
 	{{ .Content }}
 	{{ partial "section-index.html" . -}}
-	{{ partial "feedback.html" . -}}
 	{{ if (.Site.Config.Services.Disqus.Shortname) -}}
 		<br />
 		{{- partial "disqus-comment.html" . -}}
