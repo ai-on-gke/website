@@ -1,6 +1,6 @@
 ---
-linkTitle: "Skypilot"
-title: "Skypilot"
+linkTitle: "Cross region capacity chasing with SkyPilot"
+title: "GKE cross region capacity chasing with SkyPilot"
 description: "In this tutorial, we will demonstrate how to leverage the open-source software [SkyPilot](https://skypilot.readthedocs.io/en/latest/docs/index.html) to help GKE customers efficiently obtain accelerators across regions, ensuring workload continuity and optimized resource utilization."
 weight: 30
 type: docs
