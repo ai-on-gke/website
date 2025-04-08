@@ -80,7 +80,7 @@ Experiment with the model in Jupyter Notebook:
         ```bash
         kubectl apply -f deploy.yaml -n <YOUR_NAMESPACE>
         ```
-    1. Find backend IP on the services page: `hf-lc-ray-service`: ![Backend IP](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/genAI-LLM/e2e-genai-langchain-app/backend_ip.png)
+    1. Find backend IP on the services page: `hf-lc-ray-service`: ![Backend IP](backend_ip.png)
         ```bash
         kubectl get service hf-lc-ray-service -n <namespace name> -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
         ```
