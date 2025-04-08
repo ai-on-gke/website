@@ -13,21 +13,31 @@ tags:
 ## Overview
 This guide demonstrates how to deploy a Hugging Face Text Generation Inference (TGI) server on Google Kubernetes Engine (GKE) using NVIDIA L4 GPUs, enabling you to serve large language models like Mistral-7b-instruct. It walks you through creating a GKE cluster, deploying the TGI application, sending prompts to the model, and monitoring the service's performance using metrics, while also providing instructions for cleaning up the cluster.
 
+## Prerequisites
+
+Make sure you have:
+
+* A Google Cloud project with billing enabled.
+* Google Cloud SDK (gcloud CLI) installed and configured.
+* kubectl installed.
+* Terraform installed.
+* Sufficient Google Cloud quotas for NVIDIA L4 GPUs and G2 machines.
+
 ## Installation
 
-1. Clone the [AI-on-GKE/tutorial-and-examples](https://github.com/ai-on-gke/tutorials-and-examples) repository.
+1. Clone the [AI-on-GKE/tutorial-and-examples](https://github.com/ai-on-gke/tutorials-and-examples) repository
    ```bash
    git clone https://github.com/ai-on-gke/tutorials-and-examples
    cd tutorials-and-examples/hugging-face-tgi/
    ```
 
-1. Set env vars
+1. Set environment variables
 	```bash
 	export REGION=us-central1
 	export PROJECT_ID=$(gcloud config get project)
 	```
 
-1. Create cluster
+1. Create GKE cluster
 	```bash
 	gcloud container clusters create l4-demo --location ${REGION}   \
 	--workload-pool ${PROJECT_ID}.svc.id.goog   --enable-image-streaming \
@@ -36,11 +46,13 @@ This guide demonstrates how to deploy a Hugging Face Text Generation Inference (
 	 --num-nodes 1 --min-nodes 1 --max-nodes 5   \
 	--ephemeral-storage-local-ssd=count=2 --enable-ip-alias
 	```
+
+ 1. Get cluster credentials
 	```bash
 	kubectl config set-cluster l4-demo
 	```
 
-1. Create node pool
+1. Create GPU node pool
 	```bash
 	gcloud container node-pools create g2-standard-24 --cluster l4-demo \
 	  --accelerator type=nvidia-l4,count=2,gpu-driver-version=latest \
@@ -50,16 +62,28 @@ This guide demonstrates how to deploy a Hugging Face Text Generation Inference (
 	 --num-nodes=1 --min-nodes=1 --max-nodes=2 \
 	 --node-locations $REGION-a,$REGION-b --region $REGION
 	 ```
- 
-1. Set the project_id in workloads.tfvars and create the application: `terrafrom apply -var-file=workloads.tfvars` 
-1. Make sure app started ok: `kubectl logs -l app=mistral-7b-instruct`
-1. Set up port forward
-	```bash
-	kubectl port-forward deployment/mistral-7b-instruct 8080:8080 &
-	```
+
+1. Deploy the application using Terraform:**
+    * Set the `project_id` in `workloads.tfvars`.
+    * Apply the Terraform configuration:
+        ```bash
+        terraform init
+        terraform apply -var-file=workloads.tfvars
+        ```
+
+1. Check application status
+   ```bash
+    kubectl logs -l app=mistral-7b-instruct
+    ```
+    Look for logs indicating the model has loaded successfully.
+
+1. Set up port forward for testing
+   ```bash
+   kubectl port-forward deployment/mistral-7b-instruct 8080:8080 &
+   ```
 
 ## API Interaction and Service Monitoring
-1. Try a few prompts:
+1. Try a few prompts by sending a request to the TGI server using the forwarded port
 	```bash
 	export USER_PROMPT="How to deploy a container on K8s?"
 	```
