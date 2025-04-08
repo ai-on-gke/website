@@ -15,13 +15,19 @@ This guide demonstrates how to deploy a Hugging Face Text Generation Inference (
 
 ## Installation
 
+1. Clone the [AI-on-GKE/tutorial-and-examples](https://github.com/ai-on-gke/tutorials-and-examples) repository.
+   ```bash
+   git clone https://github.com/ai-on-gke/tutorials-and-examples
+   cd tutorial-and-examples/hugging-face-tgi
+   ```
+
 1. Set env vars
 	```bash
 	export REGION=us-central1
 	export PROJECT_ID=$(gcloud config get project)
 	```
 
-2. Create cluster
+1. Create cluster
 	```bash
 	gcloud container clusters create l4-demo --location ${REGION}   \
 	--workload-pool ${PROJECT_ID}.svc.id.goog   --enable-image-streaming \
@@ -34,7 +40,7 @@ This guide demonstrates how to deploy a Hugging Face Text Generation Inference (
 	kubectl config set-cluster l4-demo
 	```
 
-3. Create node pool
+1. Create node pool
 	```bash
 	gcloud container node-pools create g2-standard-24 --cluster l4-demo \
 	  --accelerator type=nvidia-l4,count=2,gpu-driver-version=latest \
@@ -45,9 +51,9 @@ This guide demonstrates how to deploy a Hugging Face Text Generation Inference (
 	 --node-locations $REGION-a,$REGION-b --region $REGION
 	 ```
  
-4. Set the project_id in workloads.tfvars and create the application: `terrafrom apply -var-file=workloads.tfvars` 
-5. Make sure app started ok: `kubectl logs -l app=mistral-7b-instruct`
-6. Set up port forward
+1. Set the project_id in workloads.tfvars and create the application: `terrafrom apply -var-file=workloads.tfvars` 
+1. Make sure app started ok: `kubectl logs -l app=mistral-7b-instruct`
+1. Set up port forward
 	```bash
 	kubectl port-forward deployment/mistral-7b-instruct 8080:8080 &
 	```
