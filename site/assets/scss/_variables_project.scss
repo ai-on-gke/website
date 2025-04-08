@@ -421,8 +421,11 @@ section:not(:first-child).td-box {
 
   &.guide-body {
     h2 {
-      border-bottom: 1px solid #dadce0 !important;
-      padding-bottom: 9px;
+      &:not(.list-item-title) {
+        border-bottom: 1px solid #dadce0 !important;
+        padding-bottom: 9px;
+      }
+     
       &.feedback--title {
         font-weight: 700 !important;
         margin-bottom: 10px !important;
