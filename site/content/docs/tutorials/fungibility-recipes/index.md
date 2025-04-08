@@ -1,3 +1,15 @@
+---
+linkTitle: "vLLM GPU/TPU Fungibility"
+title: "vLLM GPU/TPU Fungibility"
+description: "This tutorial shows you who to serve a large language model (LLM) using both Tensor Processing Units (TPUs) and GPUs on Google Kubernetes Engine (GKE) using the same deployment with [vLLM](https://github.com/vllm-project/vllm)"
+weight: 30
+type: docs
+tags:
+ - Serving
+ - Tutorials
+ - Inference Servers
+---
+
 # **Background**
 
 This user guide shows you how to optimize AI inference by configuring Google Kubernetes Engine (GKE) to dynamically scale workloads across TPU & GPUs, which helps you better manage demand fluctuations and capacity constraints. In this example we show you how to prioritize high-performance TPU nodes so you deliver optimal speed and responsiveness to your application while ensuring continuous service under peak demand by seamlessly transitioning workloads with additional TPU and GPU nodes, as needed.
