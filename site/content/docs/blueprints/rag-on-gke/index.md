@@ -8,6 +8,7 @@ type: docs
 tags: 
     - RAG on GKE
     - Blueprints
+
 ---
 
 This is a sample to deploy a Retrieval Augmented Generation (RAG) application on GKE. 
