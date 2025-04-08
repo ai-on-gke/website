@@ -18,7 +18,7 @@ This guide demonstrates how to deploy a Hugging Face Text Generation Inference (
 1. Clone the [AI-on-GKE/tutorial-and-examples](https://github.com/ai-on-gke/tutorials-and-examples) repository.
    ```bash
    git clone https://github.com/ai-on-gke/tutorials-and-examples
-   cd tutorial-and-examples/hugging-face-tgi
+   cd tutorials-and-examples/hugging-face-tgi/
    ```
 
 1. Set env vars
