@@ -368,7 +368,7 @@ Run the following command to set up the custom stackdriver metrics adapter on yo
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml
 ```
 
-Because we are using Workload Identity Federation (needed for the Google Cloud Storage FUSE CSI driver), grant the Monitoring Viewer role to the service account that the stackdriver metrics adapter runs under.
+Grant the Monitoring Viewer role to the service account that the stackdriver metrics adapter runs under.
 
 ```
 gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
