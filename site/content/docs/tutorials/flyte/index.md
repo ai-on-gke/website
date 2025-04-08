@@ -31,7 +31,7 @@ This guide illustrates the deployment of Flyte on Google Kubernetes Engine (GKE)
 
 ## Architecture overview
 
-![Architecture overview](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/flyte/img/architecture-overview.png)
+![Architecture overview](architecture-overview.png)
 
 ## Setting up your GKE cluster with Terraform
 
