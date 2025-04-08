@@ -144,43 +144,43 @@ SkyPilot will evaludate the contexts by the order specified until it finds a clu
 ## Launch the jobs
 Under `~/skypilot-test/ai-on-gke/tutorials-and-examples/skypilot`, you’ll find a file named `train.yaml`, which uses SkyPilot's syntax to define a job. 
 In the resource section, the job asks for 4\*A100 first. If no capacity is found, it failovers to L4. You can find other supported syntax in SkyPilot to specify resource choices in the documentation [here](https://docs.skypilot.co/en/latest/examples/auto-failover.html#multiple-candidate-resources).
-```yaml
-resources:
-  cloud: kubernetes
-  # The order of accelerators represent the preference.
-  accelerators: [ A100:4, L4:4 ]
-```
+    ```yaml
+    resources:
+      cloud: kubernetes
+      # The order of accelerators represent the preference.
+      accelerators: [ A100:4, L4:4 ]
+    ```
 
 The `launch.py` a Python program that initiates a hyperparameter tuning process with two jobs for the learning rate (LR) parameter. In production environments, such experiments are typically tracked using open-source frameworks like MLFlow.
 
 SkyPilot offers support for launching hyperparameter tuning tasks through its CLI using the `sky launch` command. For more details, refer to the [official documentation](https://docs.skypilot.co/en/latest/running-jobs/many-jobs.html#with-cli-and-config-files).
 Start the training:
-```bash
-python launch.py
-```
+    ```bash
+    python launch.py
+    ```
 The first job will be first deployed to the demo-us-central1 GKE cluster with 4\*A100 GPUs. For the second job, it will be deployed to the demo-us-west1 cluster with 4\*L4 GPUs, because no 4*A100 GPUs were available in all clusters.
 
 You also can check SkyPilot's status using: 
-```bash
-sky status
-```
+    ```bash
+    sky status
+    ```
 
 You can SSH into the pod in GKE using the cluster's name. Once inside, you'll find the local source code `text-classification` are synced to the pod under `~/sky_workdir`. This setup makes it convenient for developers to debug and iterate on their AI/ML code efficiently.
 
-```bash
-ssh train-cluster1
-```
+    ```bash
+    ssh train-cluster1
+    ```
 
 ## Clean up
 Delete the GKE clusters.
-```bash
-gcloud container clusters delete demo-us-central1 \
-    --location=us-central1-c \
-    --project=$PROJECT_ID
-```
+    ```bash
+    gcloud container clusters delete demo-us-central1 \
+        --location=us-central1-c \
+        --project=$PROJECT_ID
+    ```
 
-```bash
-gcloud container clusters delete demo-us-west1 \
-    --location=us-west1-a \
-    --project=$PROJECT_ID
-```
+    ```bash
+    gcloud container clusters delete demo-us-west1 \
+        --location=us-west1-a \
+        --project=$PROJECT_ID
+    ```
