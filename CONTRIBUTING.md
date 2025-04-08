@@ -31,7 +31,7 @@ Guidelines](https://opensource.google/conduct/).
 
 ### Your first contribution
 You can prepare for your first contribution by reviewing several steps beforehand.
-1. Ensure to revciew the repository [License](https://github.com/ai-on-gke/website/blob/main/LICENSE).
+1. Ensure to review the repository [License](https://github.com/ai-on-gke/website/blob/main/LICENSE).
 2. Check [ai-on-gke/website](https://github.com/ai-on-gke/website/issues) issues list for issues that make good entry points.
 3. [Open a pull request using GitHub](https://github.com/ai-on-gke/website/pulls) to existing documentation and learn more about filing issues in GitHub.
 4. Review pull requests from other GKE AI Labs community members for accuracy and language.
