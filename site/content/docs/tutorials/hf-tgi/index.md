@@ -73,7 +73,7 @@ Make sure you have:
 
 1. Check application status
    ```bash
-    kubectl logs -l app=mistral-7b-instruct
+    kubectl logs -l app=mistral-7b-instruct -n l4-demo
     ```
     Look for logs indicating the model has loaded successfully.
 
