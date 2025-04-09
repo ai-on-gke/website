@@ -425,7 +425,7 @@ section:not(:first-child).td-box {
         border-bottom: 1px solid #dadce0 !important;
         padding-bottom: 9px;
       }
-     
+
       &.feedback--title {
         font-weight: 700 !important;
         margin-bottom: 10px !important;
@@ -631,7 +631,6 @@ h2.side-bar-title {
   padding-bottom: 6px !important;
 }
 
-
 h2 {
   font-size: 20px !important;
   font-weight: 700 !important;
@@ -668,4 +667,97 @@ h5 {
   font-style: normal;
   font-weight: 400;
   line-height: 16px;
+}
+
+.alert {
+  display: flex;
+  gap: 14px;
+}
+
+.alert-heading {
+  flex-shrink: 0;
+  font-weight: 700 !important;
+  &::after {
+    content: ":";
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+.title-note {
+  text-indent: 47px;
+  &::before {
+    content: "Note:";
+    font-weight: 700;
+    position: absolute;
+    left: 8px;
+  }
+}
+
+.title-caution {
+  p {
+    text-indent: 70px;
+  }
+
+  &::before {
+    content: "Caution:";
+    font-weight: 700;
+    position: absolute;
+    left: 54px;
+  }
+}
+
+.title-success {
+  p {
+    text-indent: 70px;
+  }
+
+  &::before {
+    content: "Success:";
+    font-weight: 700;
+    position: absolute;
+    left: 54px;
+  }
+}
+
+.title-warning {
+  p {
+    text-indent: 72px;
+  }
+
+  &::before {
+    content: "Warning:";
+    font-weight: 700;
+    position: absolute;
+    left: 54px;
+  }
+}
+
+.alert-body {
+  display: flex;
+  display: inline;
+}
+
+.alert-note {
+  background-color: rgb(232, 240, 254) !important;
+  color: rgb(48, 63, 159) !important;
+}
+
+.alert-success {
+  border: none !important;
+  background-color: rgb(224, 242, 241) !important;
+  color: rgb(0, 121, 107) !important;
+}
+
+.alert-caution {
+  background-color: rgb(254, 239, 227) !important;
+  color: rgb(179, 20, 18) !important;
+}
+
+.alert-warning {
+  border: none !important;
+  background-color: rgb(252, 232, 230) !important;
+  color: rgb(165, 14, 14) !important;
 }
