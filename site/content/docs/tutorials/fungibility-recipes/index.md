@@ -33,7 +33,7 @@ To set up your environment with Cloud Shell, follow these steps:
 gcloud config set project PROJECT_ID
 export PROJECT_ID=$(gcloud config get project)
 export CLUSTER_NAME=vllm-fungibility
-export LOCATION=us-east1-c
+export LOCATION=<location-with-v6e> See https://cloud.google.com/tpu/docs/regions-zones
 export CLUSTER_VERSION=<GKE version that supports Trillium, 1.31.4-gke.1256000+>
 export REGION_NAME=REGION_NAME
 export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(projectNumber)")
