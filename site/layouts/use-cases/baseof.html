@@ -11,9 +11,17 @@
     <header>
       {{ partial "navbar.html" . }}
     </header>
-    <div class="container td-outer">
+    <div class="container-fluid td-outer">
       <div class="td-main">
         <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-5 col-xl-3 td-sidebar d-print-none">
+            {{ partial "sidebar.html" . }}
+          </aside>
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            <h5 class="side-bar-title">{{ T "meta_links_title" }}</h2>
+            {{ partial "page-meta-links.html" . }}
+            {{ partial "taxonomy_terms_clouds.html" . }}
+          </aside>
             <div class="col"><main class="col-12" role="main">
                 {{ partial "version-banner.html" . }}
                 {{ block "main" . }}{{ end }}

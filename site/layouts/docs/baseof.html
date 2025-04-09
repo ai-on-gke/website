@@ -18,10 +18,10 @@
             {{ partial "sidebar.html" . }}
           </aside>
           <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
-            <h5 class="side-bar-title">{{ T "toc_title" }}</h2>
-            {{ partial "toc.html" . }}
             <h5 class="side-bar-title">{{ T "meta_links_title" }}</h2>
             {{ partial "page-meta-links.html" . }}
+            <h5 class="side-bar-title pt-3">{{ T "toc_title" }}</h2>
+            {{ partial "toc.html" . }}
             {{ partial "taxonomy_terms_clouds.html" . }}
           </aside>
           <main class="col-12 col-md-7 col-xl-7 ps-md-3" role="main">
