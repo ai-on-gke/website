@@ -17,6 +17,7 @@ languageCode: en-us
 title: GKE AI Labs
 
 docsDir: site
+enableGitInfo: true
 
 contentDir: site/content
 publishDir: site/public
