@@ -5,4 +5,4 @@ menu:
   main:
     weight: 50
 ---
-{{% include "CONTRIBUTING.MD" %}}
+{{% include "/CONTRIBUTING.md" %}}
