@@ -651,6 +651,10 @@ h5 {
   font-size: 14px !important;
   font-weight: 700 !important;
   &.side-bar-title {
+    &:not(:first-of-type) {
+      margin-top: 16px !important;
+    }
+    margin-top: 6px;
     border-bottom: 1px solid #dadce0 !important;
     padding-bottom: 6px !important;
   }
