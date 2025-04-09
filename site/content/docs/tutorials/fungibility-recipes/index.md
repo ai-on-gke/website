@@ -56,10 +56,10 @@ gcloud container clusters create $CLUSTER_NAME \
 
 All node pools will have autoscaling enabled in order to demonstrate that [custom compute class (CCC)](https://cloud.google.com/kubernetes-engine/docs/concepts/about-custom-compute-classes) is able to autoscale any type of node pool. We will also add a label and taint with the CCC name so that it can be used in the priority list.
 
-Create a TPU v6e-1 node pool:
+Create a TPU v6e-1 [Spot](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms) node pool:
 
 ```
-gcloud container node-pools create v6e-1 \
+gcloud container node-pools create v6e-1-spot \
 	--location=$LOCATION \
 	--num-nodes=1 \
 	--machine-type=ct6e-standard-1t \
@@ -68,24 +68,8 @@ gcloud container node-pools create v6e-1 \
 --node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
 	--enable-autoscaling \
 	--min-nodes=1 \
-	--max-nodes=2
-```
-
-Create a GPU L4 [Spot](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms) node pool:
-
-```
-gcloud container node-pools create l4-preemptible \
-	--cluster=$CLUSTER_NAME \
-	--location=$LOCATION \
-	--num-nodes=1 \
-	--machine-type "g2-standard-4" \
---preemptible \
-	--accelerator "type=nvidia-l4,gpu-driver-version=LATEST" \
-	--node-labels=cloud.google.com/compute-class=$COMPUTE_CLASS \
-	--node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
-	--enable-autoscaling \
-	--min-nodes=0 \
-	--max-nodes=2
+	--max-nodes=2 \
+  --spot
 ```
 
 Create a GPU L4 node pool:
@@ -106,7 +90,7 @@ gcloud container node-pools create l4 \
 
 # **Setup Custom Compute Class**
 
-Inspect the following `ccc.yaml`, where we define the priority order of the nodepools.  v6e-1 scales up first, l4-spot second, and l4 scales up last.
+Inspect the following `ccc.yaml`, where we define the priority order of the nodepools.  l4 scales up first, and v6e-1-spot scales up last.
 
 ```
 apiVersion: cloud.google.com/v1
@@ -115,9 +99,8 @@ metadata:
   name: vllm-fallback
 spec:
   priorities:
-  - nodepools: [v6e-1]
-  - nodepools: [l4-spot]
   - nodepools: [l4]
+  - nodepools: [v6e-1-spot]
 ```
 
 Apply the manifest
