@@ -79,7 +79,7 @@ Make sure you have:
 
 1. Set up port forward for testing
    ```bash
-   kubectl port-forward deployment/mistral-7b-instruct 8080:8080 &
+   kubectl port-forward deployment/mistral-7b-instruct 8080:8080 -n l4-demo &
    ```
 
 ## API Interaction and Service Monitoring
