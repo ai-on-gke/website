@@ -61,13 +61,13 @@ Create a TPU v6e-1 [Spot](https://cloud.google.com/kubernetes-engine/docs/concep
 ```
 gcloud container node-pools create v6e-1-spot \
 	--location=$LOCATION \
-	--num-nodes=1 \
+	--num-nodes=0 \
 	--machine-type=ct6e-standard-1t \
 	--cluster=$CLUSTER_NAME \
 	--node-labels=cloud.google.com/compute-class=$COMPUTE_CLASS \
 --node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
 	--enable-autoscaling \
-	--min-nodes=1 \
+	--min-nodes=0 \
 	--max-nodes=2 \
   --spot
 ```
@@ -87,6 +87,21 @@ gcloud container node-pools create l4 \
 	--min-nodes=1 \
 	--max-nodes=2
 ```
+
+# **Configure Kubectl to communicate with your cluster**
+To configure kubectl to communicate with your cluster, run the following command:
+
+```
+  gcloud container clusters get-credentials ${CLUSTER_NAME} --region=${REGION}
+```
+
+# **Create Kubernetes Secret for Hugging Face credentials**
+To create a Kubernetes Secret that contains the Hugging Face token, run the following command:
+
+```
+kubectl create secret generic hf-secret --from-literal=hf_api_token=${HF_TOKEN}
+```
+
 
 # **Setup Custom Compute Class**
 
