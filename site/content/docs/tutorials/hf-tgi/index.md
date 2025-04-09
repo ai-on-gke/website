@@ -97,7 +97,28 @@ Make sure you have:
 	}
 	EOF
 	```
-1. Look at `/metrics` endpoint of the service. Go to cloud monitoring and search for one of those metrics. For example, `tgi_request_count` or `tgi_batch_inference_count`. Those metrics should show up if you search for them in PromQL. 
+1. Explore the `/metrics` endpoint of the service for performance information
+    * Fetch and filter for `tgi_request_count`. This command will retrieve all metrics and then filter the output to show only lines containing tgi_request_count.
+      ```bash
+      curl -s 127.0.0.1:8080/metrics | grep tgi_request_count
+      ```
+      Expected Output (similar to):
+
+      ```bash
+      # TYPE tgi_request_count counter
+      tgi_request_count 1.0
+      ```
+   * To find `tgi_batch_inference_count` without the progress meter:
+     ```bash
+     curl -s 127.0.0.1:8080/metrics | grep tgi_batch_inference_count
+     ```
+     And the output will be similar to:
+     ```bash
+     # TYPE tgi_batch_inference_count counter
+     tgi_batch_inference_count 1.0
+     ```
+  
+1. Go to cloud monitoring and search for one of those metrics. For example, `tgi_request_count` or `tgi_batch_inference_count`. Those metrics should show up if you search for them in PromQL. 
 
 ## Clean up
 
