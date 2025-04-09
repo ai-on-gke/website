@@ -351,14 +351,6 @@ Run the following command to set up the custom stackdriver metrics adapter on yo
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml
 ```
 
-Grant the Monitoring Viewer role to the service account that the stackdriver metrics adapter runs under.
-
-```
-gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
- --role roles/monitoring.viewer \
- --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/custom-metrics/sa/custom-metrics-stackdriver-adapter
-```
-
 ## Deploy a PodMonitoring spec to set up prometheus metric scraping 
 
 Now deploy a Pod Monitoring spec for the prometheus metrics scraper. Refer to [https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed](https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed) for more details on Google Managed Prometheus and setup. This should be enabled by default on the GKE cluster though. Save the following yaml as vllm\_pod\_monitor.yaml
