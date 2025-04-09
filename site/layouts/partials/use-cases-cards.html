@@ -1,0 +1,34 @@
+<div
+  class="row gy-3"
+  style="padding: 0"
+>
+  <div class="col-sm-12 col-md-12 col-lg-6 me-auto">
+    {{ partial "card.html" (dict "link" "docs/use-cases/" "icon_path"
+    "icons/experimentation.svg" "title" "Experimentation" "context" . "description"
+    `Leverage containerized environments to manage dependencies and simplify
+    reproducibility. Explore examples of using GKE for distributed training and
+    hyperparameter tuning, enabling faster experimentation cycles.`) }}
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-6 me-auto">
+    {{ partial "card.html" (dict "link" "docs/use-cases/" "icon_path"
+    "icons/orchestration.svg" "title" "Orchestration" "context" . "description" `Streamline
+    your AI/ML workflows with GKE's powerful orchestration capabilities. Manage
+    complex pipelines, schedule jobs, and automate resource allocation.`) }}
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-6 me-auto">
+    {{ partial "card.html" (dict "link" "docs/use-cases/" "icon_path"
+    "icons/evaluation.svg" "title" "Evaluation" "context" . "description"
+    `Ensure the quality and performance of your
+      AI/ML models with GKE's robust evaluation infrastructure. Deploy
+      evaluation services and dashboards to monitor key metrics and track model
+      performance.`) }}
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-6 me-auto">
+    {{ partial "card.html" (dict "link" "docs/use-cases/" "icon_path"
+    "icons/serving.svg" "title" "Serving" "context" . "description"
+    `Deploy and scale your trained AI/ML models
+    with GKE's production-ready serving infrastructure. Leverage containerized
+    serving solutions to deliver low-latency predictions and handle high
+    traffic volumes.`) }}
+  </div>
+</div>

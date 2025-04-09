@@ -1,4 +1,5 @@
 {{ $section := .sectionTitle }}
+
 {{ range $key, $value := .context.Site.Taxonomies.tags }}
 {{ if eq (strings.ToLower $key) (strings.ToLower $section) }}
                     {{ range $value.Pages }}
