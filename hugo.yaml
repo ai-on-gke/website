@@ -51,7 +51,7 @@ params:
     taxonomyCloudTitle: 
       - Categories
     taxonomyPageHeader: [tags]
-  maxRelativeArticlesToDisplay: 5
+  maxRelativeArticlesToDisplay: 6
 
   
   offlineSearch: true
