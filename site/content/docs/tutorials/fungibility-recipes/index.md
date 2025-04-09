@@ -20,7 +20,7 @@ This user guide shows you how to optimize AI inference by configuring Google Kub
 2. Time Per Output Token (TPOT) and Time to First Token (TTFT) characteristics could be different between GPU replicas and TPU replicas, although they belong in the same Deployment.  
 3. TPU servers and GPU servers exhibit different failure characteristics and special attention needs to be paid to these Deployments.  
 4. Since the TPU type is hardcoded as an environment variable, this yaml is not able to be fungible between different generations of TPUs (ie v5e to v6e)  
-5. Users should ensure they have access to the TPUs they need for scaling purposes. If there is a `GCE_STOCKOUT` error when provisioning TPUs, it could take up to 10 hours to fall back. Users can work around this issue by limiting autoscaling to the number of TPUs nodes they have access to. We plan to remove this limitation in the future.
+5. Users should ensure they have access to the TPUs they need for scaling purposes. If there is a GCE_STOCKOUT error when provisioning TPUs, it could take up to 10 hours to fall back from a TPU node to a GPU. Users can work around this issue by 1) limiting autoscaling to the number of TPUs nodes they have access to or 2) falling back from GPUs to TPUs. We plan to remove this limitation in the future.
 
 # **Prepare the Environment**
 
