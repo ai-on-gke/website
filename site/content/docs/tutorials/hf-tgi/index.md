@@ -115,7 +115,8 @@ Make sure you have:
      And the output will be similar to:
      ```bash
      # TYPE tgi_batch_inference_count counter
-     tgi_batch_inference_count 1.0
+     tgi_batch_inference_count{method="decode"} 292
+     tgi_batch_inference_count{method="prefill"} 1
      ```
   
 1. Go to cloud monitoring and search for one of those metrics. For example, `tgi_request_count` or `tgi_batch_inference_count`. Those metrics should show up if you search for them in PromQL. 
