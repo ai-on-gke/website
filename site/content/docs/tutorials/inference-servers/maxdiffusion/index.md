@@ -89,7 +89,7 @@ gcloud container node-pools list --region $REGION --cluster $CLUSTER_NAME
 ## Explaination on MaxDiffusion inference server sample code
 The sample Stable Diffusion XL inference [code template](https://github.com/google/maxdiffusion/blob/main/src/maxdiffusion/generate_sdxl_replicated.py) from MaxDiffusion repo is updated with FastAPI and uvicorn libraries to fit for API requests.
 
-The updated Stable Diffusion XL Inference [Code sample](https://github.com/GoogleCloudPlatform/ai-on-gke.git/blob/main/tutorials-and-examples/tpu-examples/maxdiffusion/build/server/main.py) provided here for reference.
+The updated Stable Diffusion XL Inference [Code sample](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/inference-servers/maxdiffusion/build/server/main.py) provided here for reference.
 
 ### Add FastAPI and Uvicorn libraries
 ### Add logging, health check

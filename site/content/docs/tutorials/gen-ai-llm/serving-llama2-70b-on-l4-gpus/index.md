@@ -14,7 +14,7 @@ this post the text-generation-inference project is used for serving.
 ### Prerequisites
 *   A terminal with `kubectl` and `gcloud` installed. Cloud Shell works great!
 *   L4 GPUs quota to be able to run additional 2 L4 GPUs
-*   Request access to Meta Llama models by submitting the [request access form](https://ai.meta.com/resources/models-and-libraries/llama-downloads/)
+*   Request access to Meta Llama models by submitting the [request access form](https://www.llama.com/llama-downloads/)
 *   Agree to the Llama 2 terms on the [Llama 2 70B Chat HF](https://huggingface.co/meta-llama/Llama-2-70b-chat-hf) model in HuggingFace
 
 Choose your region and set your project:
