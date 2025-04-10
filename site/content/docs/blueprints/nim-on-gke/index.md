@@ -37,9 +37,6 @@ tags:
 	export PROJECT_ID=$(gcloud config get project)
 	export REGION=us-central1
 	export ZONE=${REGION?}-a
-	export MACH=g2-standard-24
-	export GPU_TYPE=nvidia-l4
-	export GPU_COUNT=1
 	```	
 
 
@@ -64,17 +61,13 @@ tags:
 
 1. Create a nodepool
 	```bash
-	gcloud container node-pools create ${MACH?}-node-pool --cluster nim-demo \
-	   --accelerator type=${GPU_TYPE?},count=${GPU_COUNT?},gpu-driver-version=latest \
-	  --machine-type ${MACH?} \
-	  --ephemeral-storage-local-ssd=count=2 \
-	  --enable-autoscaling --enable-image-streaming \
-	  --num-nodes=1 --min-nodes=1 --max-nodes=3 \
-	  --node-locations ${ZONE?} \
-	  --region ${REGION?} \
-	  --spot
+	gcloud container clusters create l4-demo --location ${REGION}   \
+         --workload-pool ${PROJECT_ID}.svc.id.goog   --enable-image-streaming \
+         --node-locations=$REGION-a --addons GcsFuseCsiDriver  \
+ 	 --machine-type n2d-standard-4  \
+	--num-nodes 1 --min-nodes 1 --max-nodes 5   \
+	--ephemeral-storage-local-ssd=count=2 --enable-ip-alias
 	```
-
 
 ## Set Up Access to NVIDIA NIMs and prepare environment
 
