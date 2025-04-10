@@ -225,19 +225,35 @@ $breadcrumb-active-color: "#202124";
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
+
+  &.single-page {
+    font-size: 28px !important;
+  }
 }
 
-.title2 {
+.use-case-card-description {
   color: var(--grey-900, #202124);
   text-align: left;
   font-family: Roboto, sans-serif !important;
-  font-size: 12px;
+  font-size: 12px!important;
   line-height: 16px;
   font-weight: 400;
   overflow: hidden;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
+
+  &.single-page {
+    font-size: 18px !important;
+    line-height: 20px !important;
+    min-height: 120px !important;
+  }
+}
+
+.use-case-links-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .github-card {
@@ -603,10 +619,10 @@ aside {
   color: var(--Grey-900, #202124);
   font-feature-settings: "liga" off, "clig" off;
   font-family: "Roboto", sans-serif !important;
-  font-size: 12px !important;
+  font-size: 16px !important;
   font-style: normal;
   font-weight: 400;
-  line-height: 16px;
+  line-height: 18px;
 }
 
 .code-toolbar {

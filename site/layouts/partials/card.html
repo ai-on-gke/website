@@ -4,16 +4,19 @@
 {{ $link := .link -}}
 {{ $context := .context -}}
 {{ partial "pages-with-same-tag.html" (dict "sectionTitle" $title "context" .) }}
-<div class="option-primary-l -bg-primary-light" style="height: 750px;">
+<div class="option-primary-l -bg-primary-light"
+  style="height: 750px; overflow: scroll; font-size: 1.2rem;">
   <div role="presentation">
     {{ with resources.Get $icon_path -}} {{ ( . | minify).Content | safeHTML -}}
     {{ end -}}
   </div>
-  <div class="title" role="heading">
+  <div class="title single-page" role="heading">
     {{ $title }}
   </div>
   {{ if $description -}}
-  <div class="title2" style="min-height: 80px;">{{ $description }}</div>
+  <div class="use-case-card-description single-page">{{ $description }}</div>
   {{ end -}}
-  {{ partial "pages-with-same-tag.html" (dict "sectionTitle" $title "context" $context) }}
+  <div class="use-case-links-container">
+    {{ partial "pages-with-same-tag.html" (dict "sectionTitle" $title "context" $context) }}
+  </div>
 </div>
