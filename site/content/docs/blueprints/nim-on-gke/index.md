@@ -122,9 +122,6 @@ tags:
 	
 ## Deploy the NIM with the generated engine using a Helm chart
 
->[!NOTE]
-> Expect the **demo-nim** deployment to take a few minutes as the Llama3 model downloads.
-
 1. Clone the nim-deploy repository
 	```bash
 	git clone https://github.com/NVIDIA/nim-deploy.git
@@ -137,12 +134,16 @@ tags:
 	```
 
 ## Test the NIM
+
+>[!NOTE]
+> Expect the **demo-nim** deployment to take a few minutes as the Llama3 model downloads.
+
 1. Expose the service
 	```bash
 	kubectl port-forward --namespace nim services/demo-nim-nim-llm 8000
 	```
 
-2. Send a test prompt - A100
+2. Send a test prompt
 	```bash
 	curl -X 'POST' \
 	  'http://localhost:8000/v1/chat/completions' \
