@@ -59,7 +59,7 @@ tags:
 
 1. Get cluster credentials
    ```bash
-   kubectl config set-cluster l4-demo
+   kubectl config set-cluster nim-demo
    ```
 
 1. Create a nodepool
