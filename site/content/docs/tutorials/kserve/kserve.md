@@ -146,7 +146,7 @@ KServe relies on [Knative](https://knative.dev/docs/concepts/) and requires a ne
    kubectl get pods -n knative-serving
 
    # Find the webhook pod and delete it to restart the pod.
-   kubeclt delete pod webhook-64c67b4fc-nmzwt -n knative-serving
+   kubectl delete pod webhook-64c67b4fc-nmzwt -n knative-serving
    ```
    
 After successfully installing KServe, you can now explore various examples such as, [first inference service](https://kserve.github.io/website/master/get_started/first_isvc/), [canary rollout](https://kserve.github.io/website/master/modelserving/v1beta1/rollout/canary-example/), inference [batcher](https://kserve.github.io/website/master/modelserving/batcher/batcher/) and [auto-scaling](https://kserve.github.io/website/master/modelserving/autoscaling/autoscaling/).
