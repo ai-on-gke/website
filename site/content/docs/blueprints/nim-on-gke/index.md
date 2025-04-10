@@ -67,7 +67,7 @@ tags:
 	gcloud container node-pools create ${MACH?}-node-pool --cluster nim-demo \
 	   --accelerator type=${GPU_TYPE?},count=${GPU_COUNT?},gpu-driver-version=latest \
 	  --machine-type ${MACH?} \
-	  --ephemeral-storage-local-ssd=count=${GPU_COUNT?} \
+	  --ephemeral-storage-local-ssd=count=2 \
 	  --enable-autoscaling --enable-image-streaming \
 	  --num-nodes=1 --min-nodes=1 --max-nodes=3 \
 	  --node-locations ${ZONE?} \
