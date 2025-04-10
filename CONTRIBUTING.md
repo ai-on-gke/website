@@ -4,7 +4,7 @@ Your contributions and patches to GKE AI Labs are highly valued and appreciated!
 
 New contributors should review the raw code and documentation of existing content to gain a better understanding of the approved format and ensure all guidelines are met. If you have any questions, please reach out to the GKE AI Labs project maintainers.
 
->[!IMPORTANT]
+>[!CAUTION]
 >The use of the assets contained in this repository is subject to compliance with [Google's AI Principles](https://ai.google/responsibility/principles/).
 
 ## Getting started
