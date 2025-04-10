@@ -141,8 +141,10 @@ KServe relies on [Knative](https://knative.dev/docs/concepts/) and requires a ne
      --namespace knative-serving \
      --type merge \
      --patch '{"data":{"kubernetes.podspec-nodeselector":"enabled", "kubernetes.podspec-tolerations":"enabled"}}'
-
-   # Restart knative webhook to consume the config, for example
+   ```
+   
+   Restart knative webhook to consume the config, for example:
+   ```bash
    kubectl get pods -n knative-serving
 
    # Find the webhook pod and delete it to restart the pod.
