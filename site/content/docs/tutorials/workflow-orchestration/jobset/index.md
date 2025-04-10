@@ -25,7 +25,7 @@ Run the command:
 You should see output indicating the cluster is being created (this can take ~10 minutes or so).
 
 ### 2. Install the JobSet CRD on your cluster
-Follow the [JobSet installation guide](https://github.com/kubernetes-sigs/jobset/blob/main/docs/setup/install.md).
+Follow the [JobSet installation guide](https://jobset.sigs.k8s.io/docs/installation/).
 
 ### 3. Apply the PyTorch MNIST example JobSet
 Run the command: 

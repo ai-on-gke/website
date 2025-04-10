@@ -26,7 +26,7 @@ As part of this tutorial, you will get to do the following:
 ## Prerequisites
 *   A terminal with `kubectl` and `gcloud` installed. Cloud Shell works great!
 *   L4 GPUs quota to be able to run additional 8 L4 GPUs
-*   Request access to Meta Llama models by submitting the [request access form](https://ai.meta.com/resources/models-and-libraries/llama-downloads/)
+*   Request access to Meta Llama models by submitting the [request access form](https://www.llama.com/llama-downloads/)
 *   Agree to the Llama 2 terms on the [Llama 2 7B HF](https://huggingface.co/meta-llama/Llama-2-7b-hf) model in HuggingFace
 
 

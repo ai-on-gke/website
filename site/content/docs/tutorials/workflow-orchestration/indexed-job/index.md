@@ -43,9 +43,9 @@ gcloud container node-pools create gpu-pool \
 Creating this GPU node pool will take a few minutes.
 
 ### 3. Build and push the Docker image to GCR
-Make a local copy of the [mnist.py](mnist.py) file which defines a traditional convolutional neural network, as the training logic which trains the model on the classic [MNIST](https://en.wikipedia.org/wiki/MNIST_database) dataset.
+Make a local copy of the [mnist.py](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/workflow-orchestration/indexed-job/mnist.py#L4) file which defines a traditional convolutional neural network, as the training logic which trains the model on the classic [MNIST](https://en.wikipedia.org/wiki/MNIST_database) dataset.
 
-Next, make a local copy of the [Dockerfile](Dockerfile) and run the following commands to build the container image and push it to your GCR repository:
+Next, make a local copy of the [Dockerfile](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/workflow-orchestration/indexed-job/Dockerfile) and run the following commands to build the container image and push it to your GCR repository:
 
 ```bash
 export PROJECT_ID=<your GCP project ID>
