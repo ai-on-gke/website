@@ -9,25 +9,26 @@ tags:
 ---
 ## Before you begin
 
-1. Get access to NVIDIA NIMs
 > [!CAUTION]
 > Before you proceed further, ensure you have the NVIDIA AI Enterprise License (NVAIE) to access the NIMs.  To get started, go to [build.nvidia.com](https://build.nvidia.com/explore/discover?signin=true) and provide your company email address
+
+1. Get access to NVIDIA NIMs
 
 2. In the [Google Cloud console](https://console.cloud.google.com), on the project selector page, select or create a new project with [billing enabled](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#console)
 
 3. Ensure you have the following tools installed on your workstation
-* [gcloud CLI](https://cloud.google.com/sdk/docs/install)
-* [gcloud kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_kubectl)
-* [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [jq](https://jqlang.github.io/jq/)
-* [ngc](https://ngc.nvidia.com/setup)
+   * [gcloud CLI](https://cloud.google.com/sdk/docs/install)
+   * [gcloud kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_kubectl)
+   * [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+   * [jq](https://jqlang.github.io/jq/)
+   * [ngc](https://ngc.nvidia.com/setup)
 
 4. Enable the required APIs
-```bash
-gcloud services enable \
-  container.googleapis.com \
-  file.googleapis.com
-```
+   ```bash
+   gcloud services enable \
+     container.googleapis.com \
+     file.googleapis.com
+   ```
 
 ## Set up your GKE Cluster
 
@@ -72,12 +73,13 @@ gcloud services enable \
 
 ## Set Up Access to NVIDIA NIMs and prepare environment
 
+> [!TIP]
+> If you have not set up NGC, see [NGC Setup](https://ngc.nvidia.com/setup) to get your access key and begin using NGC.
+
 1. Get your NGC_API_KEY from NGC
-	```bash
-	export NGC_CLI_API_KEY="<YOUR_API_KEY>"
-	```
-	> [!NOTE]
-	> If you have not set up NGC, see [NGC Setup](https://ngc.nvidia.com/setup) to get your access key and begin using NGC.
+   ```bash
+   export NGC_CLI_API_KEY="<YOUR_API_KEY>"
+   ```	
 
 2. As a part of the NGC setup, set your configs
 	```bash
@@ -95,6 +97,9 @@ gcloud services enable \
 	```
 
 ## Deploy a PVC to persist the model
+> [!NOTE]
+> This PVC will [dynamically provision a PV](https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes#dynamic_provisioning) with the necessary storage to persist model weights across replicas of your pods.
+
 1. Create a PVC to persist the model weights - recommended for deployments with more than one (1) replica.  Save the following yaml as `pvc.yaml`.
 	```yaml
 	apiVersion: v1
@@ -115,9 +120,7 @@ gcloud services enable \
 	```bash
 	kubectl apply -f pvc.yaml
 	```
-	> [!NOTE]
-	> This PVC will [dynamically provision a PV](https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes#dynamic_provisioning) with the necessary storage to persist model weights across replicas of your pods.
-
+	
 ## Deploy the NIM with the generated engine using a Helm chart
 
 1. Clone the nim-deploy repository
@@ -164,3 +167,10 @@ gcloud services enable \
 	```
 
 3. Browse the API by navigating to http://localhost:8000/docs
+
+## Clean up
+
+Remove the cluster and deployment by runnign the following command:
+```bash
+gcloud container clusters delete l4-demo --location ${REGION} 
+```
