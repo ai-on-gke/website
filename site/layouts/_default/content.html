@@ -8,8 +8,8 @@
 	</header>
 	{{ .Render "td-content-after-header" -}}
 	{{ .Content }}
-    {{ partial "tags.html" . -}}
 	{{ partial "feedback.html" . -}}
+    {{ partial "tags.html" . -}}
 	{{ if (.Site.Config.Services.Disqus.Shortname) -}}
 		<br />
 		{{- partial "disqus-comment.html" . -}}
