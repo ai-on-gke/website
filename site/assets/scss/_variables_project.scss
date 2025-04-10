@@ -8,6 +8,7 @@ $google_font_name: "Google Sans";
 $google_font_family: "Google+Sans:300,300i,400,400i,700,700i";
 $breadcrumb-divider: quote("⟵");
 $breadcrumb-active-color: "#202124";
+$enable-negative-margins: true;
 
 .td-content .highlight pre {
   background-color: var(--td-pre-bg) !important;
@@ -214,6 +215,21 @@ $breadcrumb-active-color: "#202124";
   height: 300px;
   padding-bottom: 2rem;
 }
+.text {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+
+  @supports (-webkit-line-clamp: 4) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: initial;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+  }
+}
 
 .title {
   color: var(--grey-900, #202124);
@@ -225,19 +241,35 @@ $breadcrumb-active-color: "#202124";
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
+
+  &.single-page {
+    font-size: 28px !important;
+  }
 }
 
-.title2 {
+.use-case-card-description {
   color: var(--grey-900, #202124);
   text-align: left;
   font-family: Roboto, sans-serif !important;
-  font-size: 12px;
+  font-size: 12px!important;
   line-height: 16px;
   font-weight: 400;
   overflow: hidden;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
+
+  &.single-page {
+    font-size: 18px !important;
+    line-height: 20px !important;
+    min-height: 120px !important;
+  }
+}
+
+.use-case-links-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .github-card {
@@ -425,7 +457,7 @@ section:not(:first-child).td-box {
         border-bottom: 1px solid #dadce0 !important;
         padding-bottom: 9px;
       }
-     
+
       &.feedback--title {
         font-weight: 700 !important;
         margin-bottom: 10px !important;
@@ -603,10 +635,10 @@ aside {
   color: var(--Grey-900, #202124);
   font-feature-settings: "liga" off, "clig" off;
   font-family: "Roboto", sans-serif !important;
-  font-size: 12px !important;
+  font-size: 16px !important;
   font-style: normal;
   font-weight: 400;
-  line-height: 16px;
+  line-height: 18px;
 }
 
 .code-toolbar {
@@ -630,7 +662,6 @@ h2.side-bar-title {
   border-bottom: 1px solid #dadce0 !important;
   padding-bottom: 6px !important;
 }
-
 
 h2 {
   font-size: 20px !important;
@@ -668,4 +699,97 @@ h5 {
   font-style: normal;
   font-weight: 400;
   line-height: 16px;
+}
+
+.alert {
+  display: flex;
+  gap: 14px;
+}
+
+.alert-heading {
+  flex-shrink: 0;
+  font-weight: 700 !important;
+  &::after {
+    content: ":";
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+.title-note {
+  text-indent: 47px;
+  &::before {
+    content: "Note:";
+    font-weight: 700;
+    position: absolute;
+    left: 8px;
+  }
+}
+
+.title-caution {
+  p {
+    text-indent: 70px;
+  }
+
+  &::before {
+    content: "Caution:";
+    font-weight: 700;
+    position: absolute;
+    left: 54px;
+  }
+}
+
+.title-success {
+  p {
+    text-indent: 70px;
+  }
+
+  &::before {
+    content: "Success:";
+    font-weight: 700;
+    position: absolute;
+    left: 54px;
+  }
+}
+
+.title-warning {
+  p {
+    text-indent: 72px;
+  }
+
+  &::before {
+    content: "Warning:";
+    font-weight: 700;
+    position: absolute;
+    left: 54px;
+  }
+}
+
+.alert-body {
+  display: flex;
+  display: inline;
+}
+
+.alert-note {
+  background-color: rgb(232, 240, 254) !important;
+  color: rgb(48, 63, 159) !important;
+}
+
+.alert-success {
+  border: none !important;
+  background-color: rgb(224, 242, 241) !important;
+  color: rgb(0, 121, 107) !important;
+}
+
+.alert-caution {
+  background-color: rgb(254, 239, 227) !important;
+  color: rgb(179, 20, 18) !important;
+}
+
+.alert-warning {
+  border: none !important;
+  background-color: rgb(252, 232, 230) !important;
+  color: rgb(165, 14, 14) !important;
 }

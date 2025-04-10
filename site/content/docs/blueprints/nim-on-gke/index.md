@@ -10,7 +10,7 @@ tags:
 ## Before you begin
 
 1. Get access to NVIDIA NIMs
-> [!IMPORTANT]
+> [!CAUTION]
 > Before you proceed further, ensure you have the NVIDIA AI Enterprise License (NVAIE) to access the NIMs.  To get started, go to [build.nvidia.com](https://build.nvidia.com/explore/discover?signin=true) and provide your company email address
 
 2. In the [Google Cloud console](https://console.cloud.google.com), on the project selector page, select or create a new project with [billing enabled](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#console)
