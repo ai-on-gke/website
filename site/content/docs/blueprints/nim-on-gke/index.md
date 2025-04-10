@@ -122,6 +122,9 @@ tags:
 	
 ## Deploy the NIM with the generated engine using a Helm chart
 
+>[!NOTE]
+> Expect the **demo-nim** deployment to take a few minutes as the Llama3 model downloads.
+
 1. Clone the nim-deploy repository
 	```bash
 	git clone https://github.com/NVIDIA/nim-deploy.git
