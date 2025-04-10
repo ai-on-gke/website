@@ -116,6 +116,7 @@ KServe relies on [Knative](https://knative.dev/docs/concepts/) and requires a ne
 
 5. Install [Cert Manager](https://cert-manager.io/docs/installation/), which is required to provision webhook certs for production grade installation.
    ```bash
+   helm repo add jetstack https://charts.jetstack.io --force-update
    helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.15.3 --set crds.enabled=true --set global.leaderElection.namespace=cert-manager
    ```
 
