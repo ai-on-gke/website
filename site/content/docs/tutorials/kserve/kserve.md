@@ -228,15 +228,18 @@ In the next step, we'll demonstrate how to deploy Gemma2 using vLLM in KServe wi
 ## Test the Inference Service
 1. Find the URL returned in kubectl get inferenceservice
    ```bash
-   URL=$(kubectl get inferenceservice huggingface-gemma2 -o jsonpath='{.status.url}')
+   URL=$(kubectl get inferenceservice huggingface-gemma2 -n kserve-test -o jsonpath='{.status.url}')
+   echo $URL
+   ```
 
-   # URL should look like this:
+   URL should look like this:
+   ```bash
    http://huggingface-gemma2.kserve-test.34.121.87.225.sslip.io
    ```
 
-2. Open the swagger UI at $URL/docs
+3. Open the swagger UI at $URL/docs
 
-3. Play with the openai chat API with the example input below. Click execute and you can see the response.
+4. Play with the openai chat API with the example input below. Click execute and you can see the response.
    ```json
    {
        "model": "gemma2",
@@ -257,6 +260,7 @@ In the next step, we'll demonstrate how to deploy Gemma2 using vLLM in KServe wi
 
 ## Clean up
 Delete the GKE cluster.
+```bash
 gcloud container clusters delete ${CLUSTER_NAME} \
     --location=$REGION \
     --project=$PROJECT_ID \
