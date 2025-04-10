@@ -36,14 +36,14 @@ tags:
 	```bash
 	export PROJECT_ID=$(gcloud config get project)
 	export REGION=us-central1
-	export ZONE=${REGION?}-b
-	export MACH=a2-highgpu-1g
-	export GPU_TYPE=nvidia-tesla-a100
+	export ZONE=${REGION?}-a
+	export MACH=g2-standard-24
+	export GPU_TYPE=nvidia-l4
 	export GPU_COUNT=1
 	```	
 
 
-2. Create a GKE cluster:
+1. Create a GKE cluster:
 	```bash
 	gcloud container clusters create nim-demo --location ${REGION?} \
 	  --workload-pool ${PROJECT_ID?}.svc.id.goog \
@@ -57,7 +57,12 @@ tags:
 	  --ephemeral-storage-local-ssd=count=2
 	```
 
-3. Create a nodepool
+1. Get cluster credentials
+   ```bash
+   kubectl config set-cluster l4-demo
+   ```
+
+1. Create a nodepool
 	```bash
 	gcloud container node-pools create ${MACH?}-node-pool --cluster nim-demo \
 	   --accelerator type=${GPU_TYPE?},count=${GPU_COUNT?},gpu-driver-version=latest \
