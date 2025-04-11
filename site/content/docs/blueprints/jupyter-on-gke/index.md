@@ -204,6 +204,16 @@ Ensure that the following variables within `workloads.tfvars` are set:
 > [!NOTE]
 > You can use a custom domain & existing ingress ip address in the `workloads.tfvars` file.
 
+## Cleanup
+
+Remove the cluster and deployment by running the following command:
+```bash
+terraform destroy --var-file="workloads.tfvars"
+```
+
+>[!TIP]
+> If you encounter a network deletion issue when applying the `terraform destroy` command,  this is becasue it fails to delete the network due to a known issue in the GCP provider. For now, the workaround is to manually delete it.
+
 ## Additional Information
 
 For more information about JupyterHub profiles and the preset profiles visit [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/applications/jupyter/profiles.md)
