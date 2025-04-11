@@ -42,7 +42,7 @@ Let's start with setting up the infrastructure using Terraform. The Terraform co
    Copy the `example_environment.tfvars` file to a new file, e.g., `your_environment.tfvars`, and fill `project_id` and `cluster_name` with your values. You can also adjust any other parameters as you need.
 
    ```hcl
-   project_id = "flyte-project"
+   project_id = "google-project-id"
    cluster_name = "flyte-test"
    autopilot_cluster = true  # Set to false for Standard cluster
    ```
@@ -66,8 +66,8 @@ Let's start with setting up the infrastructure using Terraform. The Terraform co
    cloudsql_user = "flytepg"
    gke_cluster_location = "us-central1"
    gke_cluster_name = "flyte-test"
-   bucket_name = "flyte-bucket"
-   project_id = "flyte-project"
+   bucket_name = "flyte-bucket-name"
+   project_id = "google-project-id"
    service_account = "tf-gke-flyte-test-k3af@flyte-project.iam.gserviceaccount.com"
    ```
 
@@ -126,7 +126,7 @@ At this point, the Flyte dashboard is not exposed to the internet. Let's access 
 
 3. Open <http://localhost:8088/console> in your browser to access the Flyte dashboard.
    You should see the following screen:
-   ![alt text](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/flyte/img/flyte_dashboard.png)
+   ![alt text](flyte_dashboard.png)
 
    If you experience issues accessing the dashboard, make sure the pods are running and the port forwarding is set up correctly.
 
