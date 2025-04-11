@@ -249,7 +249,7 @@ The model fine-tuning process requires a dedicated environment, which we will en
 gcloud builds submit ../finetune_inside_metaflow/image --config=../cloudbuild.yaml
 ```
 
-*More details can be found in the [cloudbuild.yaml](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/metaflow/cloudbuild.yaml) file.*
+*More details can be found in the [cloudbuild.yaml](https://github.com/ai-on-gke/tutorials-and-examples/blob/main/metaflow/cloudbuild.yaml) file.*
 
 ## Fine-tune the model
 
@@ -338,12 +338,12 @@ kubectl -n argo port-forward svc/argo-server 2746:2746
 
 6. Open argo-workflows UI at [https://localhost:2746](https://localhost:2746) and go to the [workflow templates](https://localhost:2746/workflow-templates) section. There must be a template that you have created earlier.
 
-![argo-workflows-templates](https://github.com/user-attachments/assets/dff16d8f-d41d-4b4f-8cb4-ec018d8630ff)
+![argo-workflows-templates](argo-workflow-create.png)
 
 
 7. Select this template and click submit to start the workflow:
 
-![argo-workflows-submit](https://github.com/user-attachments/assets/476cc157-3410-4987-9d27-725f79c531a1)
+![argo-workflows-submit](argo-workflow-submit.png)
 
 
 Wait until the fine-tuning process is completed and a new model is uploaded to the HuggingFace. It should take around 30 minutes to complete.
@@ -354,11 +354,11 @@ You can open the Metaflow UI at http://localhost:8083/ to monitor the execution 
 
 Note: this UI does not display the model upload status to HuggingFace
 
-![metaflow-ui](https://github.com/user-attachments/assets/0e1b9a91-5175-4237-a777-94866170a7c2)
+![metaflow-ui](metaflow-ui.png)
 
 8. Go to your [Hugging Face](https://huggingface.co/) profile to verify that the fine-tuned model has been uploaded:
 
-![huggingface](https://github.com/user-attachments/assets/b67d0632-a12b-4195-b651-62181256ac5e)
+![huggingface](huggingface-portal.png)
 
 
 
