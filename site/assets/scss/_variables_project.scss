@@ -262,6 +262,7 @@ $enable-negative-margins: true;
     font-size: 18px !important;
     line-height: 20px !important;
     min-height: 120px !important;
+    flex-shrink: 0;
   }
 }
 
@@ -270,6 +271,7 @@ $enable-negative-margins: true;
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
+  padding: 10px 0;
 }
 
 .github-card {
