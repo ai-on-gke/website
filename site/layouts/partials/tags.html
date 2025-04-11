@@ -22,7 +22,7 @@
           {{ end }} 
         {{ end }} 
       {{ end }}
-<div style="background-color: rgb(240, 240, 240); padding: 10px 10px">
+<div style="padding: 10px 10px">
   <h2 style="font-weight: 700">Continue reading:</h2>
   <div class="row gy-3">
     {{ if len (.Store.Get "pagesToDisplay") }}
@@ -31,7 +31,7 @@
       <a href="{{ $key }}" class="continue-reading-link"
         style="text-decoration: none;">
         <div
-          style="padding: 35px 25px; background-color: white; height: 170px;">
+          style="padding: 35px 25px; background-color: rgb(240,240,240); height: 170px;">
           <div>
             <h3 style="font-weight: 700; color: #1d7db3">{{ $value.linkTitle }}
             </h3>
@@ -55,7 +55,7 @@
       <a href="{{ $page.Permalink }}" class="continue-reading-link"
         style="text-decoration: none;">
         <div
-          style="padding: 35px 25px; background-color: white; height: 170px; overflow: hidden;">
+          style="padding: 35px 25px; background-color: rgb(240,240,240); height: 170px; overflow: hidden;">
           <div>
             <h3 style="font-weight: 700; color: #1d7db3">{{ $page.LinkTitle }}
             </h3>
@@ -76,7 +76,7 @@
       <a href="{{ $page.Permalink }}" class="continue-reading-link"
         style="text-decoration: none;">
         <div
-          style="padding: 35px 25px; background-color: white; height: 170px; overflow: hidden;">
+          style="padding: 35px 25px; background-color: rgb(240,240,240); height: 170px; overflow: hidden;">
           <div>
             <h3 style="font-weight: 700; color: #1d7db3">{{ $page.LinkTitle }}
             </h3>
