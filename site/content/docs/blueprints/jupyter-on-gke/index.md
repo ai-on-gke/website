@@ -1,18 +1,13 @@
 ---
 linkTitle: "Jupyter on GKE"
 title: "Jupyter on GKE"
-description: "This guide details how to deploy JupyterHub on Google Kubernetes Engine (GKE) using a provided Terraform template, including options for persistent storage and Identity-Aware Proxy (IAP) for secure access. It covers the necessary prerequisites, configuration steps, and installation process, emphasizing the use of Terraform for automation and IAP for authentication. The guide also provides instructions for accessing JupyterHub, setting up user access, and running an example notebook that serves a GPT-J-6B model with Ray AIR, demonstrating the platform's capabilities for AI and machine learning workloads."
+description: "This guide details how to deploy JupyterHub on Google Kubernetes Engine (GKE) using a provided Terraform template, including options for persistent storage and Identity-Aware Proxy (IAP) for secure access. It covers the necessary prerequisites, configuration steps, and installation process, emphasizing the use of Terraform for automation and IAP for authentication. The guide also provides instructions for accessing JupyterHub, setting up user access, and running an example notebook."
 weight: 30
 type: docs
 tags:
  - Blueprints
 ---
 This repository contains a Terraform template for running [JupyterHub](https://jupyter.org/hub) on Google Kubernetes Engine.
-
-We've also included some example notebooks (`applications/ray/example_notebooks`), including one that serves a GPT-J-6B model with Ray AIR (see
-[here](https://docs.ray.io/en/latest/train/examples/deepspeed/gptj_deepspeed_fine_tuning.html) for the original notebook). To run these, follow the instructions at
-`applications/ray/README.md` to install a Ray cluster.
-
 
 This module deploys the following resources, once per user:
 * JupyterHub deployment
@@ -48,8 +43,8 @@ To use GCS, create a bucket with your username. For example, when authenticating
 
 1. If needed, clone the repo
 	```bash
-	 git clone https://github.com/GoogleCloudPlatform/ai-on-gke
-	 cd ai-on-gke/applications/jupyter
+	 git clone https://github.com/ai-on-gke/quick-start-guides
+	 cd quick-start-guides/jupyter
 	 ```
 
 2. Edit `workloads.tfvars` with your GCP settings. The `namespace` that you specify will become a K8s namespace for your JupyterHub services. For more information about what the variables do, visit [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/applications/jupyter/variable_definitions.md).
@@ -65,9 +60,7 @@ To use GCS, create a bucket with your username. For example, when authenticating
     | `create_service_account`  | Create service accounts used for Workload Identity mapping                                                      | Yes      |
     | `gcp_and_k8s_service_account` | GCP service account used for Workload Identity mapping and k8s sa attached with workload                      | Yes      |
 
- > [!NOTE]
- > If using this with the Ray module (`applications/ray/`), it is recommended to use the same k8s namespace for both, i.e., set this to the same namespace as `applications/ray/workloads.tfvars`.
- 
+
  For variables under `JupyterHub with IAP`, please see the section below.
 
 
@@ -110,9 +103,17 @@ To use GCS, create a bucket with your username. For example, when authenticating
 	gcloud auth application-default login
 	```
 
-6. Run `terraform init`
+6. Initialize the Terraform template
+  	```bash
+	 terraform init
+	```
 
-7. Run `terraform apply --var-file=./workloads.tfvars`. It can take upto 5 minutes on standard clusters & upto 10 minutes on AutoPilot clusters. Due to some IAP limitations, this is expected to fail with an error `Error retrieving IAM policy for iap webbackendservice` which will be resolved by the next step.
+7. Run Terraform creation tempalte
+    ```bash
+    terraform apply --var-file=./workloads.tfvars
+    ```
+
+    It can take upto 5 minutes on standard clusters & upto 10 minutes on AutoPilot clusters. Due to some IAP limitations, this is expected to fail with an error `Error retrieving IAM policy for iap webbackendservice` which will be resolved by the next step.
 
 8. If using authentication with IAP (i.e. `add_auth = true`), rerun terraform apply again. This is needed to configure Jupyter with IAP correctly.
 
@@ -124,28 +125,39 @@ To use GCS, create a bucket with your username. For example, when authenticating
 
 ### If Auth with IAP is disabled
 
-1. Extract the randomly generated password for JupyterHub login
+1. Extract the randomly generated password for JupyterHub login.
 
 	```bash
 	terraform output jupyterhub_password
 	```
 
-2. Setup port forwarding for the frontend: `kubectl port-forward service/proxy-public -n <namespace> 8081:80 &`, and open `localhost:8081` in a browser.
+1. Setup port forwarding for the frontend and and open `localhost:8081` in a browser. Use the username **admin** and the password retrieved in the previous step. If you're not using the default **ai-on-gke** namespace, replace your namespace in the command.
+    ```bash
+	kubectl port-forward service/proxy-public -n ai-on-gke 8081:80 &
+	```
 
 ### If Auth with IAP is enabled
 
-1. Note down the value for the `domain` from the terraform output section: `terraform output domain`. You can open this in a browser & login with your credentials. Alternatively, domain value for Jupyter Ingress can be found on [Certificate Manager](https://console.cloud.google.com/security/ccm/list/lbCertificates) page.
+1. Note down the value for the **domain** from the terraform output section: 
+    ```bash
+    terraform output domain 
+    ```
+    
+    You can open this in a browser & login with your credentials. Alternatively, domain value for Jupyter Ingress can be found on [Certificate Manager](https://console.cloud.google.com/security/ccm/list/lbCertificates) page.
 
-2. Ensure the managed cert for the domain has finished provisioning: `kubectl get managedcertificate -n <namespace>`.
-This can take 10 - 20 minutes. You may see an SSL error if you try to hit the domain when the cert isn't `Active`.
+2. Ensure the managed cert for the domain has finished provisioning: 
+    ```bash
+    kubectl get managedcertificate -n <namespace>
+    ```
+    This can take 10 - 20 minutes. You may see an SSL error if you try to hit the domain when the cert isn't **Active**.
 
-3. Open the external IP in a browser and login. If you get an access error, see the `Setup Access` section below.
+3. Open the external IP in a browser and login. If you get an access error, see the **Setup Access** section below.
 Please note there may be some propagation delay after adding IAP principals (5-10 mins).
 
 4. Select profile and open a Jupyter Notebook
 
-  >[!NOTE]
-  >Domain specific managed certificate may take some time to finish provisioning. This can take between 10-15 minutes. The browser may not display the login page correctly until the certificate provisioning is complete.
+>[!NOTE]
+>Domain specific managed certificate may take some time to finish provisioning. This can take between 10-15 minutes. The browser may not display the login page correctly until the certificate provisioning is complete.
 
 ### Setup Access
 
@@ -153,39 +165,27 @@ In order for users to login to JupyterHub via IAP, their access needs to be conf
 
 1. Navigate to the [GCP IAP Cloud Console](https://console.cloud.google.com/security/iap) and select your backend-service for `<namespace>/proxy-public`.
 
-2. Click on `Add Principal`, insert the username / group name and select under `Cloud IAP` with role `IAP-secured Web App User`. Once presmission is granted, these users / groups can login to JupyterHub with IAP. Please note there may be some propagation delay after adding IAP principals (5-10 mins).
+2. Click on **Add Principal**, insert the username / group name and select under **Cloud IAP** with role **IAP-secured Web App User**. Once presmission is granted, these users / groups can login to JupyterHub with IAP. Please note there may be some propagation delay after adding IAP principals (5-10 mins).
 
 ## Persistent Storage
 
 JupyterHub is configured to provide 2 choices for storage:
 
-1. Default JupyterHub Storage - `pd.csi.storage.gke.io` with reclaim policy `Delete`
+1. Default JupyterHub Storage - `pd.csi.storage.gke.io` with reclaim policy **Delete**
 
 2. GCSFuse - `gcsfuse.csi.storage.gke.io` uses GCS Buckets and require users to pre-create buckets with name format `gcsfuse-{username}`
 
 For more information about Persistent storage and the available options, visit [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/applications/jupyter/storage.md)
 
-## Running GPT-J-6B
+## Running example notebook
 
-This example is adapted from Ray AIR's examples [here](https://docs.ray.io/en/latest/train/examples/deepspeed/gptj_deepspeed_fine_tuning.html).
+1. Open the JupyterHub instance by gogin to `localhost:8081` in a browser. 
 
-1. Open the `gpt-j-online.ipynb` notebook under `ai-on-gke/applications/ray/example_notebooks`.
+1. Go to *File* -> *New* -> *Notebook*
 
-2. Open a terminal in the Jupyter session and install Ray AIR:
+4. Connect the notebook to the **Python 3** kernel.
 
-    ```cmd
-    pip install ray[air]
-    ```
-
-3. Run through the notebook cells. You can change the prompt in the last cell:
-
-    ```jupyter
-    prompt = (
-        ## Input your own prompt here
-    )
-    ```
-
-4. This should output a generated text response.
+1. Start writing your Python code.
 
 ## Auto Brand creation and IAP enablement
 
@@ -203,6 +203,16 @@ Ensure that the following variables within `workloads.tfvars` are set:
 
 > [!NOTE]
 > You can use a custom domain & existing ingress ip address in the `workloads.tfvars` file.
+
+## Cleanup
+
+Remove the cluster and deployment by running the following command:
+```bash
+terraform destroy --var-file="workloads.tfvars"
+```
+
+>[!TIP]
+> If you encounter a network deletion issue when applying the `terraform destroy` command,  this is becasue it fails to delete the network due to a known issue in the GCP provider. For now, the workaround is to manually delete it.
 
 ## Additional Information
 
