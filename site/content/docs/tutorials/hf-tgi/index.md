@@ -123,7 +123,7 @@ Make sure you have:
 
 ## Clean up
 
-Remove the cluster and deployment by runnign the following command:
+Remove the cluster and deployment by running the following command:
 ```bash
 gcloud container clusters delete l4-demo --location ${REGION} 
 ```
