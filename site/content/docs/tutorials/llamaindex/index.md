@@ -465,7 +465,7 @@ kubectl  port-forward svc/llamaindex-rag-service 8000:8000
 
    
 
-3. Do some prompting. If you ask `What Paul did?`, the output should look like this:
+3. Do some prompting. If you ask `What did Paul do?`, the output should look like this:
 
 ```
 {
