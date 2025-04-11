@@ -270,6 +270,7 @@ $enable-negative-margins: true;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow-y: scroll;
 }
 
 .github-card {

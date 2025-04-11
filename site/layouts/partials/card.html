@@ -5,7 +5,7 @@
 {{ $context := .context -}}
 {{ partial "pages-with-same-tag.html" (dict "sectionTitle" $title "context" .) }}
 <div class="option-primary-l -bg-primary-light"
-  style="height: 750px; overflow: scroll; font-size: 1.2rem;">
+  style="height: 750px; overflow: hidden; font-size: 1.2rem;">
   <div role="presentation">
     {{ with resources.Get $icon_path -}} {{ ( . | minify).Content | safeHTML -}}
     {{ end -}}
