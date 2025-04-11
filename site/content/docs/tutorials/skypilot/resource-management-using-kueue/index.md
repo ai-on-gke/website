@@ -4,6 +4,8 @@ title: "Efficient GPU Resource Management for ML Workloads using SkyPilot, Kueue
 description: "This tutorial expands on the [SkyPilot Tutorial](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/tutorials-and-examples/skypilot) by leveraging [Dynamic Workload Scheduler](https://cloud.google.com/blog/products/compute/introducing-dynamic-workload-scheduler) with the help of an open-source project called [Kueue](https://kueue.sigs.k8s.io/)"
 weight: 30
 type: docs
+owner: >-
+    [Vlado Djerek](https://github.com/volatilemolotov)
 tags:
  - Serving
  - Orchestration
@@ -180,24 +182,29 @@ For SkyPilot to create pods with the necessary pod config we need to add the fol
                 provreq.kueue.x-k8s.io/maxRunDurationSeconds: "3600"
           provision_timeout: 900
     ```
+
 And labels config to the resources section
     ```yaml
       labels:
         kueue.x-k8s.io/queue-name: dws-local-queue
     ```
+
 Launch the workload
     ```bash
     sky launch -c skypilot-dws train_dws.yaml
     ```
+
 SkyPilot will wait in Launching state until the node is provisioned.
     ```
     ⚙︎ Launching on Kubernetes.
     ```
+
 In another terminal, you can `kubectl get pods` and it will be in SchedulingGated state
     ```bash
     NAME                     READY   STATUS            RESTARTS   AGE
     skypilot-dws-00b5-head   0/1     SchedulingGated   0          44s
     ```
+
 If you run `kubectl describe provisioningrequests` you can see in the Conditions: what is happening with the request.
     ```bash
       Conditions:
@@ -214,6 +221,7 @@ If you run `kubectl describe provisioningrequests` you can see in the Conditions
         Status:                False
         Type:                  Provisioned
     ```
+
 When the requested resource is availaible the `provisioningrequest` will reflect that in the `Conditions:`
     ```bash
         Last Transition Time:  2024-12-20T11:42:55Z
@@ -223,11 +231,13 @@ When the requested resource is availaible the `provisioningrequest` will reflect
         Status:                True
         Type:                  Provisioned
     ```
+
 Now the workload will be running
     ```bash
     NAME                     READY   STATUS    RESTARTS   AGE
     skypilot-dws-00b5-head   1/1     Running   0          4m49s
     ```
+
 And later finished
     ```
     ✓ Job finished (status: SUCCEEDED).

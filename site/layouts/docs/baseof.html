@@ -25,12 +25,14 @@
           </aside>
           <main class="col-12 col-md-7 col-xl-7 ps-md-3" role="main">
             {{ partial "version-banner.html" . }}
-            {{ if not (.Param "ui.breadcrumb_disable") -}}
+            <div class="top-nav-bar">{{ if not (.Param "ui.breadcrumb_disable") -}}
               {{ partial "breadcrumb.html" . -}}
             {{ end -}}
+            {{ partial "article-metadata.html" . }}
+          </div>
+            
             {{ block "main" . }}{{ end }}
-            <div class="ms-n3 pt-3" style="width: calc(100% + 28px); background-color: rgb(240, 240, 240);">{{ partial "tags.html" . -}}</div>
-            {{ partial "page-meta-lastmod.html" . }}
+            <div class="ms-n3 pt-3" style="width: calc(100% + 28px);">{{ partial "tags.html" . -}}</div>
           </main>
         </div>
       </div>

@@ -38,7 +38,7 @@ You can prepare for your first contribution by reviewing several steps beforehan
 3. Check [ai-on-gke/website](https://github.com/ai-on-gke/website/issues) issues list for issues that make good entry points.
 4. [Open a pull request using GitHub](https://github.com/ai-on-gke/website/pulls) to existing documentation and learn more about filing issues in GitHub.
 5. Review pull requests from other GKE AI Labs community members for accuracy and language.
-6. Read the GKE AI Labs [Contribution process](#Contribution_process) so you can leave informed comments.
+6. Read the GKE AI Labs [Contribution process](#contribution-process) so you can leave informed comments.
 7. Learn about page content types and [Hugo shortcodes](https://kubernetes.io/docs/contribute/style/hugo-shortcodes/).
 
 ## Contribution process

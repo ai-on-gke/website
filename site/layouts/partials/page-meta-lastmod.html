@@ -1,10 +1,9 @@
 {{ if and .GitInfo .Site.Params.github_repo (not .Params.notoc) -}}
 <div class="td-page-meta__lastmod">
-  {{ T "post_last_mod" }} {{ .Lastmod.Format .Site.Params.time_format_default -}}
-  {{ with .GitInfo }}: {{/* Trim WS */ -}}
-    <a data-proofer-ignore href="{{ $.Site.Params.github_repo }}/commit/{{ .Hash }}">
-      {{- .Subject }} ({{ .AbbreviatedHash }}) {{- /* Trim WS */ -}}
-    </a>
-  {{- end }}
+  {{ T "post_last_mod" }}
+  <a data-proofer-ignore
+    href="{{ .Site.Params.github_repo }}/commit/{{ .GitInfo.Hash }}">
+    {{ .Lastmod.Format .Site.Params.time_format_default -}}
+  </a>
 </div>
 {{ end -}}
