@@ -4,6 +4,8 @@ title: "Efficient GPU Resource Management for ML Workloads using SkyPilot, Kueue
 description: "This tutorial expands on the [SkyPilot Tutorial](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/tutorials-and-examples/skypilot) by leveraging [Dynamic Workload Scheduler](https://cloud.google.com/blog/products/compute/introducing-dynamic-workload-scheduler) with the help of an open-source project called [Kueue](https://kueue.sigs.k8s.io/)"
 weight: 30
 type: docs
+owner: >-
+    [Vlado Djerek](https://github.com/volatilemolotov)
 tags:
  - Serving
  - Orchestration
