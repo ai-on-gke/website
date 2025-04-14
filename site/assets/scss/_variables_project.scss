@@ -772,6 +772,12 @@ h5 {
 .alert-body {
   display: flex;
   display: inline;
+  align-items: center;
+  align-content: center;
+  width: 100%;
+  p {
+    margin-bottom: 0 !important;
+  }
 }
 
 .alert-note {
