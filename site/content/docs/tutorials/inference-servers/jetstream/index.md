@@ -131,9 +131,9 @@ Next, deploy a Maxengine server hosting the Gemma-7b model. You can use the prov
 
 ### Deploy via Kubectl
 
-See the [Jetstream component README](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/modules/jetstream-maxtext-deployment/README.md#installation-via-bash-and-kubectl) for start to finish instructions on how to deploy jetstream to your cluster, assure the value of the PARAMETERS_PATH is the path where the checkpoint-converter job uploaded the converted checkpoints to, in this case it should be `gs://$BUCKET_NAME/final/unscanned/gemma_7b-it/0/checkpoints/0/items` where $BUCKET_NAME is the same as above.
+See the [Jetstream component README](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/common/modules/jetstream-maxtext-deployment/README.md#installation-via-bash-and-kubectl) for start to finish instructions on how to deploy jetstream to your cluster, assure the value of the PARAMETERS_PATH is the path where the checkpoint-converter job uploaded the converted checkpoints to, in this case it should be `gs://$BUCKET_NAME/final/unscanned/gemma_7b-it/0/checkpoints/0/items` where `$BUCKET_NAME` is the same as above.
 
- This README also includes [instructions for setting up autoscaling](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/modules//jetstream-maxtext-deployment/README.md#optional-autoscaling-components). Follow those instructions to install the required components for autoscaling and configuring your HPAs appropriately.
+ This guide also includes [instructions for setting up autoscaling](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/common/modules/jetstream-maxtext-deployment/README.md#optional-autoscaling-components). Follow those instructions to install the required components for autoscaling and configuring your HPAs appropriately.
 
 ### Deploy via Terraform
 
@@ -160,57 +160,56 @@ hpa_config = {
 }
 ```
 
-### Verify the deployment
+## Verify the deployment and send sample requests
 
-Wait for the containers to finish creating:
-```bash
-kubectl get deployment
+1. Wait for the containers to finish creating:
+   ```bash
+   kubectl get deployment   
 
-NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-maxengine-server   2/2     2            2           ##s
-```
+   # You should see an output similar to the following:
+   NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+   maxengine-server   2/2     2            2           ##s
+   ```
 
-Check the Maxengine pod’s logs, and verify the compilation is done. You will see similar logs of the following:
-```bash
-kubectl logs deploy/maxengine-server -f -c maxengine-server
+1. Check the Maxengine pod’s logs, and verify the compilation is done. You will see similar logs of the following:
+   ```bash
+   kubectl logs deploy/maxengine-server -f -c maxengine-server
 
-2024-03-29 17:09:08,047 - jax._src.dispatch - DEBUG - Finished XLA compilation of jit(initialize) in 0.26236414909362793 sec
-2024-03-29 17:09:08,150 - root - INFO - ---------Generate params 0 loaded.---------
-```
+   # You should see an output similar to the following:
+   2024-03-29 17:09:08,047 - jax._src.dispatch - DEBUG - Finished XLA compilation of jit(initialize) in 0.26236414909362793 sec
+   2024-03-29 17:09:08,150 - root - INFO - ---------Generate params 0 loaded.---------
+   ```
 
-Check http server logs, this can take a couple minutes:
-```bash
-kubectl logs deploy/maxengine-server -f -c jetstream-http
+1. Check http server logs. This can take a couple minutes:
+   ```bash
+   kubectl logs deploy/maxengine-server -f -c jetstream-http
+   
+   # You should see an output similar to the following:
+   INFO:     Started server process [1]
+   INFO:     Waiting for application startup.
+   INFO:     Application startup complete.
+   INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+   ```
 
-INFO:     Started server process [1]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-```
+1. Set up port forwarding to the http server:
+   ```bash
+   kubectl port-forward svc/jetstream-svc 8000:8000
+   ```
 
-### Send sample requests
+1. In a new terminal, send a request to the server:
+   ```bash
+   curl --request POST --header "Content-type: application/json" -s localhost:8000/generate --data '{
+       "prompt": "What are the top 5 programming languages",
+       "max_tokens": 200
+   }'
+   ```
 
-Run the following command to set up port forwarding to the http server:
-
-```bash
-kubectl port-forward svc/jetstream-svc 8000:8000
-```
-
-In a new terminal, send a request to the server:
-
-```bash
-curl --request POST --header "Content-type: application/json" -s localhost:8000/generate --data '{
-    "prompt": "What are the top 5 programming languages",
-    "max_tokens": 200
-}'
-```
-
-The output should be similar to the following:
-```
-{
-    "response": " in 2021?\n\nThe answer to this question is not as simple as it may seem. There are many factors that go into determining the most popular programming languages, and they can change from year to year.\n\nIn this blog post, we will discuss the top 5 programming languages in 2021 and why they are so popular.\n\n<h2><strong>1. Python</strong></h2>\n\nPython is a high-level programming language that is used for web development, data analysis, and machine learning. It is one of the most popular languages in the world and is used by many companies such as Google, Facebook, and Instagram.\n\nPython is easy to learn and has a large community of developers who are always willing to help out.\n\n<h2><strong>2. Java</strong></h2>\n\nJava is a general-purpose programming language that is used for web development, mobile development, and game development. It is one of the most popular languages in the"
-}
-```
+   The output should be similar to the following:
+   ```json
+   {
+       "response": " in 2021?\n\nThe answer to this question is not as simple as it may seem. There are many factors that go into determining the most popular programming languages, and they can change from year to year.\n\nIn this blog post, we will discuss the top 5 programming languages in 2021 and why they are so popular.\n\n<h2><strong>1. Python</strong></h2>\n\nPython is a high-level programming language that is used for web development, data analysis, and machine learning. It is one of the most popular languages in the world and is used by many companies such as Google, Facebook, and Instagram.\n\nPython is easy to learn and has a large community of developers who are always willing to help out.\n\n<h2><strong>2. Java</strong></h2>\n\nJava is a general-purpose programming language that is used for web development, mobile development, and game development. It is one of the most popular languages in the"
+   }
+   ```
 
 ## Other optional steps
 ### Build and upload Maxengine Server image
@@ -224,7 +223,7 @@ docker push gcr.io/${PROJECT_ID}/jetstream/maxtext/maxengine-server:latest
 
 ### Build and upload HTTP Server image
 
-Build the HTTP Server Dockerfile from [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/inference-servers/jetstream/http-server) and upload to your project
+Build the HTTP Server Dockerfile from [here](hhttps://github.com/ai-on-gke/tutorials-and-examples/tree/main/inference-servers/jetstream/http-server) and upload to your project
 ```bash
 docker build -t jetstream-http .
 docker tag jetstream-http gcr.io/${PROJECT_ID}/jetstream/maxtext/jetstream-http:latest
