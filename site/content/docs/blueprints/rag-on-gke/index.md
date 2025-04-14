@@ -24,7 +24,7 @@ This is a sample to deploy a Retrieval Augmented Generation (RAG) application on
 RAG uses a semantically searchable knowledge base (like vector search) to retrieve relevant snippets for a given prompt to provide additional context to the LLM. Augmenting the knowledge base with additional data is typically cheaper than fine tuning and is more scalable when incorporating current events and other rapidly changing data spaces.
 
 ### RAG on GKE Architecture
-1. A GKE service endpoint serving [Hugging Face TGI inference](https://huggingface.co/docs/text-generation-inference/en/index) using `mistral-7b`.
+1. A GKE service endpoint serving [Hugging Face TGI inference](https://huggingface.co/docs/text-generation-inference/en/index) using **mistral-7b**.
 2. [Cloud SQL `pgvector` instance](https://github.com/pgvector/pgvector) with vector embeddings generated from an input dataset.
 3. A [Ray](https://docs.ray.io/en/latest/ray-overview/getting-started.html) cluster running on GKE that runs jobs to generate embeddings and populate the vector DB.
 5. A [Jupyter](https://docs.jupyter.org/en/latest/) notebook running on GKE that reads the dataset using GCS fuse driver integrations and runs a Ray job to populate the vector DB.
@@ -32,7 +32,7 @@ RAG uses a semantically searchable knowledge base (like vector search) to retrie
 
 This tutorial walks you through installing the RAG infrastructure in a GCP project, generating vector embeddings for a sample [Kaggle Netflix shows](https://www.kaggle.com/datasets/shivamb/netflix-shows) dataset and prompting the LLM with context.
 
-# Prerequisites
+## Prerequisites
 
 ### Install tooling (required)
 
@@ -48,7 +48,7 @@ By default, this tutorial creates a cluster on your behalf. We highly recommend 
 
 If you prefer to manage your own cluster, set `create_cluster = false` and make sure the `network_name` is set to your cluster's network in the [Installation section](#installation). Creating a long-running cluster may be better for development, allowing you to iterate on Terraform components without recreating the cluster every time.
 
-Use gcloud to create a GKE Autopilot cluster. Note that RAG requires the latest Autopilot features, available on the latest versions of 1.28 and 1.29.
+Use gcloud to create a GKE Autopilot cluster. Note that RAG requires the latest Autopilot features.
 
 ```bash
 gcloud container clusters create-auto rag-cluster \
@@ -73,18 +73,28 @@ This section sets up the RAG infrastructure in your GCP project using Terraform.
 > [!NOTE]
 > Terraform keeps state metadata in a local file called `terraform.tfstate`. Deleting the file may cause some resources to not be cleaned up correctly even if you delete the cluster. We suggest using `terraform destroy` before reapplying/reinstalling.
 
-1. `cd ai-on-gke/applications/rag`
+1. If needed, clone the repo
+   ```bash
+   git clone https://github.com/ai-on-gke/quick-start-guides
+   cd quick-start-guides/jupyter
+   ```
 
-2. Edit `workloads.tfvars` to set your project ID, location, cluster name, and GCS bucket name. Ensure the `gcs_bucket` name is globally unique (add a random suffix). Optionally, make the following changes:
+1. Edit `workloads.tfvars` to set your project ID, location, cluster name, and GCS bucket name. Ensure the `gcs_bucket` name is globally unique (add a random suffix). Optionally, make the following changes:
     * (Recommended) [Enable authenticated access](#configure-authenticated-access-via-iap-recommended) for JupyterHub, frontend chat and Ray dashboard services.
     * (Optional) Set a custom `kubernetes_namespace` where all k8s resources will be created.
     * (Optional) Set `autopilot_cluster = false` to deploy using GKE Standard.
     * (Optional) Set `create_cluster = false` if you are bringing your own cluster. If using a GKE Standard cluster, ensure it has an L4 nodepool with autoscaling and node autoprovisioning enabled. You can simplify setup by following the Terraform instructions in [`infrastructure/README.md`](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/infrastructure/README.md).
     * (Optional) Set `create_network = false` if you are bringing your own VPC. Ensure your VPC has Private Service Connect enabled as described above.
 
-3. Run `terraform init`
+1. Initialize the Terraform template
+  	```bash
+	 terraform init
+	```
 
-4. Run `terraform apply --var-file workloads.tfvars`
+1. Run Terraform creation tempalte
+    ```bash
+    terraform apply --var-file=./workloads.tfvars
+    ```
 
 ## Generate vector embeddings for the dataset
 
