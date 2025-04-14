@@ -257,7 +257,7 @@ And later finished
 You can now ssh into the pod, run different workloads and experiment.
 
 ## Fine-tune and Serve Gemma 2B on GKE
-This section details how to fine-tune Gemma 2B for SQL generation on GKE Autopilot using SkyPilot. Model artifacts stored in Google Cloud Storage (GCS) bucket and shared across pods using [gcsfuse](https://cloud.google.com/storage/docs/cloud-storage-fuse/overview). The workflow separates training and serving into distinct pods, managed through [finetune.yaml](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/skypilot/dws-and-kueue/finetune.yaml) and [serve.yaml](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/skypilot/dws-and-kueue/serve.yaml).  We'll use two SkyPilot commands for this workflow:
+This section details how to fine-tune Gemma 2B for SQL generation on GKE Autopilot using SkyPilot. Model artifacts stored in Google Cloud Storage (GCS) bucket and shared across pods using [gcsfuse](https://cloud.google.com/storage/docs/cloud-storage-fuse/overview). The workflow separates training and serving into distinct pods, managed through [finetune.yaml](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/skypilot-dws-kueue/finetune.yaml) and [serve.yaml](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/skypilot-dws-kueue/serve.yaml).  We'll use two SkyPilot commands for this workflow:
  - `sky launch`: For running the fine-tuning job 
  - `sky serve`: For deploying the model as a persistent service
 
@@ -267,10 +267,10 @@ This section details how to fine-tune Gemma 2B for SQL generation on GKE Autopil
  - HuggingFace account with access to Gemma model
 
 ### Fine-tuning Implementation
-The [finetune.py](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/skypilot/dws-and-kueue/code/finetune.py) script uses QLoRA with 4-bit quantization to fine-tune Gemma 2B on SQL generation tasks.
+The [finetune.py](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/skypilot-dws-kueue/code/finetune.py) script uses QLoRA with 4-bit quantization to fine-tune Gemma 2B on SQL generation tasks.
 
 ### Configure GCS Storage Access
-The infrastructure Terraform configuration in [main.tf](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/skypilot/dws-and-kueue/main.tf) includes Workload Identity and GCS bucket setup:
+The infrastructure Terraform configuration in [main.tf](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/skypilot-dws-kueue/main.tf) includes Workload Identity and GCS bucket setup:
     ```hcl
     module "skypilot-workload-identity" {
       source              = "terraform-google-modules/kubernetes-engine/google//modules/    workload-identity"
@@ -308,7 +308,7 @@ This will create policy binding that will allow the kubernetes service account t
     terraform output model_bucket_name
     ```
 5. Update gcsfuse configuration in `finetune.yaml` and `serve.yaml`\
-Replace the [BUCKET_NAME](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/skypilot/dws-and-kueue/finetune.yaml#L27)
+Replace the [BUCKET_NAME](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/skypilot-dws-kueue/finetune.yaml#L27)
 
 ### Fine-tune the Model
 1. Set up HuggingFace access:
