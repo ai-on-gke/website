@@ -6,6 +6,7 @@ weight: 30
 type: docs
 tags:
  - Benchmarking
+draft: true
 ---
 This framework enables you to run automated benchmarks on Google Kubernetes Engine (GKE) for AI workloads using Terraform. The benchmark utilizes an accelerator-based cluster with GPU or TPU nodes, depending on your Terraform configuration.
 

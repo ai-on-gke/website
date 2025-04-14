@@ -8,6 +8,7 @@ tags:
  - Serving
  - Tutorials
  - Mistral
+draft: true
 ---
 Learn how to serve the Mistral 7B instruct v0.1 chat model on GKE using just 1 x L4 GPU. This tutorial adapts the HF-text-generation-inference project for serving Mistral AI's model.
 
