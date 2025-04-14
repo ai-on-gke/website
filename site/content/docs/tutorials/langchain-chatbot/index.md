@@ -118,7 +118,7 @@ If you're getting a 404 error in a chat box, it means the model is not accessibl
 
 This section describes how to create an [autopilot GKE cluster](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview) using the Google Cloud CLI. An autopilot cluster is a fully managed Kubernetes cluster that automatically adjusts the resources based on the workload requirements. It is a good choice for running any type of workload as it provides a balance between cost and performance.
 
-If you already have a GKE cluster that you want to use to host the chatbot application, you can skip this section and proceed to [Prepare the Application for Deployment](#prepare-the-application-for-deployment). If you previously followed the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/kserve/kserve/) to deploy the model, you can use the same GKE cluster to deploy the chatbot application, and you don't need to create a new cluster, so you can skip this section as well.
+If you already have a GKE cluster that you want to use to host the chatbot application, you can skip this section and proceed to [Prepare the Application for Deployment](#prepare-the-application-for-deployment). If you previously followed the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/kserve/) to deploy the model, you can use the same GKE cluster to deploy the chatbot application, and you don't need to create a new cluster, so you can skip this section as well.
 
 The command below creates an autopilot GKE cluster named `langchain-chatbot-demo` in the `us-central1` region. You can adjust the region and cluster name as needed.
 
