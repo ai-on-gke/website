@@ -72,7 +72,7 @@ tags:
 
 ## Set Up Access to NVIDIA NIMs and prepare environment
 
-> [!TIP]
+> [!NOTE]
 > If you have not set up NGC, see [NGC Setup](https://ngc.nvidia.com/setup) to get your access key and begin using NGC.
 
 1. Get your NGC_API_KEY from NGC
