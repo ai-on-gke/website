@@ -345,7 +345,7 @@ Instead of manually following the steps above, you can use Terraform to automate
 Go to the `terraform` directory, make a copy of `terraform.tfvars.example`, name the copy `terraform.tfvars`, and adjust the variables for the Terraform configuration. The minimum required variables are:
 
 - `project_id` - your GCP project ID
-- `model_base_url` and `model_name` - where to find the model; if you followed the instructions from the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/kserve/kserve/), the `model_base_url` will be something like `http://huggingface-gemma2.kserve-test.33.44.55.66.sslip.io/openai/v1` if the model is running on a separate GKE cluster, or `http://huggingface-gemma2.kserve-test.svc.cluster.local/openai/v1` in case of the model running in the same GKE cluster
+- `model_base_url` and `model_name` - where to find the model; if you followed the instructions from the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/kserve/), the `model_base_url` will be something like `http://huggingface-gemma2.kserve-test.33.44.55.66.sslip.io/openai/v1` if the model is running on a separate GKE cluster, or `http://huggingface-gemma2.kserve-test.svc.cluster.local/openai/v1` in case of the model running in the same GKE cluster
 - `db_network` - the network from which the Cloud SQL instance will be accessible; it should be the same network as the GKE cluster
 - `k8s_namespace` - existing namespace in your GKE cluster where the application will be deployed
 - `k8s_app_image` - the full name of the Docker image in the Artifact Registry (e.g., `us-central1-docker.pkg.dev/my-project/langchain-chatbot/app:latest`)
