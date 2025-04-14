@@ -338,12 +338,12 @@ kubectl -n argo port-forward svc/argo-server 2746:2746
 
 6. Open argo-workflows UI at [https://localhost:2746](https://localhost:2746) and go to the [workflow templates](https://localhost:2746/workflow-templates) section. There must be a template that you have created earlier.
 
-![argo-workflows-templates](argo-workflow-create.png)
+![argo-workflows-templates](img/argo-workflow-create.png)
 
 
 7. Select this template and click submit to start the workflow:
 
-![argo-workflows-submit](argo-workflow-submit.png)
+![argo-workflows-submit](img/argo-workflow-submit.png)
 
 
 Wait until the fine-tuning process is completed and a new model is uploaded to the HuggingFace. It should take around 30 minutes to complete.
@@ -354,11 +354,11 @@ You can open the Metaflow UI at http://localhost:8083/ to monitor the execution 
 
 Note: this UI does not display the model upload status to HuggingFace
 
-![metaflow-ui](metaflow-ui.png)
+![metaflow-ui](img/metaflow-ui.png)
 
 8. Go to your [Hugging Face](https://huggingface.co/) profile to verify that the fine-tuned model has been uploaded:
 
-![huggingface](huggingface-portal.png)
+![huggingface](img/huggingface-portal.png)
 
 
 
