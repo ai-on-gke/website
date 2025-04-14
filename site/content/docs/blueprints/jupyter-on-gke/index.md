@@ -211,7 +211,7 @@ Remove the cluster and deployment by running the following command:
 terraform destroy --var-file="workloads.tfvars"
 ```
 
->[!TIP]
+>[!NOTE]
 > If you encounter a network deletion issue when applying the `terraform destroy` command,  this is becasue it fails to delete the network due to a known issue in the GCP provider. For now, the workaround is to manually delete it.
 
 ## Additional Information
