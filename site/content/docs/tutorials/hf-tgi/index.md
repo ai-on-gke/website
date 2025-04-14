@@ -63,7 +63,7 @@ Make sure you have:
 	 --node-locations $REGION-a,$REGION-b --region $REGION
 	 ```
 
-1. Deploy the application using Terraform:**
+1. Deploy the application using Terraform:
     * Set the `project_id` in `workloads.tfvars`.
     * Apply the Terraform configuration:
         ```bash
