@@ -1,6 +1,6 @@
 ---
 linkTitle: "Jetstream"
-title: "Jetstream"
+title: "Serving LLM with TPUs using Jetstream"
 description: "This tutorial shows you how to serve a large language model (LLM) using Tensor Processing Units (TPUs) on Google Kubernetes Engine (GKE) with [JetStream](https://github.com/google/JetStream) and [MaxText](https://github.com/google/maxtext)."
 weight: 30
 type: docs
@@ -8,51 +8,45 @@ tags:
  - Serving
  - Tutorials
  - Inference Servers
-draft: true
+draft: false
 ---
-## Background
+## Overview
 This tutorial shows you how to serve a large language model (LLM) using Tensor Processing Units (TPUs) on Google Kubernetes Engine (GKE) with [JetStream](https://github.com/google/JetStream) and [MaxText](https://github.com/google/maxtext). 
 
 ## Setup
 
-### Set default environment variables
-```bash
-gcloud config set project [PROJECT_ID]
-export PROJECT_ID=$(gcloud config get project)
-export REGION=[COMPUTE_REGION]
-export ZONE=[ZONE]
-```
+1. Set default environment variables
+   ```bash
+   gcloud config set project [PROJECT_ID]
+   export PROJECT_ID=$(gcloud config get project)
+   export REGION=[COMPUTE_REGION]
+   export ZONE=[ZONE]
+   ```
 
-### Create GKE cluster and node pool
-```bash
-# Create zonal cluster with 2 CPU nodes
-gcloud container clusters create jetstream-maxtext \
-    --zone=${ZONE} \
-    --project=${PROJECT_ID} \
-    --workload-pool=${PROJECT_ID}.svc.id.goog \
-    --release-channel=rapid \
-    --num-nodes=2
+1. Create a Standard GKE cluster with 2 CPU nodes.
+   ```bash
+   # Create zonal cluster with 2 CPU nodes
+   gcloud container clusters create jetstream-maxtext \
+       --zone=${ZONE} \
+       --project=${PROJECT_ID} \
+       --workload-pool=${PROJECT_ID}.svc.id.goog \
+       --release-channel=rapid \
+       --num-nodes=2
+    ```
+1. Create one v5e TPU pool with topology 2x4 (1 TPU node with 8 chips)
+   ```bash
+   gcloud container node-pools create tpu \
+       --cluster=jetstream-maxtext \
+       --zone=${ZONE} \
+       --num-nodes=2 \
+       --machine-type=ct5lp-hightpu-8t \
+       --project=${PROJECT_ID}
+   ```
 
-# Create one v5e TPU pool with topology 2x4 (1 TPU node with 8 chips)
-gcloud container node-pools create tpu \
-    --cluster=jetstream-maxtext \
-    --zone=${ZONE} \
-    --num-nodes=2 \
-    --machine-type=ct5lp-hightpu-8t \
-    --project=${PROJECT_ID}
-```
-You have created the following resources:
-
-- Standard cluster with 2 CPU nodes.
-- One v5e TPU node pool with 2 nodes, each with 8 chips.
-
-### Configure Applications to use Workload Identity
+## Configure Applications to use Workload Identity
 Prerequisite: make sure you have the following roles
-
-```
-roles/container.admin
-roles/iam.serviceAccountAdmin
-```
+- `roles/container.admin`
+- `roles/iam.serviceAccountAdmin`
 
 Follow [these steps](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#authenticating_to) to configure the IAM and Kubernetes service account:
 
@@ -83,23 +77,24 @@ $ kubectl annotate serviceaccount default \
     iam.gke.io/gcp-service-account=jetstream-iam-sa@${PROJECT_ID}.iam.gserviceaccount.com
 ```
 
-### Create a Cloud Storage bucket to store the Gemma-7b model checkpoint
+## Set up model prerequistes
 
-```bash
-gcloud storage buckets create $BUCKET_NAME
-```
+1. Create a GCS bucket to store the Gemma-7b model checkpoint
+   ```bash
+   gcloud storage buckets create $BUCKET_NAME
+   ```
 
-### Get access to the model
+1. Get access to the model using *Kaggle*
 
-Access the [model consent page](https://www.kaggle.com/models/google/gemma) and request access with your Kaggle Account. Accept the Terms and Conditions. 
+   Access the [model consent page](https://www.kaggle.com/models/google/gemma) and request access with your Kaggle Account. Accept the Terms and Conditions. 
+   
+1. Obtain a Kaggle API token by going to your Kaggle settings and under the `API` section, click `Create New Token`. A `kaggle.json` file will be downloaded.
 
-Obtain a Kaggle API token by going to your Kaggle settings and under the `API` section, click `Create New Token`. A `kaggle.json` file will be downloaded.
-
-Create a Secret to store the Kaggle credentials
-```bash
-kubectl create secret generic kaggle-secret \
-    --from-file=kaggle.json
-```
+1. Create a Secret to store the Kaggle credentials
+   ```bash
+   kubectl create secret generic kaggle-secret \
+      --from-file=kaggle.json
+   ```
 
 ## Convert the Gemma-7b checkpoint
 
@@ -111,23 +106,24 @@ To convert the Gemma-7b checkpoint, we have created a job `checkpoint-job.yaml` 
 
 In the manifest, ensure the value of the BUCKET_NAME environment variable is the name of the Cloud Storage bucket you created above. Do not include the `gs://` prefix.
 
-Apply the manifest:
-```bash
-kubectl apply -f checkpoint-job.yaml
-```
+1. Apply the manifest:
+   ```bash
+   kubectl apply -f checkpoint-job.yaml
+   ```
 
-Observe the logs:
-```bash
-kubectl logs -f jobs/data-loader-7b
-```
+1. Observe the logs:
+   ```bash
+   kubectl logs -f jobs/data-loader-7b
+   ```
 
-You should see the following output once the job has completed. This will take around 10 minutes:
-```
-Successfully generated decode checkpoint at: gs://BUCKET_NAME/final/unscanned/gemma_7b-it/0/checkpoints/0/items
-+ echo -e '\nCompleted unscanning checkpoint to gs://BUCKET_NAME/final/unscanned/gemma_7b-it/0/checkpoints/0/items'
+   You should see the following output once the job has completed. This will take around 10 minutes:
 
-Completed unscanning checkpoint to gs://BUCKET_NAME/final/unscanned/gemma_7b-it/0/checkpoints/0/items
-```
+   ```
+   Successfully generated decode checkpoint at: gs://BUCKET_NAME/final/unscanned/gemma_7b-it/0/checkpoints/0/items
+   + echo -e '\nCompleted unscanning checkpoint to gs://BUCKET_NAME/final/unscanned/gemma_7b-it/0/checkpoints/0/items'
+
+   Completed unscanning checkpoint to gs://BUCKET_NAME/final/unscanned/gemma_7b-it/0/checkpoints/0/items
+   ```
 
 ## Deploy Maxengine Server and HTTP Server
 
