@@ -8,6 +8,7 @@ tags:
  - Experimentation
  - Tutorials
  - Llama
+draft: true
 ---
 We’ll walk through fine-tuning a Llama 2 7B model using GKE using 8 x L4 GPUs. L4 GPUs are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs, at a fraction of the cost of using a higher end GPU.
 
@@ -26,7 +27,7 @@ As part of this tutorial, you will get to do the following:
 ## Prerequisites
 *   A terminal with `kubectl` and `gcloud` installed. Cloud Shell works great!
 *   L4 GPUs quota to be able to run additional 8 L4 GPUs
-*   Request access to Meta Llama models by submitting the [request access form](https://www.llama.com/llama-downloads/)
+*   Request access to Meta Llama models by submitting the [request access form](https://llama.com)
 *   Agree to the Llama 2 terms on the [Llama 2 7B HF](https://huggingface.co/meta-llama/Llama-2-7b-hf) model in HuggingFace
 
 

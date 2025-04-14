@@ -8,6 +8,7 @@ tags:
  - Serving
  - Orchestration
  - Tutorials
+draft: true
 ---
 ## Package and Deploy from Hugging Face to Artifact Registry and GKE
 

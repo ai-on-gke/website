@@ -1,4 +1,3 @@
-
 ---
 linkTitle: "Hyperdisk ML"
 title: "Hyperdisk ML"
@@ -8,6 +7,7 @@ type: docs
 tags:
  - Storage
  - Tutorials
+draft: true
 ---
 ## Populate a Hyperdisk ML Disk from Google Cloud Storage
 

@@ -1,4 +1,3 @@
-
 ---
 linkTitle: "RAG on GKE"
 title: "RAG on GKE"
@@ -8,7 +7,7 @@ type: docs
 tags: 
     - RAG on GKE
     - Blueprints
-
+draft: true
 ---
 
 This is a sample to deploy a Retrieval Augmented Generation (RAG) application on GKE. 

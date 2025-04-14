@@ -7,6 +7,7 @@ type: docs
 tags:
  - Orchestration
  - Tutorials
+draft: true
 ---
 The repository contains examples on how to use DWS in GKE. More information about DWS is
 available [here](https://cloud.google.com/kubernetes-engine/docs/how-to/provisioningrequest).
