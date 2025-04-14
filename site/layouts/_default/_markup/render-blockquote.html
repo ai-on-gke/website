@@ -6,7 +6,7 @@
 }}
 {{ if eq .Type "alert" }}
 <div class="alert alert-{{ .AlertType }}">
-  <div><span class="material-symbols-outlined">
+  <div style="display: flex;"><span class="material-symbols-outlined">
     {{ index $emojis .AlertType }}
     </span></div>
   <div class="alert-body">
