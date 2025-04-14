@@ -9,7 +9,7 @@ tags:
  - Tutorials
  - Gemma
  - Finetuning
-draft: true
+draft: false
 ---
 We’ll walk through fine-tuning a Gemma 2b model using GKE using 8 x L4 GPUs. L4 GPUs are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs, at a fraction of the cost of using a higher end GPU.
 
