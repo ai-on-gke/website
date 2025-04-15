@@ -19,6 +19,7 @@ baseUrl: https://gke-ai-labs.dev/
 
 docsDir: site
 enableGitInfo: true
+enableRobotsTXT: true
 
 contentDir: site/content
 publishDir: site/public
