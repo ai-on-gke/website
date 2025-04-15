@@ -19,6 +19,7 @@ baseUrl: https://gke-ai-labs.dev/
 
 docsDir: site
 enableGitInfo: true
+enableRobotsTXT: true
 
 contentDir: site/content
 publishDir: site/public
@@ -73,3 +74,7 @@ params:
             Thank you for your feedback.
           'no': >-
             Thank you for your feedback.
+
+services:
+  googleAnalytics:
+    id: G-7BN0PBFHK1
