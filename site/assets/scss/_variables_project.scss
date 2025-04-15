@@ -815,3 +815,13 @@ div.td-page-meta {
     border-top: none !important;
   }
 }
+
+.card-title {
+  font-weight: 700;
+  color: #1d7db3 !important;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-height: 20px;
+  white-space: nowrap;
+  margin-bottom: 8px!important;
+}
