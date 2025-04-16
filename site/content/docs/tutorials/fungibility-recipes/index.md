@@ -52,7 +52,7 @@ gcloud container clusters create $CLUSTER_NAME \
 --location=$LOCATION \
 --cluster-version=$VERSION \
 --project=$PROJECT_ID \
---labels=created-by=ai-on-gke
+--labels=created-by=ai-on-gke,guide=fungibility-recipes
 ```
 
 ## Create v6e TPU, L4 Preemptible, and L4 on demand node pools

@@ -26,7 +26,7 @@ using PyTorch. The training computation will be distributed across 4 GPU nodes i
 Run the command: 
 
 ```bash
-gcloud container clusters create demo --zone us-central1-c --labels=created-by=ai-on-gke
+gcloud container clusters create demo --zone us-central1-c --labels=created-by=ai-on-gke,guide=indexed-job
 ```
 
 You should see output indicating the cluster is being created (this can take ~10 minutes or so).

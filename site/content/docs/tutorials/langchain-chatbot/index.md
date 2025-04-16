@@ -127,7 +127,7 @@ The command below creates an autopilot GKE cluster named `langchain-chatbot-demo
 ```bash
 gcloud container clusters create-auto langchain-chatbot-demo \
   --location=us-central1 \
-  --labels=created-by=ai-on-gke
+  --labels=created-by=ai-on-gke,guide=langchain-chatbot
 ```
 
 After the cluster is created, you need to configure `kubectl` to connect to the cluster:
