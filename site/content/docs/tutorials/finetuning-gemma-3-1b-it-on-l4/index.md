@@ -1,7 +1,7 @@
 ---
-linkTitle: "Finetuning Gemma 2b on l4"
-title: "Finetuning Gemma 2b on l4"
-description: "This tutorial guides you through fine-tuning the Gemma 2b language model on Google Kubernetes Engine (GKE) using L4 GPUs, leveraging Parameter Efficient Fine Tuning (PEFT) and LoRA. It covers setting up a GKE cluster, containerizing the fine-tuning code, running the fine-tuning job, and uploading the resulting model to Hugging Face. Finally, it demonstrates how to deploy and interact with the fine-tuned model using either Hugging Face TGI or vLLM on GKE."
+linkTitle: "Finetuning Gemma-3-1b-it on l4"
+title: "Finetuning Gemma-3-1b-it on l4"
+description: "This tutorial guides you through fine-tuning the Gemma-3b-1b-it language model on Google Kubernetes Engine (GKE) using L4 GPU, leveraging Parameter Efficient Fine Tuning (PEFT) and LoRA. It covers setting up a GKE cluster, containerizing the fine-tuning code, running the fine-tuning job, and uploading the resulting model to Hugging Face. Finally, it demonstrates how to deploy and interact with the fine-tuned model using vLLM on GKE."
 weight: 30
 owner: >-
     [Francisco Cabrera](https://github.com/fcabrera23)
@@ -13,9 +13,9 @@ tags:
  - Finetuning
 draft: false
 ---
-We’ll walk through fine-tuning a Gemma 2b model using GKE using 8 x L4 GPUs. L4 GPUs are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs, at a fraction of the cost of using a higher end GPU.
+We’ll walk through fine-tuning a Gemma-3-1b-it model using GKE using L4 GPU. L4 GPU are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs, at a fraction of the cost of using a higher end GPU.
 
-Let’s get started and fine-tune Gemma 2B on the [b-mc2/sql-create-context](https://huggingface.co/datasets/b-mc2/sql-create-context) dataset using GKE.
+Let’s get started and fine-tune Gemma-3-1b-it on the [b-mc2/sql-create-context](https://huggingface.co/datasets/b-mc2/sql-create-context) dataset using GKE.
 Parameter Efficient Fine Tuning (PEFT) and LoRA is used so fine-tuning is posible
 on GPUs with less GPU memory.
 
@@ -24,7 +24,7 @@ As part of this tutorial, you will get to do the following:
 1. Prepare your environment with a GKE cluster in
     Autopilot mode.
 2. Create a finetune container.
-3. Use GPU to finetune the Gemma 2B model and upload the model to huggingface.
+3. Use GPU to finetune the Gemma-3-1b-it model and upload the model to huggingface.
 
 ## Prerequisites
 
@@ -35,13 +35,13 @@ As part of this tutorial, you will get to do the following:
 
 ## Creating the GKE cluster with L4 nodepools
 
-Let’s start by setting a few environment variables that will be used throughout this post. You should modify these variables to meet your environment and needs. 
+Let’s start by setting a few environment variables that will be used throughout this post. You should modify these variables to meet your environment and needs.
 
 Download the code and files used throughout the tutorial:
 
 ```bash
-git clone https://github.com/GoogleCloudPlatform/ai-on-gke
-cd ai-on-gke/tutorials-and-examples/genAI-LLM/finetuning-gemma-2b-on-l4
+git clone https://github.com/ai-on-gke/tutorials-and-examples.git
+cd tutorials-and-examples/finetuning-gemma-3-1b-it-on-l4
 ```
 
 Run the following commands to set the env variables and make sure to replace `<my-project-id>`:
@@ -105,7 +105,7 @@ In your shell session, do the following:
 ## Run Finetune Job on GKE
 
 1. Open the `finetune.yaml` manifest.
-2. Edit the `image` name with the container image built with Cloud Build and `NEW_MODEL` environment variable value. This `NEW_MODEL` will be the name of the model you would save as a public model in your Hugging Face account.
+2. Edit the `<IMAGE_URL>` name with the container image built with Cloud Build and `NEW_MODEL` environment variable value. This `NEW_MODEL` will be the name of the model you would save as a public model in your Hugging Face account.
 3. Run the following command to create the finetune job:
 
     ```sh
@@ -128,7 +128,7 @@ In your shell session, do the following:
 
 ## Serve the Finetuned Model on GKE
 
-To deploy the finetuned model on GKE you can follow the instructions from Deploy a pre-trained Gemma model on [Hugging Face TGI](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-tgi#deploy-pretrained) or [vLLM](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#deploy-vllm). Select the Gemma 2B instruction and change the `MODEL_ID` to `<YOUR_HUGGING_FACE_PROFILE>/gemma-2b-sql-finetuned`.
+To deploy the finetuned model on GKE you can follow the instructions from Deploy a pre-trained Gemma-3 model on  [vLLM](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#deploy-vllm). Select the `Gemma 3 1B-it` instruction and change the `MODEL_ID` to `<YOUR_HUGGING_FACE_PROFILE>/gemma-3-1b-it-sql-finetuned`.
 
 ### Set up port forwarding
 
@@ -148,29 +148,53 @@ Forwarding from 127.0.0.1:8000 -> 8000
 
 Once the model is deployed In a new terminal session, use curl to chat with your model:
 
-> The following example command is for TGI.
+> The following example command is for vLLM.
 
 ```sh
-USER_PROMPT="Question: What is the total number of attendees with age over 30 at kubecon eu? Context: CREATE TABLE attendees (name VARCHAR, age INTEGER, kubecon VARCHAR)"
-
-curl -X POST http://localhost:8000/generate \
-  -H "Content-Type: application/json" \
-  -d @- <<EOF
-{
-    "inputs": "${USER_PROMPT}",
-    "parameters": {
-        "temperature": 0.1,
-        "top_p": 0.95,
-        "max_new_tokens": 25
-    }
-}
-EOF
+curl http://127.0.0.1:8000/v1/chat/completions \
+-X POST \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "google/gemma-3-4b-it",
+    "messages": [
+        {
+          "role": "user",
+          "content": "Question: What is the total number of attendees with age over 30 at kubecon eu? Context: CREATE TABLE attendees (name VARCHAR, age INTEGER, kubecon VARCHAR)"
+        }
+    ]
+}'
 ```
 
 The following output shows an example of the model response:
 
 ```sh
-{"generated_text":" Answer: SELECT COUNT(age) FROM attendees WHERE age > 30 AND kubecon = 'eu'\n"}
+{
+  "id": "chatcmpl-5cc07394271a4183820c62199e84c7db",
+  "object": "chat.completion",
+  "created": 1744811735,
+  "model": "google/gemma-3-4b-it",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "reasoning_content": null,
+        "content": "\`\`\`sql\nSELECT COUNT(age) FROM attendees WHERE age > 30 AND kubecon = 'kubecon eu'\n\`\`\`",
+        "tool_calls": []
+      },
+      "logprobs": null,
+      "finish_reason": "stop",
+      "stop_reason": 106
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 45,
+    "total_tokens": 73,
+    "completion_tokens": 28,
+    "prompt_tokens_details": null
+  },
+  "prompt_logprobs": null
+}
 ```
 
 ## Clean Up
@@ -185,4 +209,3 @@ To avoid incurring charges to your Google Cloud account for the resources that y
 gcloud container clusters delete ${CLUSTER_NAME} \
   --region=${REGION}
 ```
-
