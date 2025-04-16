@@ -33,7 +33,7 @@ As part of this tutorial, you will get to do the following:
 * Ensure your project has sufficient quota for GPUs. To learn more, see [About GPUs](https://cloud.google.com/kubernetes-engine/docs/concepts/gpus#gpu_quota) and [Allocation quotas](https://cloud.google.com/compute/resource-usage#gpu_quota).
 * To get access to the Gemma models for deployment to GKE, you must first sign the license consent agreement then generate a Hugging Face access token. Make sure the token has `Write` permission.
 
-## Creating the GKE cluster with L4 nodepools
+## Creating the GKE cluster with L4 nodepool
 
 Let’s start by setting a few environment variables that will be used throughout this post. You should modify these variables to meet your environment and needs.
 
