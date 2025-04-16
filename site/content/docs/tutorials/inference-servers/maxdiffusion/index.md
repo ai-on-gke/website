@@ -66,7 +66,8 @@ gcloud container clusters create $CLUSTER_NAME --location ${REGION} \
   --cluster-version 1.29 \
   --num-nodes 1 --min-nodes 1 --max-nodes 3 \
   --ephemeral-storage-local-ssd=count=2 \
-  --scopes="gke-default,storage-rw"
+  --scopes="gke-default,storage-rw" \
+  --labels=created-by=ai-on-gke
 ```
 
 ### Nodepool

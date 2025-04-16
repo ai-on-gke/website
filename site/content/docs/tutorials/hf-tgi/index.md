@@ -44,9 +44,10 @@ Make sure you have:
 	gcloud container clusters create l4-demo --location ${REGION}   \
 	--workload-pool ${PROJECT_ID}.svc.id.goog   --enable-image-streaming \
 	--node-locations=$REGION-a --addons GcsFuseCsiDriver  \
-	 --machine-type n2d-standard-4  \
-	 --num-nodes 1 --min-nodes 1 --max-nodes 5   \
-	--ephemeral-storage-local-ssd=count=2 --enable-ip-alias
+	--machine-type n2d-standard-4  \
+	--num-nodes 1 --min-nodes 1 --max-nodes 5   \
+	--ephemeral-storage-local-ssd=count=2 --enable-ip-alias \
+    --labels=created-by=ai-on-gke
 	```
 
  1. Get cluster credentials

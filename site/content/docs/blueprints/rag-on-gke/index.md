@@ -53,7 +53,8 @@ Use gcloud to create a GKE Autopilot cluster. Note that RAG requires the latest 
 ```bash
 gcloud container clusters create-auto rag-cluster \
   --location us-central1 \
-  --cluster-version 1.28
+  --cluster-version 1.28 \
+  --labels=created-by=ai-on-gke
 ```
 
 ### Bring your own VPC (optional)

@@ -63,7 +63,8 @@ gcloud container clusters create-auto ${CLUSTER_NAME} \
   --project=${PROJECT_ID} \
   --region=${REGION} \
   --release-channel=rapid \
-  --cluster-version=1.29
+  --cluster-version=1.29 \
+  --labels=created-by=ai-on-gke
 ```
 
 ### Create a Kubernetes secret for Hugging Face credentials

@@ -51,7 +51,8 @@ export HF_TOKEN=HUGGING_FACE_TOKEN
 gcloud container clusters create $CLUSTER_NAME \
 --location=$LOCATION \
 --cluster-version=$VERSION \
---project=$PROJECT_ID
+--project=$PROJECT_ID \
+--labels=created-by=ai-on-gke
 ```
 
 ## Create v6e TPU, L4 Preemptible, and L4 on demand node pools

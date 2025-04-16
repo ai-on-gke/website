@@ -47,7 +47,8 @@ Create two clusters, you can create  the clusters in parrallel to reduce time.
 	```bash
 	gcloud container clusters create demo-us-central1 \
 	    --location=us-central1-c \
-	    --project=$PROJECT_ID 
+	    --project=$PROJECT_ID \
+  	  --labels=created-by=ai-on-gke
 	```
 	```bash
 	gcloud container node-pools create gpu-node-pool \
@@ -67,7 +68,8 @@ Create two clusters, you can create  the clusters in parrallel to reduce time.
 	```bash
 	gcloud container clusters create demo-us-west1 \
 	    --location=us-west1-a \
-	    --project=$PROJECT_ID 
+	    --project=$PROJECT_ID \
+  		--labels=created-by=ai-on-gke
 	```
 	```bash
 	gcloud container node-pools create gpu-node-pool \

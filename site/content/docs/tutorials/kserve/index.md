@@ -38,7 +38,8 @@ Additionally, this tutorial includes an example of serving Gemma2 with vLLM in K
    gcloud container clusters create-auto ${CLUSTER_NAME} \
      --location=$REGION \
      --project=$PROJECT_ID \
-     --workload-policies=allow-net-admin
+     --workload-policies=allow-net-admin \
+     --labels=created-by=ai-on-gke
 
    # Get credentials
    gcloud container clusters get-credentials ${CLUSTER_NAME} \
