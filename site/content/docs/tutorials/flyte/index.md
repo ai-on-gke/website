@@ -3,6 +3,8 @@ linkTitle: "Flyte"
 title: "Running Flyte on GKE"
 description: "This guide illustrates the deployment of Flyte on Google Kubernetes Engine (GKE) using Helm, utilizing Google Cloud Storage for scalable data storage and Cloud SQL PostgreSQL for a reliable metadata store. By the end of this tutorial, you will have a fully functional Flyte instance on GKE, offering businesses seamless integration with the GCP ecosystem, improved resource efficiency, and cost-effectiveness."
 weight: 30
+owner: >-
+    [Vlado Djerek](https://github.com/volatilemolotov)
 type: docs
 tags:
   - Orchestration

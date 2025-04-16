@@ -4,6 +4,8 @@ title: "Fine-tune gemma-2-9b and track as an experiment in MLFlow"
 description: "In this tutorial we will fine-tune gemma-2-9b using LoRA as an experiment in MLFlow. We will deploy MLFlow on a GKE cluster and set up MLFlow to store artifacts inside a GCS bucket. In the end, we will deploy a fine-tuned model using KServe."
 weight: 30
 type: docs
+owner: >-
+    [Vlado Djerek](https://github.com/volatilemolotov)
 resources:
 - src: "**img*.png"
 
