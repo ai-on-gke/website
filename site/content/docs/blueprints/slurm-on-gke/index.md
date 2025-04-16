@@ -446,7 +446,7 @@ individual resources.
 	terraform  destroy
 	```
 
-	>![IMPORTANT]
+	>[!CAUTION]
 	>This step deletes all the resources that you created previously: the GKE cluster, the VPC network, the firewall rules, and the Google Cloud project.
 
 ## License

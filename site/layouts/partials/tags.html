@@ -28,7 +28,7 @@
     {{ if len (.Store.Get "pagesToDisplay") }}
     {{ range $key, $value := .Store.Get "pagesToDisplay" }}
     <div class="col-sm-12 col-md-6 col-lg-4 me-auto" style="padding: 15px;">
-      <a href="{{ $key }}" class="continue-reading-link"
+      <a href="{{ $key }}?from=continue-reading" class="continue-reading-link"
         style="text-decoration: none;">
         <div
           style="padding: 35px 25px; background-color: rgb(240,240,240); height: 170px;">
@@ -52,7 +52,7 @@
     {{ if gt (page.Store.Get "maxRelativeArticles") 0 }}
     {{ page.Store.Set "maxRelativeArticles" (sub (page.Store.Get "maxRelativeArticles") 1) }}
     <div class="col-sm-12 col-md-6 col-lg-4 me-auto" style="padding: 15px;">
-      <a href="{{ $page.Permalink }}" class="continue-reading-link"
+      <a href="{{ $page.Permalink }}?from=continue-reading" class="continue-reading-link"
         style="text-decoration: none;">
         <div
           style="padding: 35px 25px; background-color: rgb(240,240,240); height: 170px; overflow: hidden;">
@@ -73,7 +73,7 @@
     {{ if gt (page.Store.Get "maxRelativeArticles") 0 }}
     {{ page.Store.Set "maxRelativeArticles" (sub (page.Store.Get "maxRelativeArticles") 1) }}
     <div class="col-sm-12 col-md-6 col-lg-4 me-auto" style="padding: 15px;">
-      <a href="{{ $page.Permalink }}" class="continue-reading-link"
+      <a href="{{ $page.Permalink }}?from=continue-reading" class="continue-reading-link"
         style="text-decoration: none;">
         <div
           style="padding: 35px 25px; background-color: rgb(240,240,240); height: 170px; overflow: hidden;">

@@ -119,3 +119,33 @@ for (let c of containers) {
 }
 </script>
 {{ end -}}
+
+
+<script>
+  const sideBar = document.querySelector('.td-sidebar__search');
+  const sendData = (value) => {
+    if (typeof gtag !== 'function') return;
+    gtag('event', 'search_button', {
+      'event_category': 'Search',
+      'event_label': window.location.pathname,
+      'value': value,
+    });
+  };
+
+  if (sideBar) {
+    const sideBarSearchButton = sideBar.querySelector('.search-button');
+    const sideBarSearchInput = sideBar.querySelector('.td-search__input');
+    sideBarSearchButton.addEventListener('click', () => {
+      sendData(sideBarSearchInput.value);
+    });
+  };
+ 
+  const searchButton = document.querySelector('.search-button');
+  const input = document.querySelector('.td-search__input');
+  searchButton.addEventListener('click', () => {
+    sendData(input.value);
+  });
+
+
+ 
+</script>
