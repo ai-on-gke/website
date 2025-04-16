@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 $primary: #1d7db3;
-$secondary: #3ba256;
 
 $light: #fff;
 $google_font_name: "Google Sans";
@@ -823,5 +822,98 @@ div.td-page-meta {
   overflow: hidden;
   max-height: 20px;
   white-space: nowrap;
-  margin-bottom: 8px!important;
+  margin-bottom: 8px !important;
+}
+
+.user-satisfaction-container {
+  border-radius: 28px 28px 0px 0px;
+  position: sticky;
+  background-color: #f0f4f9;
+  margin-top: -450px;
+  display: flex;
+  bottom: 0;
+  flex-direction: column;
+  gap: 8px;
+  width: 412px;
+  height: 450px;
+  padding: 0 16px;
+  margin-left: auto;
+  z-index: 1000;
+
+  .widget-content {
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .toggler {
+    display: flex;
+    justify-content: space-around;
+    padding: 16px;
+    align-items: center;
+    cursor: pointer;
+
+    &.closed {
+      rotate: 180deg;
+    }
+  }
+
+  .title {
+    font-weight: 500 !important;
+    font-size: 16px;
+    line-height: 24px;
+    color: #1f1f1f;
+  }
+
+  .widget-response {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .user-satisfaction {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option {
+    border-radius: 8px;
+    padding: 8px 10px 8px 10px;
+    display: flex;
+    gap: 8px;
+    &:hover {
+      background-color: #c2e7ff;
+    }
+
+    &.selected {
+      background-color: #c2e7ff;
+    }
+  }
+
+  .option-text {
+    &.selected {
+      color: #004a77;
+      fill: red;
+    }
+    cursor: pointer;
+    margin-bottom: 0 !important;
+    color: #444746;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0px;
+  }
+
+  .button-section {
+    display: flex;
+    justify-content: end;
+    gap: 8px;
+  }
+}
+
+body {
+  position: relative;
 }
