@@ -53,7 +53,8 @@ tags:
 	  --addons=GcpFilestoreCsiDriver  \
 	  --machine-type n2d-standard-4 \
 	  --num-nodes 1 --min-nodes 1 --max-nodes 5 \
-	  --ephemeral-storage-local-ssd=count=2
+	  --ephemeral-storage-local-ssd=count=2 \
+  	--labels=created-by=ai-on-gke,guide=nim-on-gke
 	```
 
 1. Get cluster credentials

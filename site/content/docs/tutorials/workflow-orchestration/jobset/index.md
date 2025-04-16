@@ -23,7 +23,7 @@ using PyTorch. The training computation will be distributed across 4 nodes in a 
 ### 1. Create a GKE cluster with 4 nodes
 Run the command: 
 
-```gcloud container clusters create jobset-cluster --zone us-central1-c --num_nodes=4```
+```gcloud container clusters create jobset-cluster --zone us-central1-c --num_nodes=4 --labels=created-by=ai-on-gke,guide=jobset```
 
 You should see output indicating the cluster is being created (this can take ~10 minutes or so).
 
