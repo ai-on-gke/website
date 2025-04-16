@@ -4,7 +4,7 @@
         {{ ( . | minify).Content | safeHTML -}}
         {{ end -}}
     </div>
-    <div class="widget-content" style="display: flex;">
+    <div class="widget-content" style="display: none;">
         <p class="title">How satisfied are you with the content of the website?
         </p>
         <div class="user-satisfaction">
@@ -53,7 +53,7 @@
                 onclick="sendData()">Submit</button>
         </div>
     </div>
-    <div class="widget-response" style="display: none; text-align: center;">Thank you for you feedback!</div>
+    <div class="widget-response" style="display: none; text-align: center;">Thank you for your feedback!</div>
 </div>
 <script>
     if (localStorage.getItem("feedbackSent")) {
@@ -114,8 +114,8 @@
             toggler.className = 'toggler';
         } else {
             widgetContent.style.display = 'none';
-            container.style.height = 'auto';
-            container.style.marginTop = '-56px';
+            container.style.height = '36px';
+            container.style.marginTop = '-36px';
             toggler.className = 'toggler closed';
         }
     }
