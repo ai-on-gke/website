@@ -47,7 +47,7 @@ Make sure you have:
 	--machine-type n2d-standard-4  \
 	--num-nodes 1 --min-nodes 1 --max-nodes 5   \
 	--ephemeral-storage-local-ssd=count=2 --enable-ip-alias \
-    --labels=created-by=ai-on-gke,guide=hf-tgi
+	--labels=created-by=ai-on-gke,guide=hf-tgi
 	```
 
  1. Get cluster credentials
