@@ -4,6 +4,8 @@ title: "Deploying a Persistent Chatbot on Google Cloud Platform with LangChain, 
 description: "In this tutorial, you will learn how to deploy a chatbot application using [LangChain](https://python.langchain.com/) and [Streamlit](https://streamlit.io/) on Google Cloud Platform (GCP)."
 weight: 30
 type: docs
+owner: >-
+    [Vlado Djerek](https://github.com/volatilemolotov)
 tags:
  - Serving
  - Experimentation
