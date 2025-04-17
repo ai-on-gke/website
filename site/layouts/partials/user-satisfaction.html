@@ -50,7 +50,7 @@
                 style="background-color: #f0f4f9; border: none; color: #0b57d0; box-shadow:none;"
                 onclick="toggleUserSatisfaction()">Cancel</button>
             <button class="btn btn-primary submit-button"
-                onclick="sendData()">Submit</button>
+                onclick="sendUserData()">Submit</button>
         </div>
     </div>
     <div class="widget-response" style="display: none; text-align: center;">Thank you for your feedback!</div>
@@ -75,7 +75,7 @@
         });
     });
 
-    function sendData() {
+    function sendUserData() {
         const container = document.querySelector('.user-satisfaction-container');
         const buttonSection = container.querySelector('.submit-button');
         const widgetContent = container.querySelector('.widget-content');
