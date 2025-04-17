@@ -29,7 +29,7 @@ Ensure you have a GCP project with a billing account. Enable the following APIs 
 Ensure you have the following tools installed on your workstation:
 ```bash
 gcloud CLI
-gcloud kubectl
+kubectl
 terraform
 helm
 ```
