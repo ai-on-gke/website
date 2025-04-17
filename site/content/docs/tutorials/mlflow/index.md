@@ -32,11 +32,18 @@ gcloud CLI
 kubectl
 terraform
 helm
+git
 ```
 If you previously installed the gcloud CLI, get the latest version by running `gcloud components update`
 
 ## Set up
 If you don’t have a GCP project, you have to create one. Ensure that your project has access to GKE.
+
+Clone the repository with our guides and cd to the llamaindex/rag directory by running these commands:
+```bash
+git clone https://github.com/ai-on-gke/tutorials-and-examples.git
+cd tutorials-and-examples/mlflow/finetune-gemma
+```
 
 Run these commands to authenticate:
 ```bash
@@ -44,7 +51,7 @@ gcloud auth login
 gcloud auth application-default login
 ```
 
-Enter the `terraform-gke-cluster` folder 
+Enter the `terraform-gke-cluster` folder
 ```bash
 cd terraform-gke-cluster
 ```
