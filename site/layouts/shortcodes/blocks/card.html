@@ -8,7 +8,7 @@ $description := .Get "description" -}} {{ $col_id := .Get "col_id" -}} {{ $link
     {{ end -}}
   </div>
 
-  <div class="title" role="heading">{{ $title }}</div>
+  <div class="title" role="heading" aria-level="4">{{ $title }}</div>
 
   {{ if $description -}}
   <div class="use-case-card-description">{{ $description }}</div>
