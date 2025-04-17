@@ -40,7 +40,7 @@ site/content/docs/tutorials/hf-tgi @ai-on-gke/gke-ai-labs
 site/content/docs/tutorials/inference-servers/checkpoints @ai-on-gke/gke-ai-labs
 site/content/docs/tutorials/inference-servers/jetstream @ai-on-gke/gke-ai-labs
 site/content/docs/tutorials/inference-servers/maxdiffusion @ai-on-gke/gke-ai-labs
-site/content/docs/tutorials/kserve @ai-on-gke/gke-ai-labs
+site/content/docs/tutorials/inference-servers/kserve @ai-on-gke/gke-ai-labs
 site/content/docs/tutorials/langchain-chatbot @ai-on-gke/akvelon
 site/content/docs/tutorials/llamaindex @ai-on-gke/akvelon
 site/content/docs/tutorials/metaflow @ai-on-gke/akvelon

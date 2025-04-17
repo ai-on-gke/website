@@ -342,7 +342,7 @@ gcloud artifacts repositories remove-iam-policy-binding gemma-deployment \
 
 Go to the `deploy-gemma2/kserve` directory. In this section we will use KServe to deploy our fine-tuned model.
 
-To install KServe, you can follow [the guide in our repo](https://gke-ai-labs.dev/docs/tutorials/kserve/kserve/). After the successful installation, we need to patch the deployment mode and create an ingress class.
+To install KServe, you can follow [the guide in our repo](https://gke-ai-labs.dev/docs/tutorials/inference-servers/kserve/). After the successful installation, we need to patch the deployment mode and create an ingress class.
 Run the command below:
 ```bash
 kubectl patch configmap/inferenceservice-config -n kserve --type=strategic -p '{"data": {"deploy": "{\"defaultDeploymentMode\": \"RawDeployment\"}"}}'
