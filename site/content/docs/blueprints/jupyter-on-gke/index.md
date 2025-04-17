@@ -24,7 +24,7 @@ This module deploys the following resources, once per user:
     - *iap.googleapis.com* (required when using authentication with Identity Aware Proxy)
 
 2. A functional GKE cluster.
-    - To create a new standard or autopilot cluster, follow the instructions in [`infrastructure/README.md`](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/infrastructure/README.md)
+    - To create a new standard or autopilot cluster, follow the instructions in [`infrastructure/README.md`](https://github.com/ai-on-gke/quick-start-guides/tree/main/common/infrastructure)
     - Alternatively, you can set the `create_cluster` variable to true in `workloads.tfvars` to provision a new GKE cluster. This will default to creating a GKE Autopilot cluster; if you want to provision a standard cluster you must also set `autopilot_cluster` to false.
 
 3. This module is configured to use Identity Aware Proxy (IAP) as default authentication method for JupyterHub. It expects the brand & the OAuth consent configured in your org. You can check the details here: [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
