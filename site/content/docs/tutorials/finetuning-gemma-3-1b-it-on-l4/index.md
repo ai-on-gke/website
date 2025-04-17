@@ -1,7 +1,7 @@
 ---
-linkTitle: "Finetuning Gemma-3-1b-it on l4"
-title: "Finetuning Gemma-3-1b-it on l4"
-description: "This tutorial guides you through fine-tuning the Gemma-3b-1b-it language model on Google Kubernetes Engine (GKE) using L4 GPU, leveraging Parameter Efficient Fine Tuning (PEFT) and LoRA. It covers setting up a GKE cluster, containerizing the fine-tuning code, running the fine-tuning job, and uploading the resulting model to Hugging Face. Finally, it demonstrates how to deploy and interact with the fine-tuned model using vLLM on GKE."
+linkTitle: "Finetuning Gemma 3-1B-it on l4"
+title: "Finetuning Gemma 3-1B-it on l4"
+description: "This tutorial guides you through fine-tuning the Gemma 3-1B-it language model on Google Kubernetes Engine (GKE) using L4 GPU, leveraging Parameter Efficient Fine Tuning (PEFT) and LoRA. It covers setting up a GKE cluster, containerizing the fine-tuning code, running the fine-tuning job, and uploading the resulting model to Hugging Face. Finally, it demonstrates how to deploy and interact with the fine-tuned model using vLLM on GKE."
 weight: 30
 owner: >-
     [Francisco Cabrera](https://github.com/fcabrera23)
@@ -13,9 +13,9 @@ tags:
  - Finetuning
 draft: false
 ---
-We’ll walk through fine-tuning a Gemma-3-1b-it model using GKE using L4 GPU. L4 GPU are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs, at a fraction of the cost of using a higher end GPU.
+We’ll walk through fine-tuning a Gemma 3-1B-it model using GKE using L4 GPU. L4 GPU are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs, at a fraction of the cost of using a higher end GPU.
 
-Let’s get started and fine-tune Gemma-3-1b-it on the [b-mc2/sql-create-context](https://huggingface.co/datasets/b-mc2/sql-create-context) dataset using GKE.
+Let’s get started and fine-tune Gemma 3-1B-it on the [b-mc2/sql-create-context](https://huggingface.co/datasets/b-mc2/sql-create-context) dataset using GKE.
 Parameter Efficient Fine Tuning (PEFT) and LoRA is used so fine-tuning is posible
 on GPUs with less GPU memory.
 
@@ -23,8 +23,8 @@ As part of this tutorial, you will get to do the following:
 
 1. Prepare your environment with a GKE cluster in
     Autopilot mode.
-2. Create a finetune container.
-3. Use GPU to finetune the Gemma-3-1b-it model and upload the model to huggingface.
+2. Create a fine-tuning container.
+3. Use GPU to fine-tune the Gemma 3-1B-it model and upload the model to huggingface.
 
 ## Prerequisites
 
@@ -63,7 +63,7 @@ gcloud container clusters create-auto ${CLUSTER_NAME} \
   --project=${PROJECT_ID} \
   --region=${REGION} \
   --release-channel=rapid \
-  --labels=created-by=ai-on-gke,guide=finetuning-gemma-2b-on-l4
+  --labels=created-by=ai-on-gke,guide=finetuning-gemma-3-1b-it-on-l4
 ```
 
 ### Create a Kubernetes secret for Hugging Face credentials
@@ -102,11 +102,11 @@ In your shell session, do the following:
     gcloud builds submit .
     ```
 
-## Run Finetune Job on GKE
+## Run Fine-tuning Job on GKE
 
 1. Open the `finetune.yaml` manifest.
 2. Edit the `<IMAGE_URL>` name with the container image built with Cloud Build and `NEW_MODEL` environment variable value. This `NEW_MODEL` will be the name of the model you would save as a public model in your Hugging Face account.
-3. Run the following command to create the finetune job:
+3. Run the following command to create the fine-tuning job:
 
     ```sh
     kubectl apply -f finetune.yaml
@@ -126,9 +126,9 @@ In your shell session, do the following:
 
 6. Once the job is completed, you can check the model in Hugging Face.
 
-## Serve the Finetuned Model on GKE
+## Serve the Fine-tuned Model on GKE
 
-To deploy the finetuned model on GKE you can follow the instructions from Deploy a pre-trained Gemma-3 model on  [vLLM](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#deploy-vllm). Select the `Gemma 3 1B-it` instruction and change the `MODEL_ID` to `<YOUR_HUGGING_FACE_PROFILE>/gemma-3-1b-it-sql-finetuned`.
+To deploy the fine-tuned model on GKE you can follow the instructions from Deploy a pre-trained Gemma-3 model on  [vLLM](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#deploy-vllm). Select the `Gemma 3 1B-it` instruction and change the `MODEL_ID` to `<YOUR_HUGGING_FACE_PROFILE>/gemma-3-1b-it-sql-finetuned`.
 
 ### Set up port forwarding
 
@@ -155,7 +155,7 @@ curl http://127.0.0.1:8000/v1/chat/completions \
 -X POST \
 -H "Content-Type: application/json" \
 -d '{
-    "model": "google/gemma-3-4b-it",
+    "model": "google/gemma-3-1b-it",
     "messages": [
         {
           "role": "user",
@@ -172,7 +172,7 @@ The following output shows an example of the model response:
   "id": "chatcmpl-5cc07394271a4183820c62199e84c7db",
   "object": "chat.completion",
   "created": 1744811735,
-  "model": "google/gemma-3-4b-it",
+  "model": "google/gemma-3-1b-it",
   "choices": [
     {
       "index": 0,
