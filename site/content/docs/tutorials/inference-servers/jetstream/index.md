@@ -33,7 +33,8 @@ This tutorial shows you how to serve a large language model (LLM) using Tensor P
        --project=${PROJECT_ID} \
        --workload-pool=${PROJECT_ID}.svc.id.goog \
        --release-channel=rapid \
-       --num-nodes=2
+       --num-nodes=2 \
+       --labels=created-by=ai-on-gke,guide=jetstream
     ```
 1. Create one v5e TPU pool with topology 2x4 (1 TPU node with 8 chips)
    ```bash
