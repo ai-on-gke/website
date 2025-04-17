@@ -27,7 +27,7 @@ Ensure you have a GCP project with a billing account. Enable the following APIs 
 - [Artifact Registry API](https://console.cloud.google.com/marketplace/product/google/artifactregistry.googleapis.com?returnUrl=/artifacts?invt%3DAbma5w%26inv%3D1%26project%3Dcvdjango&project=cvdjango&inv=1&invt=Abma5w&flow=gcp)
 
 Ensure you have the following tools installed on your workstation:
-```
+```bash
 gcloud CLI
 gcloud kubectl
 terraform
@@ -44,7 +44,11 @@ gcloud auth login
 gcloud auth application-default login
 ```
 
-Run `cd terraform-gke-cluster` and adjust in the `example_environments.tfvars` file the following variables:
+Enter the `terraform-gke-cluster` folder 
+```bash
+cd terraform-gke-cluster
+```
+ and adjust in the `example_environments.tfvars` file the following variables:
 - `project_id` – your GCP project id.
 - `cluster_name` – any name for your cluster.
 - `kubernetes_namespace` – any GKE environment variable namespace.

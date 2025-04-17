@@ -45,13 +45,12 @@ The tutorial is designed for ML Platform engineers who plan to use Metaflow for 
 
 If you previously installed the gcloud CLI, get the latest version by running:
 
-```
+```bash
 gcloud components update
 ```
+Ensure that you are signed in using the gcloud CLI tool. Run the following command:
 
- Ensure that you are signed in using the gcloud CLI tool. Run the following command:
-
-```
+```bash
 gcloud auth application-default login
 ```
 
@@ -75,7 +74,7 @@ It creates:
 
 1. Go the the terraform directory:
 
-```
+```bash
 cd terraform
 ```
 
@@ -88,7 +87,7 @@ Other values can be changed, if needed, but can be left with default values.
 
 3. (Optional) For better state management and collaboration, you can configure Terraform to store its state in a GCS bucket instead of keeping it locally.  [Create a bucket](https://cloud.google.com/storage/docs/creating-buckets#command-line) manually and then uncomment the content of the file `terraform/backend.tf` and specify your bucket:
 
-```
+```hcl
 terraform {
    backend "gcs" {
      bucket = "<bucket_name>"
@@ -99,20 +98,19 @@ terraform {
 
 4. Init terraform modules:
 
-```
+```bash
 terraform init
 ```
 
- 
 5. Optionally run the `plan` command to view an execution plan: 
 
-```
+```bash
 terraform plan -var-file=default_env.tfvars
 ```
 
 6. Execute the plan:
 
-```
+```bash
 terraform apply -var-file=default_env.tfvars
 ```
 
@@ -136,7 +134,7 @@ project_id = "akvelon-gke-aieco"
 
 7. Configure your kubectl context:
 
-```
+```bash
 gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location) --project $(terraform output -raw project_id)
 ```
 
@@ -153,37 +151,37 @@ The manifests are generated from templates in the `metaflow/manifests/` director
 
 1. Apply metadata service manifest:
 
-```
+```bash
 kubectl apply -f ../gen/metaflow-metadata.yaml
 ```
 
 2. Wait for deployment is completed:
 
-```
+```bash
 kubectl rollout status deployment/metaflow-metadata
 ```
 
 3. Apply UI service manifest:
 
-```
+```bash
 kubectl apply -f ../gen/metaflow-ui.yaml
 ```
 
 4. Wait for deployment is completed:
 
-```
+```bash
 kubectl rollout status deployment/metaflow-ui
 ```
 
 5. Open new terminal and forward the metadata service port. Keep this terminal running to ensure connection to a remote metadata service:
 
-```
+```bash
 kubectl port-forward svc/metaflow-metadata-svc 8080:8080
 ```
 
 6. Open new terminal and forward port for UI. Keep this terminal running to ensure connection to a Metaflow UI service:
 
-```
+```bash
 kubectl port-forward svc/metaflow-ui-svc 8083:8083
 ```
 
@@ -195,7 +193,7 @@ kubectl port-forward svc/metaflow-ui-svc 8083:8083
 
 1. Create a Python virtual environment, activate it and install Metaflow and other requirements.
 
-```
+```bash
 python3 -m venv ../venv
 . ../venv/bin/activate
 python3 -m pip install metaflow google-cloud-storage google-auth kubernetes==31.0.0
@@ -203,14 +201,14 @@ python3 -m pip install metaflow google-cloud-storage google-auth kubernetes==31.
 
 2. Create metaflow’s config folder, if not present:
 
-```
+```bash
 mkdir -p ~/.metaflowconfig
 ```
 
 3. Create Metaflow config. Some of the missing values we get from the terraform output.
 
 
-```
+```bash
 cat <<EOF > ~/.metaflowconfig/config.json
 {
 "METAFLOW_DEFAULT_METADATA": "service",
@@ -247,7 +245,7 @@ The model fine-tuning process requires a dedicated environment, which we will en
 
 1. Build the image using [Cloud Build](https://cloud.google.com/build/docs/overview) and push it to the newly created repository. That may take some time:
 
-```
+```bash
 gcloud builds submit ../finetune_inside_metaflow/image --config=../cloudbuild.yaml
 ```
 
@@ -257,31 +255,29 @@ gcloud builds submit ../finetune_inside_metaflow/image --config=../cloudbuild.ya
 
 1. Specify your [HuggingFace token](https://huggingface.co/settings/tokens). It will be used to access model that we want to finetune:
 
-```
-HF_TOKEN="<your_token>"
+```bash
+export HF_TOKEN="<your_token>"
 ```
 
 2. Specify your HuggingFase user
 
-```
-HF_USERNAME="<your_username>"
+```bash
+export HF_USERNAME="<your_username>"
 ```
 
 3. Create secret with your token to HuggingFace:
 
-```
+```bash
 kubectl -n argo create secret generic hf-token --from-literal=HF_TOKEN=${HF_TOKEN}
 ```
 
 4. Create argo-workflows template from the metaflow fine-tuning script:
 
-```
+```bash
 python3 ../finetune_inside_metaflow/finetune_gemma.py argo-workflows create
 ```
 
-<details>
-
-<summary> More details on the flow class :</summary>
+Here is the overfiew of the FinetuneFlow class: 
 
 
 ```
@@ -329,12 +325,10 @@ class FinetuneFlow(FlowSpec):
         print("FinetuneFlow is finished.")
 
 ```
-</details>
-
 
 5. Open new terminal and forward port for argo-workflows server. Keep this terminal running to ensure uninterrupted access to the argo-workflows UI.
 
-```
+```bash
 kubectl -n argo port-forward svc/argo-server 2746:2746
 ```
 
@@ -368,32 +362,32 @@ Note: this UI does not display the model upload status to HuggingFace
 
 1. Replace the placeholder for your HuggingFace handle and run this command. 
 
-```
+```bash
 kubectl create configmap vllm-config --from-literal=model_id="${HF_USERNAME}/finetunned-gemma2-9b"
 ```
 
 2. Create secret with your token to HuggingFace:
 
-```
+```bash
 kubectl create secret generic hf-token --from-literal=HF_TOKEN=${HF_TOKEN}
 ```
 
 3. Deploy the resulting model to GKE. This will deploy the inference server and it will serve a previously finetuned model. The deployment `serve_model/vllm_deplyment.yaml`  is based on this [instruction](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#gemma-2-9b-it)
 
 
-```
+```bash
 kubectl apply -f ../serve_model/vllm_deplyment.yaml
 ```
 
 4. Wait for deployment is completed. It may take some time:
 
-```
+```bash
 kubectl rollout status deployment/vllm-gemma-deployment
 ```
 
 5. Wait until the model is pulled and initialized. Open pod's container log watch:
 
-```
+```bash
 kubectl logs  -l app=gemma-server -f
 
 ```
@@ -412,14 +406,13 @@ Press `Ctrl+C` to quit the log watch.
 
 6. Open another terminal and forward port for of the inference server:
 
-```
+```bash
 kubectl port-forward svc/llm-service 8000:8000
 ```
 
 7. Interact with the model
 
-```
-
+```bash
 USER_PROMPT="Question: What is the total number of attendees with age over 30 at kubecon \\\"EU\\\"? Context: CREATE TABLE attendees (name VARCHAR, age INTEGER, kubecon VARCHAR)\nAnswer:"
 
 curl -X POST http://localhost:8000/generate \
@@ -444,7 +437,7 @@ The output should look like this:
 
 1. Destroy the provisioned infrastructure.
 
-```
+```bash
 cd terraform 
 terraform destroy -var-file=default_env.tfvars
 ```

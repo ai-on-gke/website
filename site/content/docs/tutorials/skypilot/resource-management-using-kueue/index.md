@@ -45,7 +45,7 @@ We’ll use Terraform to provision:
     autopilot_cluster = true  # Set to false for Standard cluster
     ```
 2. (Optional) For Standard clusters: Configure GPU node pools in example_environment.tfvars by uncommenting and adjusting the gpu_pools block as needed. 
-    ```
+    ```bash
     gpu_pools = [ {
       name                = "gpu-pool"
       queued_provisioning = true
@@ -66,8 +66,8 @@ We’ll use Terraform to provision:
     ```bash
     terraform apply -var-file=your_environment.tfvar
     ```
-And you should see your resources created:
-    ```hsl
+    And you should see your resources created:
+    ```
     Apply complete! Resources: 24 added, 0 changed, 0 destroyed.
 
     Outputs:
@@ -143,17 +143,18 @@ Kueue should be up and running now.
 
     ```
 Create SkyPilot configuration. Add `autoscaler: gke` to enable SkyPilot to work with GKE's cluster autoscaling capabilities, allowing you to run workloads without pre-provisioned GPU nodes.
-    ```yaml
-    # Create and edit ~/.sky/config.yaml
-    # Change PROJECT_NAME, LOCATION and CLUSTER_NAME
-    allowed_clouds:
-      - kubernetes
-    kubernetes:
-      # Use the context's name
-      allowed_contexts:
-        - gke_${PROJECT_NAME}_${LOCATION}_${CLUSTER_NAME}
-      autoscaler: gke
-    ```
+
+```yaml 
+# Create and edit ~/.sky/config.yaml
+# Change PROJECT_NAME, LOCATION and CLUSTER_NAME
+allowed_clouds:
+    - kubernetes
+kubernetes:
+    # Use the context's name
+    allowed_contexts:
+    - gke_${PROJECT_NAME}_${LOCATION}_${CLUSTER_NAME}
+    autoscaler: gke
+```
 And verify again:
     ```bash
     sky check
@@ -172,88 +173,89 @@ And you should the the following output
     ```
 ## Configure and Run SkyPilot Job
 For SkyPilot to create pods with the necessary pod config we need to add the following config to `train_dws.yaml`.
-    ```yaml
-    experimental:
-      config_overrides:
-        kubernetes:
-          pod_config:
-            metadata:
-              annotations:
-                provreq.kueue.x-k8s.io/maxRunDurationSeconds: "3600"
-          provision_timeout: 900
-    ```
+
+```yaml
+experimental:
+    config_overrides:
+    kubernetes:
+        pod_config:
+        metadata:
+            annotations:
+            provreq.kueue.x-k8s.io/maxRunDurationSeconds: "3600"
+        provision_timeout: 900
+```
 
 And labels config to the resources section
-    ```yaml
-      labels:
-        kueue.x-k8s.io/queue-name: dws-local-queue
-    ```
+```yaml
+    labels:
+    kueue.x-k8s.io/queue-name: dws-local-queue
+```
 
 Launch the workload
-    ```bash
-    sky launch -c skypilot-dws train_dws.yaml
-    ```
+```bash
+sky launch -c skypilot-dws train_dws.yaml
+```
 
 SkyPilot will wait in Launching state until the node is provisioned.
-    ```
-    ⚙︎ Launching on Kubernetes.
-    ```
+```
+⚙︎ Launching on Kubernetes.
+```
 
 In another terminal, you can `kubectl get pods` and it will be in SchedulingGated state
-    ```bash
-    NAME                     READY   STATUS            RESTARTS   AGE
-    skypilot-dws-00b5-head   0/1     SchedulingGated   0          44s
-    ```
+```
+NAME                     READY   STATUS            RESTARTS   AGE
+skypilot-dws-00b5-head   0/1     SchedulingGated   0          44s
+```
 
 If you run `kubectl describe provisioningrequests` you can see in the Conditions: what is happening with the request.
-    ```bash
-      Conditions:
-        Last Transition Time:  2024-12-20T11:40:46Z
-        Message:               Provisioning Request was successfully queued.
-        Observed Generation:   1
-        Reason:                SuccessfullyQueued
-        Status:                True
-        Type:                  Accepted
-        Last Transition Time:  2024-12-20T11:40:47Z
-        Message:               Waiting for resources. Currently there are not enough resources  available to fulfill the request.
-        Observed Generation:   1
-        Reason:                ResourcePoolExhausted
-        Status:                False
-        Type:                  Provisioned
-    ```
+```
+    Conditions:
+    Last Transition Time:  2024-12-20T11:40:46Z
+    Message:               Provisioning Request was successfully queued.
+    Observed Generation:   1
+    Reason:                SuccessfullyQueued
+    Status:                True
+    Type:                  Accepted
+    Last Transition Time:  2024-12-20T11:40:47Z
+    Message:               Waiting for resources. Currently there are not enough resources  available to fulfill the request.
+    Observed Generation:   1
+    Reason:                ResourcePoolExhausted
+    Status:                False
+    Type:                  Provisioned
+```
 
 When the requested resource is availaible the `provisioningrequest` will reflect that in the `Conditions:`
-    ```bash
-        Last Transition Time:  2024-12-20T11:42:55Z
-        Message:               Provisioning Request was successfully provisioned.
-        Observed Generation:   1
-        Reason:                Provisioned
-        Status:                True
-        Type:                  Provisioned
-    ```
+```bash
+    Last Transition Time:  2024-12-20T11:42:55Z
+    Message:               Provisioning Request was successfully provisioned.
+    Observed Generation:   1
+    Reason:                Provisioned
+    Status:                True
+    Type:                  Provisioned
+```
 
 Now the workload will be running
-    ```bash
-    NAME                     READY   STATUS    RESTARTS   AGE
-    skypilot-dws-00b5-head   1/1     Running   0          4m49s
-    ```
+```bash
+NAME                     READY   STATUS    RESTARTS   AGE
+skypilot-dws-00b5-head   1/1     Running   0          4m49s
+```
 
 And later finished
-    ```
-    ✓ Job finished (status: SUCCEEDED).
+```
+✓ Job finished (status: SUCCEEDED).
 
-    📋 Useful Commands
-    Job ID: 1
-    ├── To cancel the job:          sky cancel skypilot-dws 1
-    ├── To stream job logs:         sky logs skypilot-dws 1
-    └── To view job queue:          sky queue skypilot-dws
+📋 Useful Commands
+Job ID: 1
+├── To cancel the job:          sky cancel skypilot-dws 1
+├── To stream job logs:         sky logs skypilot-dws 1
+└── To view job queue:          sky queue skypilot-dws
 
-    Cluster name: skypilot-dws
-    ├── To log into the head VM:    ssh skypilot-dws
-    ├── To submit a job:            sky exec skypilot-dws yaml_file
-    ├── To stop the cluster:        sky stop skypilot-dws
-    └── To teardown the cluster:    sky down skypilot-dws
-    ```
+Cluster name: skypilot-dws
+├── To log into the head VM:    ssh skypilot-dws
+├── To submit a job:            sky exec skypilot-dws yaml_file
+├── To stop the cluster:        sky stop skypilot-dws
+└── To teardown the cluster:    sky down skypilot-dws
+```
 You can now ssh into the pod, run different workloads and experiment.
 
 ## Fine-tune and Serve Gemma 2B on GKE
@@ -271,21 +273,21 @@ The [finetune.py](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/
 
 ### Configure GCS Storage Access
 The infrastructure Terraform configuration in [main.tf](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/skypilot-dws-kueue/main.tf) includes Workload Identity and GCS bucket setup:
-    ```hcl
-    module "skypilot-workload-identity" {
-      source              = "terraform-google-modules/kubernetes-engine/google//modules/    workload-identity"
-      name                = "skypilot-service-account"
-      namespace           = "default"
-      project_id          = var.project_id
-      roles               = ["roles/storage.admin", "roles/compute.admin"]
-      cluster_name = module.infra[0].cluster_name
-      location = var.cluster_location
-      use_existing_gcp_sa = true
-      gcp_sa_name = data.google_service_account.gke_service_account.email
-      use_existing_k8s_sa = true
-      annotate_k8s_sa = false
-    }
-    ```
+```hcl
+module "skypilot-workload-identity" {
+    source              = "terraform-google-modules/kubernetes-engine/google//modules/    workload-identity"
+    name                = "skypilot-service-account"
+    namespace           = "default"
+    project_id          = var.project_id
+    roles               = ["roles/storage.admin", "roles/compute.admin"]
+    cluster_name = module.infra[0].cluster_name
+    location = var.cluster_location
+    use_existing_gcp_sa = true
+    gcp_sa_name = data.google_service_account.gke_service_account.email
+    use_existing_k8s_sa = true
+    annotate_k8s_sa = false
+}
+```
 1. Get project and service account details
     ```bash
     terraform output project_id
@@ -298,7 +300,7 @@ Run additional commands to connect the Google Cloud Service Account that was cre
               --role roles/iam.workloadIdentityUser \
               --member "serviceAccount:PROJECT_ID.svc.id.goog[default/skypilot-service-account]"
     ```
-This will create policy binding that will allow the kubernetes service account to impersonate the google service account. Also note that  `[default/skypilot-service-account]` is the kubernetes namespace and service account name that is deployed by SkyPilot by default. Change if you specifically changed SkyPilot configuration or used another namespace. 
+    This will create policy binding that will allow the kubernetes service account to impersonate the google service account. Also note that  `[default/skypilot-service-account]` is the kubernetes namespace and service account name that is deployed by SkyPilot by default. Change if you specifically changed SkyPilot configuration or used another namespace. 
 3. Annotate Kubernetes service account
     ```bash
     kubectl annotate serviceaccount skypilot-service-account --namespace default iam.gke.io/    gcp-service-account=SERVICE_ACCOUNT
@@ -321,7 +323,8 @@ Follow instructions on the following link: [Get access to the model](https://clo
     ```bash
     sky launch -c finetune finetune.yaml --retry-until-up --env HF_TOKEN=$HF_TOKEN
     ```
-After finetuning is finished you should see the following output
+    After finetuning is finished you should see the following output
+
     ```
     (gemma-finetune, pid=1837) 
     100%|██████████| 5000/5000 [12:49<00:00,  6.50it/s]00 [12:49<00:00,  6.81it/s]
@@ -335,10 +338,12 @@ After finetuning is finished you should see the following output
 
 ### Serve the Model
 Next, run the finetuned model with the `serve.yaml` and serve cli
-    ```
-    sky serve up serve.yaml
-    ```
+
+```bash
+sky serve up serve.yaml
+```
 When the serve pods are provisioned you should see the following output
+
     ```
     ⚙︎ Launching serve controller on Kubernetes.
     └── Pod is up.
@@ -364,13 +369,15 @@ When the serve pods are provisioned you should see the following output
     └── To send a test request:     curl 35.226.190.154:30002
 
     ✓ Service is spinning up and replicas will be ready shortly.
-    ```
+
 Check if the serving api is ready by running 
-    ```bash
-    sky status
-    ```
+
+```bash
+sky status
+```
 And wait for the `PROVISIONING` status to appear `READY`
-    ```
+
+    
     Services
     NAME              VERSION  UPTIME   STATUS      REPLICAS  ENDPOINT              
     sky-service-7e46  -        -        NO_REPLICA  0/1       35.226.190.154:30002  
@@ -379,18 +386,19 @@ And wait for the `PROVISIONING` status to appear `READY`
     Service Replicas
     SERVICE_NAME      ID  VERSION  ENDPOINT                  LAUNCHED     RESOURCES                     STATUS        REGION                                                   
     sky-service-7e46  1   1        -                         1 min ago    1x Kubernetes({'A100': 1})    PROVISIONING  gke_skypilot_project_us-central1_-skypilot-test  
-    ```
+    
 After that take the url from the `ENDPOINT` and use curl to prompt the served model
-    ```bash
-    curl -X POST http://SKYPILOT_ADDRESS/generate \
-           -H "Content-Type: application/json" \
-           -d '{ "prompt": "Question: What is the total number of attendees with age over 30 at     kubecon eu? Context: CREATE TABLE attendees (name VARCHAR, age INTEGER, kubecon VARCHAR)    Answer:","top_p": 1.0, "temperature": 0 , "max_tokens":128 }' \
-           | jq
-    ```
+
+```bash
+curl -X POST http://SKYPILOT_ADDRESS/generate \
+        -H "Content-Type: application/json" \
+        -d '{ "prompt": "Question: What is the total number of attendees with age over 30 at     kubecon eu? Context: CREATE TABLE attendees (name VARCHAR, age INTEGER, kubecon VARCHAR)    Answer:","top_p": 1.0, "temperature": 0 , "max_tokens":128 }' \
+        | jq
+```
 And you should see the reply
-    ```
+
     Answer: SELECT COUNT(name) FROM attendees WHERE age > 30 AND kubecon = \"kubecon eu\"\
-    ```
+    
 
 ## Cleanup
 1. Remove the skypilot cluster and serve endpoints:
@@ -409,13 +417,14 @@ And you should see the reply
     ```
     the CustomResourceDefinition "workloads.kueue.x-k8s.io" is invalid: metadata.annotations: Too   long: must have at most 262144 bytes
     ```
-Make sure you include the `--server-side` argument to the `kubectl apply` command when installing Kueue. Delete it first if repeating the step
+    Make sure you include the `--server-side` argument to the `kubectl apply` command when installing Kueue. Delete it first if repeating the step
 
 2. If you get an error with the kueue-webhook-service.
     ```
     Error from server (InternalError): error when creating "kueue_resources.yaml": Internal error   occurred: failed calling webhook "mresourceflavor.kb.io": failed to call webhook: Post "https://  kueue-webhook-service.kueue-system.svc:443/mutate-kueue-x-k8s-io-v1beta1-resourceflavor?  timeout=10s": no endpoints available for service "kueue-webhook-service"
     ```
-Wait for endpoints for the kueue-webhook-service to be populated with the kubectl wait command
+    Wait for endpoints for the kueue-webhook-service to be populated with the kubectl wait command
+
     ```bash
     kubectl -n kueue-system wait endpoints/kueue-webhook-service --for=jsonpath={.subsets}
     ```
@@ -430,27 +439,27 @@ Wait for endpoints for the kueue-webhook-service to be populated with the kubect
     Hint: `sky show-gpus --cloud kubernetes` to list available accelerators.
           `sky check` to check the enabled clouds.
     ```
-Make sure you added `autoscaling: gke` to the sky config in step [Install SkyPilot](#install-skypilot)
+    Make sure you added `autoscaling: gke` to the sky config in step [Install SkyPilot](#install-skypilot)
 
 4. Permission denied when trying to write to the mounted gcsfuse volume.
 
-Make sure you added `uid=1000,gid=1000` to the `mountOptions:` YAML inside of the task yaml file. SkyPilot by default uses 1000 gid and uid
+    Make sure you added `uid=1000,gid=1000` to the `mountOptions:` YAML inside of the task yaml file. SkyPilot by default uses 1000 gid and uid
     ```yaml
     volumes:
-      - name: gcsfuse-test
+    - name: gcsfuse-test
         csi:
-          driver: gcsfuse.csi.storage.gke.io
-          volumeAttributes:
+        driver: gcsfuse.csi.storage.gke.io
+        volumeAttributes:
             bucketName: MODEL_BUCKET_NAME
             mountOptions: "implicit-dirs,uid=1000,gid=1000"
     ```
 5. Denied by autogke-gpu-limitation
 
-When running `sky serve` on Autopilot cluster GKE Warden rejects the pods
+    When running `sky serve` on Autopilot cluster GKE Warden rejects the pods
 
     ```
     "kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"admission webhook     \"warden-validating.common-webhooks.networking.gke.io\" denied the request: GKE Warden rejected     the request because it violates one or more constraints.\nViolations details: {\"[denied by     autogke-gpu-limitation]\":[\"The toleration with key 'nvidia.com/gpu' and operator 'Exists' cannot  be specified if the pod does not request to use GPU in Autopilot.\"
     ```
-Update SkyPilot to version 0.8.0 and above. 
+    Update SkyPilot to version 0.8.0 and above. 
 
-[More Details](https://github.com/skypilot-org/skypilot/issues/4542)
+    [More Details](https://github.com/skypilot-org/skypilot/issues/4542)
