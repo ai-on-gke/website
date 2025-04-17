@@ -49,7 +49,7 @@ To use GCS, create a bucket with your username. For example, when authenticating
 	 cd quick-start-guides/jupyter
 	 ```
 
-2. Edit `workloads.tfvars` with your GCP settings. The `namespace` that you specify will become a K8s namespace for your JupyterHub services. For more information about what the variables do, visit [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/applications/jupyter/variable_definitions.md).
+2. Edit `workloads.tfvars` with your GCP settings. The `namespace` that you specify will become a K8s namespace for your JupyterHub services. For more information about what the variables do, visit [here](https://github.com/ai-on-gke/quick-start-guides/blob/main/jupyter/variable_definitions.md).
    
     | Variable                  | Description                                                                                                     | Required |
     | :------------------------ | :-------------------------------------------------------------------------------------------------------------- | :------: |
@@ -177,7 +177,7 @@ JupyterHub is configured to provide 2 choices for storage:
 
 2. GCSFuse - `gcsfuse.csi.storage.gke.io` uses GCS Buckets and require users to pre-create buckets with name format `gcsfuse-{username}`
 
-For more information about Persistent storage and the available options, visit [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/applications/jupyter/storage.md)
+For more information about Persistent storage and the available options, visit [here](https://github.com/ai-on-gke/quick-start-guides/blob/main/jupyter/storage.md)
 
 ## Running example notebook
 
@@ -218,4 +218,4 @@ terraform destroy --var-file="workloads.tfvars"
 
 ## Additional Information
 
-For more information about JupyterHub profiles and the preset profiles visit [here](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/applications/jupyter/profiles.md)
+For more information about JupyterHub profiles and the preset profiles visit [here](https://github.com/ai-on-gke/quick-start-guides/blob/main/jupyter/profiles.md)
