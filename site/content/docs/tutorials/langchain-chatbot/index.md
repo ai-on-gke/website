@@ -71,7 +71,7 @@ This tutorial assumes you have the following:
 - The [Google Cloud CLI](https://cloud.google.com/sdk/docs/install-sdk) (gcloud) installed and configured
 - The [Kubernetes command-line tool](https://kubernetes.io/docs/tasks/tools/#kubectl) (kubectl) installed and configured
 - An instruction-tuned language model running on KServe or any other API that provides OpenAI-compatible interface (`v1/completion` and `v1/chat/completion` endpoints)
-  - You can follow the instructions in the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/kserve/) to deploy the model on Google Kubernetes Engine (we recommend using the instruction tuned Gemma2 model; note that the Kserve README instructs you to deploy a different one, please make sure to deploy the variant with the '-it' suffix, namely 'gemma2-2b-it', otherwise making the chatbot work properly will require additional configuration that is not covered in this tutorial)
+  - You can follow the instructions in the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/inference-servers/kserve/) to deploy the model on Google Kubernetes Engine (we recommend using the instruction tuned Gemma2 model; note that the Kserve README instructs you to deploy a different one, please make sure to deploy the variant with the '-it' suffix, namely 'gemma2-2b-it', otherwise making the chatbot work properly will require additional configuration that is not covered in this tutorial)
 - A Google Kubernetes Engine (GKE) cluster to host the application
   - Tested on an Autopilot cluster, but any type of cluster can be used
   - This can be the same cluster that the language model is deployed on
@@ -120,7 +120,7 @@ If you're getting a 404 error in a chat box, it means the model is not accessibl
 
 This section describes how to create an [autopilot GKE cluster](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview) using the Google Cloud CLI. An autopilot cluster is a fully managed Kubernetes cluster that automatically adjusts the resources based on the workload requirements. It is a good choice for running any type of workload as it provides a balance between cost and performance.
 
-If you already have a GKE cluster that you want to use to host the chatbot application, you can skip this section and proceed to [Prepare the Application for Deployment](#prepare-the-application-for-deployment). If you previously followed the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/kserve/) to deploy the model, you can use the same GKE cluster to deploy the chatbot application, and you don't need to create a new cluster, so you can skip this section as well.
+If you already have a GKE cluster that you want to use to host the chatbot application, you can skip this section and proceed to [Prepare the Application for Deployment](#prepare-the-application-for-deployment). If you previously followed the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/inference-servers/kserve/) to deploy the model, you can use the same GKE cluster to deploy the chatbot application, and you don't need to create a new cluster, so you can skip this section as well.
 
 The command below creates an autopilot GKE cluster named `langchain-chatbot-demo` in the `us-central1` region. You can adjust the region and cluster name as needed.
 
@@ -220,7 +220,7 @@ gcloud sql users set-password postgres --instance=${CLOUD_SQL_INSTANCE} --host=%
 
 Open `deployment.yaml` and replace the placeholders with the actual values. There are three pieces of information you need to provide: model base URL, model name, and database URI.
 
-The model base URL should point to the OpenAI-compatible API serving the language model and the model name should match the name of the model in the API. If you followed the instructions from the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/kserve/), the model base URL will be something like `http://huggingface-gemma2.kserve-test.33.44.55.66.sslip.io/openai/v1` if the model is running on a separate GKE cluster, or `http://huggingface-gemma2.kserve-test.svc.cluster.local/openai/v1` in case of the model running in the same GKE cluster, and the model name is `gemma2`.
+The model base URL should point to the OpenAI-compatible API serving the language model and the model name should match the name of the model in the API. If you followed the instructions from the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/inference-servers/kserve/), the model base URL will be something like `http://huggingface-gemma2.kserve-test.33.44.55.66.sslip.io/openai/v1` if the model is running on a separate GKE cluster, or `http://huggingface-gemma2.kserve-test.svc.cluster.local/openai/v1` in case of the model running in the same GKE cluster, and the model name is `gemma2`.
 
 The database URI should follow the scheme `postgres://<username>:<password>@<host>:<port>/<database>`. The `host` can be obtained from the Cloud SQL instance details: `gcloud sql instances describe langchain-chatbot --format='value(ipAddresses[0].ipAddress)'`, the `port` is `5432`, the `username` is `postgres`, and the `database` is the name of the database you created (it's `chat` if you stick to the instructions above).
 
@@ -348,7 +348,7 @@ Instead of manually following the steps above, you can use Terraform to automate
 Go to the `terraform` directory, make a copy of `terraform.tfvars.example`, name the copy `terraform.tfvars`, and adjust the variables for the Terraform configuration. The minimum required variables are:
 
 - `project_id` - your GCP project ID
-- `model_base_url` and `model_name` - where to find the model; if you followed the instructions from the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/kserve/), the `model_base_url` will be something like `http://huggingface-gemma2.kserve-test.33.44.55.66.sslip.io/openai/v1` if the model is running on a separate GKE cluster, or `http://huggingface-gemma2.kserve-test.svc.cluster.local/openai/v1` in case of the model running in the same GKE cluster
+- `model_base_url` and `model_name` - where to find the model; if you followed the instructions from the [Kserve README](https://gke-ai-labs.dev/docs/tutorials/inference-servers/kserve/), the `model_base_url` will be something like `http://huggingface-gemma2.kserve-test.33.44.55.66.sslip.io/openai/v1` if the model is running on a separate GKE cluster, or `http://huggingface-gemma2.kserve-test.svc.cluster.local/openai/v1` in case of the model running in the same GKE cluster
 - `db_network` - the network from which the Cloud SQL instance will be accessible; it should be the same network as the GKE cluster
 - `k8s_namespace` - existing namespace in your GKE cluster where the application will be deployed
 - `k8s_app_image` - the full name of the Docker image in the Artifact Registry (e.g., `us-central1-docker.pkg.dev/my-project/langchain-chatbot/app:latest`)
