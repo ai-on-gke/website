@@ -13,7 +13,7 @@ tags:
  - Finetuning
  - Tutorials
 ---
-This tutorial will provide instructions on how to deploy and use the [Metaflow](https://docs.metaflow.org/) framework on GKE (Google Kubernetes Engine) and operate AI/ML workloads using [Argo-Workflows](https://argo-workflows.readthedocs.io/en/latest/). 
+This tutorial will provide instructions on how to deploy and use the [Metaflow](https://docs.metaflow.org/) framework on GKE (Google Kubernetes Engine) and operate AI/ML workloads using [Argo-Workflows](https://argo-workflows.readthedocs.io/en/latest/).
 The tutorial is designed for ML Platform engineers who plan to use Metaflow for ML workloads on top of GKE by offloading resource-intensive tasks to a managed cluster.
 
 # Overview
@@ -25,22 +25,15 @@ The tutorial is designed for ML Platform engineers who plan to use Metaflow for 
 5. Fine-tune the model using Metaflow and Argo Workflow and GKE.
 6. Deploy the fine-tuned model on GKE for inference.
 
-## Filesystem structure
-
-* `finetune_inside_metaflow/` \- folder with [Metaflow Flow](https://docs.metaflow.org/metaflow/basics) for fine-tuning the Gemma-2 model.  
-* `serve_model/` \- a simple deployment manifest for serving the fine-tuned model within the same GKE cluster.  
-* `metaflow/manifests/` \- folder with Kubernetes manifests. These files are [templates](https://developer.hashicorp.com/terraform/language/functions/templatefile) that require additional processing by the terraform to specify additional values that are not known from the start.
-* `terraform/` \- folder with terraform config that executes automated provisioning of required infrastructure resources.
-
 # Before you begin
 
-1. Ensure you have a gcp project with billing enabled and [enabled the GKE API](https://cloud.google.com/kubernetes-engine/docs/how-to/enable-gkee).  
+1. Ensure you have a gcp project with billing enabled and [enabled the GKE API](https://cloud.google.com/kubernetes-engine/docs/how-to/enable-gkee).
 2. Ensure you have the following tools installed on your workstation
 
-    * [gcloud CLI](https://cloud.google.com/sdk/docs/install)  
-    * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)  
-    * [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)  
-    * [python](https://docs.python.org/3/using/index.html)  
+    * [gcloud CLI](https://cloud.google.com/sdk/docs/install)
+    * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+    * [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+    * [python](https://docs.python.org/3/using/index.html)
     * [venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
 
 If you previously installed the gcloud CLI, get the latest version by running:
@@ -56,6 +49,21 @@ gcloud auth application-default login
 
 # Infrastructure Setup
 
+## Clone the repository
+
+Clone the repository with our guides and cd to the llamaindex/rag directory by running these commands:
+```bash
+git clone https://github.com/ai-on-gke/tutorials-and-examples.git
+cd tutorials-and-examples/mlflow/finetune-gemma
+```
+
+## Filesystem structure
+
+* `finetune_inside_metaflow/` \- folder with [Metaflow Flow](https://docs.metaflow.org/metaflow/basics) for fine-tuning the Gemma-2 model.
+* `serve_model/` \- a simple deployment manifest for serving the fine-tuned model within the same GKE cluster.
+* `metaflow/manifests/` \- folder with Kubernetes manifests. These files are [templates](https://developer.hashicorp.com/terraform/language/functions/templatefile) that require additional processing by the terraform to specify additional values that are not known from the start.
+* `terraform/` \- folder with terraform config that executes automated provisioning of required infrastructure resources.
+
 ## Create cluster and other resources
 
 In this section we will use `Terraform` to automate the creation of infrastructure resources. For more details how it is done please refer to the terraform config in the `terraform/` folder.
@@ -66,8 +74,8 @@ It creates:
 * Cluster IAM Service Account – manages permissions for the GKE cluster.
 * Metaflow Metadata Service IAM Service Account – grants Kubernetes permissions for Metaflow’s metadata service using [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation)
 * Argo Workflows IAM Service Account – grants Kubernetes permissions for Argo Workflows using [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation)
-* [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance for Metaflow metadata database  
-* GCS bucket for Metaflow’s artifact storage  
+* [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance for Metaflow metadata database
+* GCS bucket for Metaflow’s artifact storage
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the fine-tuning process.
 
 
@@ -78,8 +86,8 @@ It creates:
 cd terraform
 ```
 
-2. Specify the following values inside the `default_env.tfvars` file (or make a separate copy):  
-        
+2. Specify the following values inside the `default_env.tfvars` file (or make a separate copy):
+
     - `<PROJECT_ID>` – replace with your project id (you can find it in the project settings).
 
 
@@ -102,7 +110,7 @@ terraform {
 terraform init
 ```
 
-5. Optionally run the `plan` command to view an execution plan: 
+5. Optionally run the `plan` command to view an execution plan:
 
 ```bash
 terraform plan -var-file=default_env.tfvars
@@ -144,7 +152,7 @@ gcloud container clusters get-credentials $(terraform output -raw gke_cluster_na
 
 This tutorial includes two Kubernetes manifests for Metaflow Metadata service:
 
-- [*Metadata-service*](https://github.com/Netflix/metaflow-service) \- Keeps track of metadata.   
+- [*Metadata-service*](https://github.com/Netflix/metaflow-service) \- Keeps track of metadata.
 - [*UI-service*](https://github.com/Netflix/metaflow-service/tree/master/services/ui_backend_service) \- Provides a backend instance that powers a web interface for monitoring active flows.
 
 The manifests are generated from templates in the `metaflow/manifests/` directory and put in the `gen` directory.
@@ -185,9 +193,9 @@ kubectl port-forward svc/metaflow-metadata-svc 8080:8080
 kubectl port-forward svc/metaflow-ui-svc 8083:8083
 ```
 
-7. Open  [http://localhost:8083/](http://localhost:8083/). Now all new submitted Metaflow runs will be shown here. 
+7. Open  [http://localhost:8083/](http://localhost:8083/). Now all new submitted Metaflow runs will be shown here.
 
-      
+
 
 ## Install and configure Metaflow locally
 
@@ -277,7 +285,7 @@ kubectl -n argo create secret generic hf-token --from-literal=HF_TOKEN=${HF_TOKE
 python3 ../finetune_inside_metaflow/finetune_gemma.py argo-workflows create
 ```
 
-Here is the overfiew of the FinetuneFlow class: 
+Here is the overfiew of the FinetuneFlow class:
 
 
 ```
@@ -286,7 +294,7 @@ class FinetuneFlow(FlowSpec):
     # specify environment variables required by the finetune process
     @environment(vars={
         # model to finetune
-        "MODEL_NAME": "google/gemma-2-9b", 
+        "MODEL_NAME": "google/gemma-2-9b",
         "LORA_R": "8",
         "LORA_ALPHA": "16",
         "TRAIN_BATCH_SIZE": "1",
@@ -297,7 +305,7 @@ class FinetuneFlow(FlowSpec):
         "LOGGING_STEPS": "5",
     })
 
-    # specify kubernetes-specific options 
+    # specify kubernetes-specific options
     @kubernetes(
         image=constants.FINETUNE_IMAGE_NAME,
         image_pull_policy="Always",
@@ -360,7 +368,7 @@ Note: this UI does not display the model upload status to HuggingFace
 
 ## Serve the Fine-Tuned Model on GKE
 
-1. Replace the placeholder for your HuggingFace handle and run this command. 
+1. Replace the placeholder for your HuggingFace handle and run this command.
 
 ```bash
 kubectl create configmap vllm-config --from-literal=model_id="${HF_USERNAME}/finetunned-gemma2-9b"
@@ -438,12 +446,12 @@ The output should look like this:
 1. Destroy the provisioned infrastructure.
 
 ```bash
-cd terraform 
+cd terraform
 terraform destroy -var-file=default_env.tfvars
 ```
 
 ## Troubleshooting
 
-* In case of usage of this guide by multiple people at the same time, consider renaming resource names in the `default_env.tfvars` to avoid name collisions.  
-* Some operations over the autopilot cluster can hang and complete once the initial scale-up event has finished.  
+* In case of usage of this guide by multiple people at the same time, consider renaming resource names in the `default_env.tfvars` to avoid name collisions.
+* Some operations over the autopilot cluster can hang and complete once the initial scale-up event has finished.
 * Sometimes access to the network through `kubectl port-forward` stops working and restarting the command can solve the problem.
