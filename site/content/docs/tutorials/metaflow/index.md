@@ -38,7 +38,7 @@ The tutorial is designed for ML Platform engineers who plan to use Metaflow for 
 2. Ensure you have the following tools installed on your workstation
 
     * [gcloud CLI](https://cloud.google.com/sdk/docs/install)  
-    * [gcloud kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_kubectl)  
+    * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)  
     * [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)  
     * [python](https://docs.python.org/3/using/index.html)  
     * [venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)

@@ -20,7 +20,7 @@ tags:
 
 3. Ensure you have the following tools installed on your workstation
    * [gcloud CLI](https://cloud.google.com/sdk/docs/install)
-   * [gcloud kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_kubectl)
+   * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
    * [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
    * [jq](https://jqlang.github.io/jq/)
    * [ngc](https://ngc.nvidia.com/setup)

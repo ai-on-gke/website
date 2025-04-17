@@ -34,7 +34,7 @@ SkyPilot supports GKE's cluster autoscaling for dynamic resource management. How
 
 2. Ensure you have the following tools installed on your workstation
 * [gcloud CLI](https://cloud.google.com/sdk/docs/install)
-* [gcloud kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_kubectl)
+* [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 
 ## Set up your GKE Cluster
 Create two clusters, you can create  the clusters in parrallel to reduce time.

@@ -21,7 +21,7 @@ Additionally, this tutorial includes an example of serving Gemma2 with vLLM in K
 
 2. Ensure you have the following tools installed on your workstation
    * [gcloud CLI](https://cloud.google.com/sdk/docs/install)
-   * [gcloud kubectl](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_kubectl)
+   * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
    * [helm](https://helm.sh/docs/intro/install/)
 
 ## Set up your GKE Cluster
