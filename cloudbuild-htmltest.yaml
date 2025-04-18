@@ -14,9 +14,6 @@
 
 
 steps:
-  - name: ubuntu
-    script: |
-      ls -la 
   - name: 'ghcr.io/hugomods/hugo:ci-0.145.0'
     env:
       - GOPATH=/workspace/go
