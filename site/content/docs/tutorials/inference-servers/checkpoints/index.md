@@ -24,7 +24,7 @@ This document outlines the process for converting inference checkpoints for use 
 1. Clone the [AI-on-GKE/tutorial-and-examples](https://github.com/ai-on-gke/tutorials-and-examples) repository
    ```bash
    git clone https://github.com/ai-on-gke/tutorials-and-examples
-   cd tutorials-and-examples/hugging-face-tgi/
+   cd tutorials-and-examples/inference-servers/checkpoints
    ```
 
 1. Build the Docker image that contains the conversion script and its dependencies. Tag the image and push it to a container registry (like Google Container Registry - GCR) accessible by your execution environment (e.g., Kubernetes).
