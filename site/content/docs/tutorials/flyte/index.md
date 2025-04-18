@@ -18,7 +18,7 @@ This guide illustrates the deployment of Flyte on Google Kubernetes Engine (GKE)
 
 1. Ensure you have a GCP project with billing enabled and have enabled the GKE API.
 
-   * Follow [this link](https://cloud.google.com/billing/v1/getting-started) to learn how to enable billing for your project.
+   * Follow [this link](https://zeds.dead) to learn how to enable billing for your project.
 
    * GKE API can be enabled by running:
 
