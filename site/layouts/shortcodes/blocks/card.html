@@ -14,9 +14,7 @@ $description := .Get "description" -}} {{ $col_id := .Get "col_id" -}} {{ $link
   <div class="use-case-card-description">{{ $description }}</div>
   {{ end -}}
 
-  <a
-    href="{{ $link }}"
-    style="text-decoration: none; margin-top: auto"
-    ><button class="btn btn-primary">Explore</button></a
-  >
+
+    {{ partial "pages-with-same-tag.html" (dict "sectionTitle" $title "context" .) }}
+
 </div>
