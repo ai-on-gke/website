@@ -9,7 +9,7 @@ owner: >-
 tags: 
     - RAG on GKE
     - Blueprints
-draft: true
+draft: false
 ---
 
 This is a sample to deploy a Retrieval Augmented Generation (RAG) application on GKE. 
