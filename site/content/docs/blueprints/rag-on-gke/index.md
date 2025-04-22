@@ -70,13 +70,13 @@ If you prefer to use your own VPC, set `create_network = false` in the in the [I
 
 This section sets up the RAG infrastructure in your GCP project using Terraform.
 
-> [!NOTE]
+> [!IMPORTANT]
 > Terraform keeps state metadata in a local file called `terraform.tfstate`. Deleting the file may cause some resources to not be cleaned up correctly even if you delete the cluster. We suggest using `terraform destroy` before reapplying/reinstalling.
 
 1. If needed, clone the repo
    ```bash
    git clone https://github.com/ai-on-gke/quick-start-guides
-   cd quick-start-guides/jupyter
+   cd quick-start-guides/rag
    ```
 
 1. Edit `workloads.tfvars` to set your project ID, location, cluster name, and GCS bucket name. Ensure the `gcs_bucket` name is globally unique (add a random suffix). Optionally, make the following changes:
@@ -96,6 +96,9 @@ This section sets up the RAG infrastructure in your GCP project using Terraform.
     terraform apply --var-file=./workloads.tfvars
     ```
 
+>[!NOTE]
+> Creation of the Kubernetes cluster, network and all other required components can take up to 10 minutes. Check the `terraform apply` logs to get the latest status. 
+
 ## Generate vector embeddings for the dataset
 
 This section generates the vector embeddings for your input dataset. Currently, the default dataset is [Netflix shows](https://www.kaggle.com/datasets/shivamb/netflix-shows). We will use a Jupyter notebook to run a Ray job that generates the embeddings & populates them into the `pgvector` instance created above.
@@ -104,7 +107,7 @@ Set your the namespace, cluster name and location from `workloads.tfvars`):
 
 ```bash
 export NAMESPACE=rag
-export CLUSTER_LOCATION=us-east4
+export CLUSTER_LOCATION=us-central1
 export CLUSTER_NAME=rag-cluster
 ```
 
@@ -115,24 +118,23 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=${CLUSTER_L
 ```
 
 1. Connect and login to JupyterHub:
-   * If IAP is disabled (`jupyter_add_auth = false`):
+   * **If IAP is disabled** (`jupyter_add_auth = false`):
         - Port forward to the JupyterHub service: `kubectl port-forward service/proxy-public -n ${NAMESPACE} 8081:80 &`
-        - Go to `localhost:8081` in a browser
+        - Go to [localhost:8081](http://localhost:8081) in a browser
         - Login with these credentials:
-            * username: admin
-            * password: use `terraform output jupyterhub_password` to fetch the password value
-   * If IAP is enabled (`jupyter_add_auth = true`):
+            * **Username**: admin
+            * **Password**: Use `terraform output jupyterhub_password` to fetch the password value
+   * **If IAP is enabled** (`jupyter_add_auth = true`):
         - Fetch the domain: `terraform output jupyterhub_uri`
         - If you used a custom domain, ensure you configured your DNS as described above. 
-        - Verify the domain status is `Active`:
+        - Verify the domain status is `Active` - *Note: This can take up to 20 minutes to propagate.*
             - `kubectl get managedcertificates jupyter-managed-cert -n ${NAMESPACE} --output jsonpath='{.status.domainStatus[0].status}'`
-            - Note: This can take up to 20 minutes to propagate.
         - Once the domain status is Active, go to the domain in a browser and login with your Google credentials.
         - To add additional users to your JupyterHub application, go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the `rag/proxy-public` service and add principals with the role `IAP-secured Web App User`.
 
 2. Load the notebook:
     - Once logged in to JupyterHub, choose the `CPU` preset with `Default` storage. 
-    - Click [File] -> [Open From URL] and paste: `https://raw.githubusercontent.com/GoogleCloudPlatform/ai-on-gke/main/applications/rag/example_notebooks/rag-kaggle-ray-sql-interactive.ipynb`
+    - Click **File** -> **Open From URL** and paste: `https://github.com/ai-on-gke/quick-start-guides/rag/example_notebooks/rag-kaggle-ray-sql-interactive.ipynb`
 
 3. Configure Kaggle:
     - Create a [Kaggle account](https://www.kaggle.com/account/login?phase=startRegisterTab&returnUrl=%2F).
