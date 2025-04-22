@@ -5,7 +5,6 @@ description: "In this tutorial, we will demonstrate how to leverage the open-sou
 weight: 30
 type: docs
 tags:
- - Serving
  - Orchestration
  - Tutorials
 ---

@@ -7,7 +7,6 @@ owner: >-
     [Francisco Cabrera](https://github.com/fcabrera23)
 type: docs
 tags: 
-    - Experimentation
     - Orchestration
     - Tutorials
 ---
