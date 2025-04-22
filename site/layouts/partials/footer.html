@@ -22,7 +22,7 @@
               "
             >
               {{ $p := . -}} {{ range .Site.Menus.main -}}
-              <li class="nav-item">
+              <li class="nav-item" role="menuitem">
                 {{ $active := or ($p.IsMenuCurrent "main" .) ($p.HasMenuCurrent
                 "main" .) -}} {{ $href := "" -}} {{ with .Page -}} {{ $active =
                 or $active ( $.IsDescendant .) -}} {{ $href = .RelPermalink -}}
@@ -47,19 +47,19 @@
                 </a>
               </li>
               {{ end -}} {{ if .Site.Params.versions -}}
-              <li class="nav-item dropdown d-none d-lg-block">
+              <li class="nav-item dropdown d-none d-lg-block" role="menuitem">
                 {{ partial "navbar-version-selector.html" . -}}
               </li>
               {{ end -}} {{ if (gt (len .Site.Home.Translations) 0) -}}
-              <li class="nav-item dropdown d-none d-lg-block">
+              <li class="nav-item dropdown d-none d-lg-block" role="menuitem">
                 {{ partial "navbar-lang-selector.html" . -}}
               </li>
               {{ end -}} {{ if .Site.Params.ui.showLightDarkModeMenu -}}
-              <li class="td-light-dark-menu nav-item dropdown">
+              <li class="td-light-dark-menu nav-item dropdown" role="menuitem">
                 {{ partial "theme-toggler" . }}
               </li>
               {{ end -}}
-              <li class="nav-item">
+              <li class="nav-item" role="menuitem">
                 <a
                   class="nav-link nav-item-separator"
                   href="https://policies.google.com/terms"
@@ -70,7 +70,7 @@
                   <span style="text-wrap: nowrap">Terms</span>
                 </a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" role="menuitem">
                 <a
                   class="nav-link nav-item-separator"
                   href="https://policies.google.com/privacy"
