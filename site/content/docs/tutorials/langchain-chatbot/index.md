@@ -8,7 +8,6 @@ owner: >-
     [Vlado Djerek](https://github.com/volatilemolotov)
 tags:
  - Serving
- - Experimentation
  - Langchain
  - Tutorials
 ---

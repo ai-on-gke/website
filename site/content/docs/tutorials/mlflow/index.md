@@ -10,8 +10,6 @@ resources:
 - src: "**img*.png"
 
 tags:
- - Evaluation
- - Experimentation
  - Orchestration
  - Finetuning
  - Tutorials
