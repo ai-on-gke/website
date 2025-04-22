@@ -130,10 +130,10 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=${CLUSTER_L
         - Verify the domain status is `Active` - *Note: This can take up to 20 minutes to propagate.*
             - `kubectl get managedcertificates jupyter-managed-cert -n ${NAMESPACE} --output jsonpath='{.status.domainStatus[0].status}'`
         - Once the domain status is Active, go to the domain in a browser and login with your Google credentials.
-        - To add additional users to your JupyterHub application, go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the `rag/proxy-public` service and add principals with the role `IAP-secured Web App User`.
+        - To add additional users to your JupyterHub application, go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the **rag/proxy-public** service and add principals with the role **IAP-secured Web App User**.
 
 2. Load the notebook:
-    - Once logged in to JupyterHub, choose the `CPU` preset with `Default` storage. 
+    - Once logged in to JupyterHub, choose the **CPU** preset with **Default** storage. 
     - Click **File** -> **Open From URL** and paste: `https://github.com/ai-on-gke/quick-start-guides/rag/example_notebooks/rag-kaggle-ray-sql-interactive.ipynb`
 
 3. Configure Kaggle:
@@ -147,40 +147,40 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=${CLUSTER_L
     * When the last cell succeeded, the vector embeddings have been generated and we can launch the frontend chat interface. Note that the Ray job can take up to 10 minutes to finish.
     * Ray may take several minutes to create the runtime environment. During this time, the job will appear to be missing (e.g. `Status message: PENDING`).
     * Connect to the Ray dashboard to check the job status or logs:
-        - If IAP is disabled (`ray_dashboard_add_auth = false`):
+        - **If IAP is disabled** (`ray_dashboard_add_auth = false`):
             - `kubectl port-forward -n ${NAMESPACE} service/ray-cluster-kuberay-head-svc 8265:8265`
-            - Go to `localhost:8265` in a browser
-        - If IAP is enabled (`ray_dashboard_add_auth = true`):
+            - Go to [localhost:8265](http://localhost:8265) in a browser
+        - **If IAP is enabled** (`ray_dashboard_add_auth = true`):
             - Fetch the domain: `terraform output ray-dashboard-managed-cert`
             - If you used a custom domain, ensure you configured your DNS as described above.
-            - Verify the domain status is `Active`:
+            - Verify the domain status is **Active**:
                 - `kubectl get managedcertificates ray-dashboard-managed-cert -n ${NAMESPACE} --output jsonpath='{.status.domainStatus[0].status}'`
                 - Note: This can take up to 20 minutes to propagate.
-            - Once the domain status is Active, go to the domain in a browser and login with your Google credentials.
-            - To add additional users to your frontend application, go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the `rag/ray-cluster-kuberay-head-svc` service and add principals with the role `IAP-secured Web App User`.
+            - Once the domain status is **Active**, go to the domain in a browser and login with your Google credentials.
+            - To add additional users to your frontend application, go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the **rag/ray-cluster-kuberay-head-svc** service and add principals with the role **IAP-secured Web App User**.
 
 ## Launch the frontend chat interface
 
 1. Connect to the frontend:
-    * If IAP is disabled (`frontend_add_auth = false`):
+    * **If IAP is disabled** (`frontend_add_auth = false`):
         - Port forward to the frontend service: `kubectl port-forward service/rag-frontend -n ${NAMESPACE} 8080:8080 &`
-        - Go to `localhost:8080` in a browser
-    * If IAP is enabled (`frontend_add_auth = true`):
+        - Go to [localhost:8080](http://localhost:8080) in a browser
+    * **If IAP is enabled** (`frontend_add_auth = true`):
         - Fetch the domain: `terraform output frontend_uri`
         - If you used a custom domain, ensure you configured your DNS as described above.
-        - Verify the domain status is `Active`:
+        - Verify the domain status is **Active**:
             - `kubectl get managedcertificates frontend-managed-cert -n ${NAMESPACE} --output jsonpath='{.status.domainStatus[0].status}'`
             - Note: This can take up to 20 minutes to propagate.
         - Once the domain status is Active, go to the domain in a browser and login with your Google credentials.
-        - To add additional users to your frontend application, go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the `rag/rag-frontend` service and add principals with the role `IAP-secured Web App User`.
+        - To add additional users to your frontend application, go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the **rag/rag-frontend** service and add principals with the role **IAP-secured Web App User**.
 2. Prompt the LLM
-    * Start chatting! This will fetch context related to your prompt from the vector embeddings in the `pgvector` CloudSQL instance, augment the original prompt with the context & query the inference model (`mistral-7b`) with the augmented prompt.
+    * Start chatting! This will fetch context related to your prompt from the vector embeddings in the `pgvector` CloudSQL instance, augment the original prompt with the context & query the inference model (**mistral-7b**) with the augmented prompt.
 
 ## Configure authenticated access via IAP (recommended)
 
 We recommend you configure authenticated access via IAP for your services.
 
-1) Make sure the [OAuth Consent Screen](https://developers.google.com/workspace/guides/configure-oauth-consent#configure_oauth_consent) is configured for your project. Ensure `User type` is set to `Internal`.
+1) Make sure the [OAuth Consent Screen](https://developers.google.com/workspace/guides/configure-oauth-consent#configure_oauth_consent) is configured for your project. Ensure **User type** is set to **Internal**.
 2) Make sure [Policy for Restrict Load Balancer Creation Based on Load Balancer Types](https://cloud.google.com/load-balancing/docs/org-policy-constraints) allows EXTERNAL_HTTP_HTTPS.
 3) Set the following variables in `workloads.tfvars`:
     * `jupyter_add_auth = true`
@@ -230,13 +230,13 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=${CLUSTER_L
         - For JupyterHub `kubectl get managedcertificates jupyter-managed-cert -n ${NAMESPACE} --output jsonpath='{.status.domainStatus[0].status}'`
         - For the frontend: `kubectl get managedcertificates frontend-managed-cert -n ${NAMESPACE} --output jsonpath='{.status.domainStatus[0].status}'`
     - Verify users are allowlisted for JupyterHub or frontend services:
-        - JupyterHub: Go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the `rag/proxy-public` service and check if the user has role `IAP-secured Web App User`.
-        - Frontend: Go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the `rag/rag-frontend` service and check if the user has role `IAP-secured Web App User`.
+        - JupyterHub: Go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the **rag/proxy-public** service and check if the user has role **IAP-secured Web App User**.
+        - Frontend: Go to [Google Cloud Platform IAP](https://console.cloud.google.com/security/iap), select the **rag/rag-frontend** service and check if the user has role **IAP-secured Web App User**.
     - Org error:
-        - The [OAuth Consent Screen](https://developers.google.com/workspace/guides/configure-oauth-consent#configure_oauth_consent) has `User type` set to `Internal` by default, which means principals external to the org your project is in cannot log in. To add external principals, change `User type` to `External`.
+        - The [OAuth Consent Screen](https://developers.google.com/workspace/guides/configure-oauth-consent#configure_oauth_consent) has **User type** set to **Internal** by default, which means principals external to the org your project is in cannot log in. To add external principals, change **User type** to **External**.
 
 3. Troubleshoot `terraform apply` failures:
-    - Inference server (`mistral`) fails to deploy:
+    - Inference server (**mistral**) fails to deploy:
         - This usually indicates a stockout/quota issue. Verify your project and chosen `cluster_location` have L4 capacity.
     - GCS bucket already exists:
         - GCS bucket names have to be globally unique, pick a different name with a random suffix.
@@ -258,10 +258,10 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=${CLUSTER_L
     - Create [a secret](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#create_a_kubernetes_secret_for_hugging_face_credentials) as noted in with the Hugging Face credential called `hf-secret` in the name space where your `mistral-7b-instruct` deployment is running.
     - Add the following entry to `env` within the deployment `mistral-7b-instruct` via `kubectl edit`.
 
-```yaml
-- name: HUGGING_FACE_HUB_TOKEN
-	  valueFrom:
-		  secretKeyRef:
-	          name: hf-secret
-              key: hf_api_token
-```
+        ```yaml
+        - name: HUGGING_FACE_HUB_TOKEN
+            valueFrom:
+                secretKeyRef:
+                    name: hf-secret
+                    key: hf_api_token
+        ```
