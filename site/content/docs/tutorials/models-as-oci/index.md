@@ -9,7 +9,7 @@ type: docs
 tags:
  - Orchestration
  - Tutorials
-draft: true
+draft: false
 ---
 ## Package and Deploy from Hugging Face to Artifact Registry and GKE
 
