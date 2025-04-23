@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
-$primary: #1A73E8;
-
-
+$primary: #1a73e8;
 
 $light: #fff;
 $google_font_name: "Google Sans";
@@ -864,7 +862,7 @@ div.td-page-meta {
 
   .title {
     font-weight: 500 !important;
-    font-size: 16px!important;
+    font-size: 16px !important;
     line-height: 24px;
     color: #1f1f1f;
   }
@@ -905,7 +903,7 @@ div.td-page-meta {
     cursor: pointer;
     margin-bottom: 0 !important;
     color: #444746;
-    font-size: 12px!important;
+    font-size: 12px !important;
     font-style: normal;
     font-weight: 400;
     line-height: 24px;
@@ -921,4 +919,82 @@ div.td-page-meta {
 
 body {
   position: relative;
+}
+
+.td-sidebar-link {
+  font-size: 13px;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 5px !important;
+
+  &.active {
+    color: #185abc !important;
+    border: 0px solid #1d7db3 !important;
+    border-bottom-right-radius: 12px;
+    border-top-right-radius: 12px;
+    background-color: #e8f0fe;
+  }
+
+  &:hover {
+    border: 0px solid #1d7db3 !important;
+    border-bottom-right-radius: 12px;
+    border-top-right-radius: 12px;
+    background-color: rgb(241, 243, 244);
+  }
+
+  div {
+    padding-left: 5px !important;
+  }
+}
+
+.td-sidebar {
+  background-color: #fff !important;
+}
+
+.ul-1 {
+  padding-left: 0 !important;
+  .td-sidebar-link {
+    padding-left: 0.5em !important;
+  }
+
+  > li {
+    > a:first-of-type {
+      font-weight: 700 !important;
+    }
+  }
+}
+
+.ul-2 {
+  padding-left: 0 !important;
+  .td-sidebar-link {
+    padding-left: 1.5em !important;
+  }
+
+  > li.with-child {
+    > a:first-of-type {
+      font-weight: 700 !important;
+    }
+  }
+}
+
+.ul-3 {
+  padding-left: 0 !important;
+  .td-sidebar-link {
+    padding-left: 2.5em !important;
+  }
+}
+
+.td-sidebar-nav__section {
+  padding-left: 1px !important;
+  padding-right: 0px !important;
+}
+
+.tree-root {
+  display: none !important;
+}
+
+nav.foldable-nav .ul-1 .with-child > label:before {
+  right: .1em;
+  left: auto!important;
+  cursor: pointer;
 }
