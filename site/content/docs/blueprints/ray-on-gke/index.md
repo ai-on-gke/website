@@ -12,15 +12,15 @@ tags:
 draft: false
 ---
 This directory contains examples, guides and best practices for running [Ray](https://www.ray.io/) on Google Kubernetes Engine.
-Most examples use the [`applications/ray`](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/applications/ray) terraform module to install KubeRay and deploy RayCluster resources.
+Most examples use the [`ray-on-gke`](https://github.com/ai-on-gke/quick-start-guides/tree/main/ray-on-gke) terraform module to install KubeRay and deploy RayCluster resources.
 
 ## Getting Started
 
-It is highly recommended to use the [infrastructure](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/infrastructure) terraform module to create your GKE cluster.
+It is highly recommended to use the [infrastructure](https://github.com/ai-on-gke/quick-start-guides/tree/main/common/infrastructure) terraform module to create your GKE cluster.
 
 ### Create a RayCluster on a GKE cluster
 
-Edit `templates/workloads.tfvars` with your environment specific variables and configurations.
+Edit `ray-on-gke/workloads.tfvars` with your environment specific variables and configurations.
 The following variables require configuration:
 * project_id
 * cluster_name
@@ -30,7 +30,7 @@ If you need a new cluster, you can specify `create_cluster: true`.
 
 Run the following commands to install KubeRay and deploy a Ray cluster onto your existing cluster.
 ```bash
-cd templates/
+cd ray-on-gke/
 terraform init
 terraform apply --var-file=workloads.tfvars
 ```
