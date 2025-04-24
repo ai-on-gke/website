@@ -2,7 +2,7 @@
 title: "Benchmarking"
 linkTitle: "Benchmarking"
 weight: 40
-type: docs
+type: docs-root
 notoc: true
 menu:
   main:

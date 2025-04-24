@@ -2,7 +2,7 @@
 title: "Tutorials & Notebooks"
 linkTitle: "Tutorials & Notebooks"
 weight: 30
-type: docs
+type: docs-root
 notoc: true
 menu:
   main:

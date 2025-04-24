@@ -2,7 +2,7 @@
 title: "Blueprints"
 linkTitle: "Blueprints"
 weight: 20
-type: docs
+type: docs-root
 notoc: true
 menu:
   main:
