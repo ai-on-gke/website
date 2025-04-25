@@ -135,7 +135,7 @@ for (let c of containers) {
   if (sideBar) {
     const sideBarSearchButton = sideBar.querySelector('.search-button');
     const sideBarSearchInput = sideBar.querySelector('.td-search__input');
-    sideBarSearchButton.addEventListener('click', () => {
+    sideBarSearchButton?.addEventListener('click', () => {
       sendData(sideBarSearchInput.value);
     });
   };
