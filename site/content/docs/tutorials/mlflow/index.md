@@ -10,7 +10,7 @@ resources:
 - src: "**img*.png"
 
 tags:
- - Orchestration
+ - Evaluation
  - Finetuning
  - Tutorials
 ---

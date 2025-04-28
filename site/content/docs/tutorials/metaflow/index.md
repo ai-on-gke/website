@@ -7,7 +7,7 @@ type: docs
 owner: >-
     [Vlado Djerek](https://github.com/volatilemolotov)
 tags:
- - Orchestration
+ - Evaluation
  - Finetuning
  - Tutorials
 ---
