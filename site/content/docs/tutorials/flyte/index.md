@@ -35,6 +35,16 @@ This guide illustrates the deployment of Flyte on Google Kubernetes Engine (GKE)
 
 ![Architecture overview](architecture-overview.png)
 
+
+## Clone the repository
+
+Clone the repository with our guides and cd to the `flyte` directory by running these commands:
+```bash
+git clone https://github.com/ai-on-gke/tutorials-and-examples.git
+cd tutorials-and-examples/flyte
+```
+
+
 ## Setting up your GKE cluster with Terraform
 
 Let's start with setting up the infrastructure using Terraform. The Terraform configuration will create an [Autopilot](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview) or [Standard](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-regional-cluster) GKE cluster with GPU node pools (only for Standard clusters).
