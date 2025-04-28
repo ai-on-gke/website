@@ -77,6 +77,15 @@ This tutorial assumes you have the following:
 - Optional: Docker installed on your local machine (if you want to build and run the application locally)
 - Optional: Terraform installed on your local machine (if you want to use the automated deployment)
 
+
+## Clone the repository
+
+Clone the repository with our guides and cd to the `langchain-chatbot` directory by running these commands:
+```bash
+git clone https://github.com/ai-on-gke/tutorials-and-examples.git
+cd tutorials-and-examples/langchain-chatbot
+```
+
 ## Optional: Build and Run the Application Locally
 
 Running the application locally allows you to quickly preview the application and catch possible configuration issues, such as incorrect model base URI, before deploying the application to the cloud.
