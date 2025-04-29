@@ -3,7 +3,7 @@
   {{ T "post_last_mod" }}
   <a data-proofer-ignore
     href="{{ .Site.Params.github_repo }}/commit/{{ .GitInfo.Hash }}">
-    {{ .Lastmod.Format .Site.Params.time_format_default -}}
+    {{ .GitInfo.CommitDate.Format .Site.Params.time_format_default -}}
   </a>
 </div>
 {{ end -}}
