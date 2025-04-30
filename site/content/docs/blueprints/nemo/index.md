@@ -9,7 +9,7 @@ owner: >-
     [Sujit Khasnis]([https://github.com/external-user](https://github.com/sujituk))
 tags:
     - NVIDIA
-    -  NeMo on GKE
+    - NeMo on GKE
     - Blueprints
 externalSource:
     repository: "ai-on-gke/nvidia-ai-solutions"
