@@ -1,5 +1,5 @@
 ---
-linkTitle: "Jupyter on GKE"
+linkTitle: "Jupyter"
 title: "Jupyter on GKE"
 description: "This guide details how to deploy JupyterHub on Google Kubernetes Engine (GKE) using a provided Terraform template, including options for persistent storage and Identity-Aware Proxy (IAP) for secure access. It covers the necessary prerequisites, configuration steps, and installation process, emphasizing the use of Terraform for automation and IAP for authentication. The guide also provides instructions for accessing JupyterHub, setting up user access, and running an example notebook."
 weight: 30
