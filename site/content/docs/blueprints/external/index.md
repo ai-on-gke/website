@@ -1,18 +1,19 @@
 ---
-linkTitle: "External"
-title: "External"
-description: "External Description."
+linkTitle: "NVIDIA NeMo"
+title: "NVIDIA NeMo"
+description: "NVIDIA NeMo™ is an end-to-end platform for development of custom generative AI models anywhere. NVIDIA NeMo framework is designed for enterprise development, it utilizes NVIDIA's state-of-the-art technology to facilitate a complete workflow from automated distributed data processing to training of large-scale bespoke models using sophisticated 3D parallelism techniques, and finally, deployment using retrieval-augmented generation for large-scale inference on an infrastructure of your choice, be it on-premises or in the cloud."
 weight: 30
 type: docs
 draft: false
 owner: >-
-    [External user](https://github.com/external-user)
+    [Sujit Khasnis]([https://github.com/external-user](https://github.com/sujituk))
 tags:
-    - Ray on GKE
+    - NVIDIA
+    -  NeMo on GKE
     - Blueprints
 externalSource:
-    repository: "ai-on-gke/website"
+    repository: "ai-on-gke/nvidia-ai-solutions"
     branch: "main"
-    filePath: "README.md"
+    filePath: "nemo/README.md"
 ---
 {{% include-external %}}
