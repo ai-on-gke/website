@@ -1,6 +1,6 @@
 ---
-linkTitle: "Finetuning Gemma 3-1B-it on L4"
-title: "Finetuning Gemma 3-1B-it on L4"
+linkTitle: "Fine-tuning Gemma 3-1B-it on L4"
+title: "Fine-tuning Gemma 3-1B-it on L4"
 description: "This tutorial guides you through fine-tuning the Gemma 3-1B-it language model on Google Kubernetes Engine (GKE) using L4 GPU, leveraging Parameter Efficient Fine Tuning (PEFT) and LoRA. It covers setting up a GKE cluster, containerizing the fine-tuning code, running the fine-tuning job, and uploading the resulting model to Hugging Face. Finally, it demonstrates how to deploy and interact with the fine-tuned model using vLLM on GKE."
 weight: 30
 owner: >-
@@ -10,7 +10,7 @@ tags:
  - Experimentation
  - Tutorials
  - Gemma
- - Finetuning
+ - Fine-tuning
 draft: false
 ---
 We’ll walk through fine-tuning a Gemma 3-1B-it model using GKE using L4 GPU. L4 GPU are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs, at a fraction of the cost of using a higher end GPU.
