@@ -39,36 +39,28 @@ This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in 
 
 ## Setting up your cluster and Hyperdisk ML Disk
 
+1. Set the default environment variables:
+
+    ```sh
+    export VM_NAME=hydrator
+    export MACHINE_TYPE=c4-standard-48
+    export IMAGE_FAMILY=debian-12
+    export IMAGE_PROJECT=debian-cloud
+    export ZONE=us-central1-a
+    export SNAP_SHOT_NAME=hdmlsnapshot
+    export PROJECT_ID=$(gcloud config get project)
+    export DISK_NAME=model1
+    ```
+
 1. Create a new GCE instance that you will use to hydrate the new Hyperdisk ML disk with data. Note a c3-standard-44 instance is used to provide the max throughput while populating the hyperdisk([Instance to throughput rates](https://cloud.google.com/compute/docs/disks/hyperdisks#performance_limits_for_other_vms)).
 
     ```sh
-    VM_NAME=hydrator
-    MACHINE_TYPE=c3-standard-44
-    IMAGE_FAMILY=debian-11
-    IMAGE_PROJECT=debian-cloud
-    ZONE=us-central1-a
-    SNAP_SHOT_NAME=hdmlsnapshot
-    PROJECT_ID=myproject
-    DISK_NAME=model1
-
     gcloud compute instances create $VM_NAME \
         --image-family=$IMAGE_FAMILY \
         --image-project=$IMAGE_PROJECT \
         --zone=$ZONE \
         --machine-type=$MACHINE_TYPE
-
-    gcloud compute ssh $VM_NAME
     ```
-
-1. Update and authenticate the instance
-
-    ```sh
-    sudo apt-get update
-    sudo apt-get install google-cloud-cli
-    gcloud init
-    gcloud auth login
-    ```
-
 1. Create and attach the disk to the new GCE VM.
 
     ```sh
@@ -80,6 +72,35 @@ This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in 
     --zone $ZONE
 
     gcloud compute instances attach-disk $VM_NAME --disk=$DISK_NAME --zone=$ZONE 
+    ```
+    
+1. Get your current IP to create a new Firewall rule
+    ```sh
+    curl ifconfig.me
+    ```
+
+1. Replace your network and add a Firewall rule to enable SSH access into the virutal machine
+     ```sh
+    gcloud compute firewall-rules create allow-rdp-ingress-from-iap \
+        --direction=INGRESS \
+        --action=allow \
+        --rules=tcp:3389 \
+        --source-ranges=<replace-your-ip>/20
+    ```
+
+1. Log into the virtual machine
+
+    ```sh
+    gcloud compute ssh $VM_NAME
+    ```
+
+1. Update and authenticate the instance
+
+    ```sh
+    sudo apt-get update
+    sudo apt-get install google-cloud-cli
+    gcloud init
+    gcloud auth login
     ```
 
 ## Create a temaplte snapshot of the disk with the content of the GCS bucket
