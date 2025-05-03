@@ -43,7 +43,7 @@ This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in 
 
     ```sh
     export VM_NAME=hydrator
-    export MACHINE_TYPE=c4-standard-48
+    export MACHINE_TYPE=c3-standard-44
     export IMAGE_FAMILY=debian-12
     export IMAGE_PROJECT=debian-cloud
     export ZONE=us-central1-a
@@ -73,7 +73,9 @@ This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in 
 
     gcloud compute instances attach-disk $VM_NAME --disk=$DISK_NAME --zone=$ZONE 
     ```
-    
+
+## Create a template snapshot of the disk with the content of the GCS bucket
+
 1. Get your current IP to create a new Firewall rule
     ```sh
     curl ifconfig.me
@@ -81,10 +83,10 @@ This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in 
 
 1. Replace your network and add a Firewall rule to enable SSH access into the virutal machine
      ```sh
-    gcloud compute firewall-rules create allow-rdp-ingress-from-iap \
+    gcloud compute firewall-rules create allow-ssh-ingress-from-iap \
         --direction=INGRESS \
         --action=allow \
-        --rules=tcp:3389 \
+        --rules=tcp:22 \
         --source-ranges=<replace-your-ip>/20
     ```
 
@@ -103,15 +105,6 @@ This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in 
     gcloud auth login
     ```
 
-## Create a temaplte snapshot of the disk with the content of the GCS bucket
-
-1. Log into the hydrator VM, format the volume, initiate transfer, and dismount the volume.
-
-    ```sh
-    gcloud compute ssh $VM_NAME
-    ```
-
-
 1. Identify the device name (eg: */dev/nvme0n2*) by looking at the output of lsblk. This should correspond to the disk that was attached in the previous step. 
 
     ```sh 
@@ -126,12 +119,17 @@ This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in 
 1. Mount the disk and copy the content form the GCS bucket into the disk
 
     ```sh
-    GCS_DIR=gs://vertex-model-garden-public-us-central1/llama2/llama2-70b-hf 
+    GCS_DIR=gs://vertex-model-garden-public-us/llama3.3/Llama-3.3-70B-Instruct
     sudo /sbin/mkfs -t ext4 -E lazy_itable_init=0,lazy_journal_init=0,discard $DEVICE
 
     sudo mount $DEVICE /mnt
-    gcloud storage cp -r $GCS_DIR /mnt
+    sudo gcloud storage cp -r $GCS_DIR /mnt
     sudo umount /mnt
+    ```
+
+1. Close the connection to the VM
+    ```sh
+    exit
     ```
 
 1. Detach disk from the hydrator and switch to READ_ONLY_MANY access mode.
@@ -148,7 +146,7 @@ This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in 
         --project=$PROJECT_ID
     ```
 
-## Use the diskaaaaa
+## Delete the VM and connect the disk to the GKE cluster
 
 1. You now have a hyperdisk ML snapshot populated with your data from Google Cloud Storage. You can delete the hydrator GCE instance and the original disk.
 
