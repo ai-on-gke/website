@@ -1017,3 +1017,15 @@ nav.foldable-nav .ul-1 .with-child > label:before {
   left: auto!important;
   cursor: pointer;
 }
+
+.td-sidebar-nav__section-title a {
+ color: rgba(33, 37, 41, 0.75) !important;
+}
+
+.td-sidebar-nav .td-sidebar-link__page {
+  color: rgba(33, 37, 41, 0.75) !important;
+}
+
+.td-sidebar-nav-active-item {
+  color: #2f80ed !important;
+}
