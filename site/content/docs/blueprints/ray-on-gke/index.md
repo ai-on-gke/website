@@ -18,10 +18,12 @@ Most examples use the [`ray-on-gke`](https://github.com/ai-on-gke/quick-start-gu
 
 It is highly recommended to use the [infrastructure](https://github.com/ai-on-gke/quick-start-guides/tree/main/common/infrastructure) terraform module to create your GKE cluster.
 
-
 ### Create a RayCluster on a GKE cluster
 
-1. Clone the [`quick-start-guides`](https://github.com/ai-on-gke/quick-start-guides/tree/main/ray-on-gke) repository.
+1. Clone the [`quick-start-guides`](https://github.com/ai-on-gke/quick-start-guides/) repository.
+    ```bash
+    git clone https://github.com/ai-on-gke/quick-start-guides.git
+    ```
 
 1. Edit `ray-on-gke/workloads.tfvars` with your environment specific variables and configurations.
     The following variables require configuration:
