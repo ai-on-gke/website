@@ -323,7 +323,7 @@ Follow instructions on the following link: [Get access to the model](https://clo
     ```bash
     sky launch -c finetune finetune.yaml --retry-until-up --env HF_TOKEN=$HF_TOKEN
     ```
-    After finetuning is finished you should see the following output
+    After fine-tuning is finished you should see the following output
 
     ```
     (gemma-finetune, pid=1837) 

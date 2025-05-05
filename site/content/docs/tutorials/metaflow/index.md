@@ -8,7 +8,7 @@ owner: >-
     [Vlado Djerek](https://github.com/volatilemolotov)
 tags:
  - Evaluation
- - Finetuning
+ - Fine-tuning
  - Tutorials
 ---
 This tutorial will provide instructions on how to deploy and use the [Metaflow](https://docs.metaflow.org/) framework on GKE (Google Kubernetes Engine) and operate AI/ML workloads using [Argo-Workflows](https://argo-workflows.readthedocs.io/en/latest/).
@@ -318,7 +318,7 @@ class FinetuneFlow(FlowSpec):
     @retry
     @step
     def start(self):
-        print("Start finetuning")
+        print("Start Fine-tuning")
         import finetune
 
         finetune.finetune_and_upload_to_hf(
