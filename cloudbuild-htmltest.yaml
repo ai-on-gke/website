@@ -14,9 +14,8 @@
 
 
 steps:
-steps:
-  - name: gcr.io/cloud-builders/gsutil
-    args: ['cp', 'gs://ai-on-gke-website-htmltest-cache/refcache.json', 'tmp/refcache.json']
+  # - name: gcr.io/cloud-builders/gsutil
+  #   args: ['cp', 'gs://ai-on-gke-website-htmltest-cache/refcache.json', 'tmp/refcache.json']
   - name: 'ghcr.io/hugomods/hugo:ci-0.145.0'
     env:
       - GOPATH=/workspace/go
@@ -24,13 +23,11 @@ steps:
     script: |
       npm i autoprefixer
       hugo build -e production
-  - name: wjdp/htmltest
+  - name: lycheeverse/lychee
     args:
       - site/public
-      - '-c'
-      - htmltest.yaml
-  - name: gcr.io/cloud-builders/gsutil
-    args: ['cp', 'tmp/refcache.json', 'gs://ai-on-gke-website-htmltest-cache/refcache.json']
+  # - name: gcr.io/cloud-builders/gsutil
+  #   args: ['cp', 'tmp/refcache.json', 'gs://ai-on-gke-website-htmltest-cache/refcache.json']
 
 options:
   logging: CLOUD_LOGGING_ONLY
