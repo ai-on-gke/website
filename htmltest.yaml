@@ -20,6 +20,7 @@ IgnoreInternalEmptyHash: true
 IgnoreEmptyHref: true
 CheckInternalHash: false
 ExternalTimeout: 60
+CacheExpires: 7d
 IgnoreURLs:
   - http://localhost
   - https://localhost
