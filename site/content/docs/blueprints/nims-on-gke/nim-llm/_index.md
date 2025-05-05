@@ -8,6 +8,9 @@ owner: >-
     [Francisco Cabrera](https://github.com/fcabrera23)
 tags:
  - Blueprints
+ - NVIDIA
+ - NIM on GKE
+ - LLM
 ---
 ## Before you begin
 
