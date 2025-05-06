@@ -25,12 +25,25 @@ steps:
       npm i autoprefixer
       hugo build -e production
   - name: lycheeverse/lychee
+    allowFailure: true
+    entrypoint: bash
     args:
-      - site/public
       - -c
-      - lychee.toml
+      - |-
+        set -e 
+
+        echo "fail" > /workspace/lychee_status
+        lychee site/public -c lychee.toml
+        echo "pass" > /workspace/lychee_status
   - name: gcr.io/cloud-builders/gsutil
     args: ['cp', '.lycheecache', 'gs://ai-on-gke-website-htmltest-cache/.lycheecache']
+  - name: bash
+    script: | 
+      #!/usr/bin/env bash
+      set -e
+      if [[ $(cat /workspace/lychee_status) != "pass" ]]; then
+        exit 1
+      fi
 
 options:
   logging: CLOUD_LOGGING_ONLY
