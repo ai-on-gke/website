@@ -6,7 +6,7 @@ weight: 30
 type: docs
 draft: false
 owner: >-
-    [Sujit Khasnis]([https://github.com/external-user](https://github.com/sujituk))
+    [Sujit Khasnis](https://github.com/sujituk)
 tags:
     - NVIDIA
     - BioNeMo on GKE
