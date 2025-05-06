@@ -40,10 +40,13 @@ steps:
   - name: bash
     script: | 
       #!/usr/bin/env bash
+      echo "Checking if the link test completed successfully"
       set -e
       if [[ $(cat /workspace/lychee_status) != "pass" ]]; then
+        echo "The link test failed"
         exit 1
       fi
+      echo "The link test completed successfully"
 
 options:
   logging: CLOUD_LOGGING_ONLY
