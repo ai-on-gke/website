@@ -2,12 +2,24 @@
 {{/* Class names ending with `--KIND` are deprecated in favor of `__KIND`, but we're keeping them for a few releases after 0.9.0 */ -}}
 
 {{ if .File -}}
-{{ $path := strings.TrimPrefix (add hugo.WorkingDir "/") $.File.Filename -}}
-{{ $gh_repo := $.Param "github_repo" -}}
+
+{{ .Scratch.Set "path" (or .Page.Params.externalSource.filePath (strings.TrimPrefix (add hugo.WorkingDir "/") $.File.Filename)) }}
+
+{{ .Scratch.Set "branch" (or .Page.Params.externalSource.branch ($.Param "github_branch" | default "main")) }}
+{{ .Scratch.Set "gh_repo" (or .Page.Params.externalSource.repository ($.Param "github_repo")) }}
+
+{{ if.Page.Params.externalSource.repository }}
+  {{ .Scratch.Set "gh_repo" (printf "https://github.com/%s" .Page.Params.externalSource.repository) }}
+{{ end }}
+
+{{ $gh_repo := .Scratch.Get "gh_repo" }}
+{{ $path := .Scratch.Get "path" }}
+{{ $gh_branch := .Scratch.Get "branch" }}
+
 {{ $gh_url := $.Param "github_url" -}}
 {{ $gh_subdir := $.Param "github_subdir" | default "" -}}
 {{ $gh_project_repo := $.Param "github_project_repo" -}}
-{{ $gh_branch := $.Param "github_branch" | default "main" -}}
+
 <div class="td-page-meta ms-2 pb-1 mb-0">
 {{ if $gh_url -}}
   {{ warnf "Warning: use of `github_url` is deprecated. For details, see https://www.docsy.dev/docs/adding-content/repository-links/#github_url-optional" -}}
