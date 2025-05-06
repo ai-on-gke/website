@@ -2,6 +2,8 @@
 {{ $branch := .Page.Params.externalSource.branch }}
 {{ $repository := .Page.Params.externalSource.repository }}
 
+{{ $folderPath := replaceRE `/.*$` "" $filePath }}
+
 {{ $url := printf "https://raw.githubusercontent.com/%s/%s/%s" $repository $branch $filePath }}
 
 {{ with try (resources.GetRemote $url) }}
@@ -11,8 +13,11 @@
 {{ with .Err }}
 {{ errorf "%s" . }}
 {{ else with .Value }}
-{{ $content := .Content | safeHTML }}
-{{ $content }}
+
+{{ $newContent := replaceRE `\]\(\./(.*?)\)` (printf "](https://github.com/%s/blob/%s/%s/%s)" $repository $branch $folderPath "${1}") .Content }}
+
+{{ $newContent | safeHTML}}
+
 {{ end }}
 {{ else }}
 {{ errorf "Unable to get remote resource %q" $url }}
