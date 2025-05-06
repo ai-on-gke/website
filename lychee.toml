@@ -12,19 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-steps:
-  - name: 'ghcr.io/hugomods/hugo:ci-0.145.0'
-    env:
-      - GOPATH=/workspace/go
-      - GO111MODULE=on
-    script: |
-      npm i autoprefixer
-      hugo build -e production
-  - name: wjdp/htmltest
-    args:
-      - site/public
-      - '-c'
-      - htmltest.yaml
-options:
-  logging: CLOUD_LOGGING_ONLY
+max_concurrency = 2
+user_agent = "curl/7.83. 1"
+retry_wait_time = 10
+accept = ["200", "429"]
+exclude_all_private = true
+cache_exclude_status = ["429","500..599","400..499"]
+cache = true
+no_progress = true
+verbose = "error"
