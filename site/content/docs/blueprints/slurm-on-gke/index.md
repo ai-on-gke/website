@@ -206,7 +206,7 @@ To set up your environment with Cloud Shell, follow these steps:
 4. Clone the code repository.
 
 	```bash
-	git clone https://github.com/GoogleCloudPlatform/ai-on-gke
+	git clone https://github.com/ai-on-gke/slurm-on-gke
 	```
 
 ### Create your cluster infrastructure
