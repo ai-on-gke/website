@@ -22,6 +22,7 @@ In case you want to add .md file from external github repository:
 ```
 
 2. Add ```{{% include-external %}}``` as a content.
+3. If your external .md file contains any images, create images folder under the same level your .md presented and put all images there.
 
 You can refer to this [example](site/content/docs/blueprints/external/index.md).
 
