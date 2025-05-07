@@ -452,5 +452,5 @@ individual resources.
 ## License
 
 * The use of the assets contained in this repository is subject to compliance with [Google's AI Principles](https://ai.google/responsibility/principles/)  
-* See [LICENSE](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/LICENSE)  
+* See [LICENSE](https://github.com/ai-on-gke/website/blob/main/LICENSE)  
 * This project is adapted from the [Stack HPC \- slurm k8s cluster project](https://github.com/stackhpc/slurm-k8s-cluster) by Giovanni Torres. Copied or derived files from the original repository, as specified within their headers, are licensed under the original MIT license and copyrighted by [Giovanni Torres](https://github.com/stackhpc/slurm-k8s-cluster/blob/main/LICENSE).
