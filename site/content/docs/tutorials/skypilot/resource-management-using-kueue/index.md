@@ -33,6 +33,13 @@ gcloud services enable container.googleapis.com
 * [venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
 * [yq](https://github.com/mikefarah/yq/#install)
 
+3. Check out the necessary code files:
+
+```bash
+git clone https://github.com/ai-on-gke/tutorials-and-examples.git
+cd tutorials-and-examples/skypilot-dws-kueue
+```
+
 ## Setting up your GKE cluster with Terraform
 We’ll use Terraform to provision:
 - A GKE cluster ([Autopilot](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview) or [Standard](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-regional-cluster))
