@@ -10,6 +10,9 @@ tags:
  - Serving
  - Orchestration
  - Tutorials
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/tutorials/skypilot/resource-management-using-kueue
 ---
 This tutorial expands on the [SkyPilot Tutorial](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/tutorials-and-examples/skypilot) by leveraging [Dynamic Workload Scheduler](https://cloud.google.com/blog/products/compute/introducing-dynamic-workload-scheduler) with the help of an open-source project called [Kueue](https://kueue.sigs.k8s.io/)
 Different from the SkyPilot tutorial, this guide shows how to use SkyPilot with Kueue on GKE to efficiently manage ML workloads with dynamic GPU provisioning.
