@@ -2,7 +2,7 @@
 {{ $branch := .Page.Params.externalSource.branch }}
 {{ $repository := .Page.Params.externalSource.repository }}
 
-{{ $folderPath := replaceRE `/.*$` "" $filePath }}
+{{ $folderPath := replaceRE `/[^/]*$` "" $filePath }}
 
 {{ $url := printf "https://raw.githubusercontent.com/%s/%s/%s" $repository $branch $filePath }}
 
@@ -14,7 +14,8 @@
 {{ errorf "%s" . }}
 {{ else with .Value }}
 
-{{ $newContent := replaceRE `\]\(\./(.*?)\)` (printf "](https://github.com/%s/blob/%s/%s/%s)" $repository $branch $folderPath "${1}") .Content }}
+{{ $newContent := replaceRE `\]\((\.\/|\b[^:][^\/][^\/]\b)(.*?)\)` (printf "](https://github.com/%s/blob/%s/%s/%s)" $repository $branch $folderPath "${2}") .Content }}
+{{ $newContent := replaceRE `(\]\(([A-Za-z0-9]*\.[a-z]+))` (printf "](https://github.com/%s/blob/%s/%s/%s)" $repository $branch $folderPath "${2}") $newContent }}
 
 {{ $newContent | safeHTML}}
 
