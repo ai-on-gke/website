@@ -15,7 +15,9 @@
 {{ else with .Value }}
 
 {{ $newContent := replaceRE `\]\((\.\/|\b[^:][^\/][^\/]\b)(.*?)\)` (printf "](https://github.com/%s/blob/%s/%s/%s)" $repository $branch $folderPath "${2}") .Content }}
-{{ $newContent := replaceRE `(\]\(([A-Za-z0-9]*\.[a-z]+))` (printf "](https://github.com/%s/blob/%s/%s/%s)" $repository $branch $folderPath "${2}") $newContent }}
+{{ $newContent := replaceRE `(\]\(([A-Za-z0-9]*\.[a-z]+))` (printf "](https://github.com/%s/blob/%s/%s/%s" $repository $branch $folderPath "${2}") $newContent }}
+
+{{ $newContent := replaceRE `\[<img.*src=".*\/(.*\.[a-z]*)".*>\]\((.*)\)` (printf "![%s](images/%s)" "${2}" "${1}") $newContent }}
 
 {{ $newContent | safeHTML}}
 
