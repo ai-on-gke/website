@@ -63,7 +63,7 @@ Before proceeding further, review the Terraform module configuration for this pa
 
 ```HCL
 module "slurm-cluster-001" {
-  source           = "../modules/slurm-cluster/"
+  source           = "./modules/slurm-cluster/"
   namespace        = "slurm"
   namespace_create = true
 
@@ -112,7 +112,7 @@ The following streamlined configuration for a new set of worker nodes requires o
 ```HCL
 # example - 1
 module "slurm-workers-001" {
-  source = "../modules/slurm-nodeset"
+  source = "./modules/slurm-nodeset"
   name   = "slurmd"
   config = {
     type      = "g2-standard-4"
@@ -124,7 +124,7 @@ module "slurm-workers-001" {
 
 # example - 2
 module "slurm-workers-002" {
-  source = "../modules/slurm-nodeset"
+  source = "./modules/slurm-nodeset"
   name   = "slurmd1"
   config = {
     type      = "n1-standard-8"
@@ -206,7 +206,7 @@ To set up your environment with Cloud Shell, follow these steps:
 4. Clone the code repository.
 
 	```bash
-	git clone https://github.com/GoogleCloudPlatform/ai-on-gke
+	git clone https://github.com/ai-on-gke/slurm-on-gke
 	```
 
 ### Create your cluster infrastructure
@@ -452,5 +452,5 @@ individual resources.
 ## License
 
 * The use of the assets contained in this repository is subject to compliance with [Google's AI Principles](https://ai.google/responsibility/principles/)  
-* See [LICENSE](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/LICENSE)  
+* See [LICENSE](https://github.com/ai-on-gke/website/blob/main/LICENSE)  
 * This project is adapted from the [Stack HPC \- slurm k8s cluster project](https://github.com/stackhpc/slurm-k8s-cluster) by Giovanni Torres. Copied or derived files from the original repository, as specified within their headers, are licensed under the original MIT license and copyrighted by [Giovanni Torres](https://github.com/stackhpc/slurm-k8s-cluster/blob/main/LICENSE).
