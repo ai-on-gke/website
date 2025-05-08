@@ -18,6 +18,7 @@
 
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' 'unsafe-inline' www.google-analytics.com www.googletagmanager.com fonts.googleapis.com maxcdn.bootstrapcdn.com fonts.gstatic.com code.jquery.com unpkg.com www.gstatic.com cdnjs.cloudflare.com;">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta property="og:image" content="{{ "images/social-logo.png" | absURL }}" />
 {{ range .AlternativeOutputFormats -}}
 <link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink | safeURL }}">
 {{ end -}}
