@@ -145,7 +145,28 @@ for (let c of containers) {
   searchButton.addEventListener('click', () => {
     sendData(input.value);
   });
+</script>
+<script>
+  function getSelectionText() {
+    var text = '';
+    if (window.getSelection) {
+      text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != 'Control') {
+      text = document.selection.createRange().text;
+    }
+    return text;
+  }
 
-
- 
+  document.addEventListener('copy', function (e) {
+    dataLayer.push({
+      'event': 'textCopied',
+      'clipboardText': getSelectionText(),
+      'clipboardLength': getSelectionText().length
+    });
+    gtag('event', 'textCopied', {
+      'clipboard_text': getSelectionText(),
+      'clipboard_length': getSelectionText().length, 
+      'value': getSelectionText()
+    });
+  });
 </script>
