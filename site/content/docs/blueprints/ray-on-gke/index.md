@@ -48,7 +48,7 @@ It is highly recommended to use the [infrastructure](https://github.com/ai-on-gk
     ```
 
 >[!NOTE]
-> See [tfvars examples](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/ray-on-gke/examples/tfvars) to explore different configuration options for the Ray cluster using the [terraform templates](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/ray-on-gke/templates).
+> See [tfvars examples](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/ray-on-gke/examples/tfvars) to explore different configuration options for the Ray cluster using the [terraform templates](https://github.com/ai-on-gke/quick-start-guides/tree/main/ray-on-gke).
 
 ### Install Ray
 
