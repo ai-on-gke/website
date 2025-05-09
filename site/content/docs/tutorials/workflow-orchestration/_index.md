@@ -5,5 +5,8 @@ description: "Workflow orchestration in the ai-on-gke project involves managing 
 weight: 20
 type: docs
 notoc: true
-draft: true
+draft: false
+tags:
+ - Orchestration
+ - Tutorials
 ---
