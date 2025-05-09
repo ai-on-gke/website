@@ -1,6 +1,17 @@
-# Using TPUs with KubeRay on GKE
-
-This page contains instructions for how to set up Ray on GKE with TPUs. 
+---
+linkTitle: "Ray on TPUs with GKE"
+title: "Using TPUs with KubeRay on GKE"
+description: "This guide provides instructions for deploying and managing Ray custom resources on Google Kubernetes Engine (GKE) with TPUs. It details how to install the KubeRay TPU webhook, an admission webhook which bootstraps required environment variables for TPU initialization and enables atomic scheduling of multi-host TPU workers on GKE nodepools. This guide also provides a sample workload to verify proper TPU initialization and links to more advanced workloads to run with TPUs and Ray on GKE."
+weight: 30
+type: docs
+owner: >-
+    [ryanaoleary](https://github.com/ryanaoleary)
+tags: 
+    - Ray on TPUs with GKE
+    - Blueprints
+draft: false
+---
+This directory contains instructions for running [KubeRay](https://github.com/ray-project/kuberay) with [TPUs](https://cloud.google.com/tpu?hl=en) on Google Kubernetes Engine. This includes instructions for installing the [KubeRay TPU webhook](https://github.com/ai-on-gke/kuberay-tpu-webhook/tree/main) to enable multi-host TPU workloads.
 
 
 ### Prerequisites
