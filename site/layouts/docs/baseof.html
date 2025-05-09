@@ -25,6 +25,7 @@
           </aside>
           <main class="col-12 col-md-10 col-xl-8 ps-md-3" role="main">
             {{ partial "version-banner.html" . }}
+            {{ partial "callout-banner.html" . }}
             <div class="top-nav-bar">{{ if not (.Param "ui.breadcrumb_disable") -}}
               {{ partial "breadcrumb.html" . -}}
             {{ end -}}
