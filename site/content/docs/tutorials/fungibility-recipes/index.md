@@ -65,7 +65,7 @@ gcloud container node-pools create v6e-1 \
 	--machine-type=ct6e-standard-1t \
 	--cluster=$CLUSTER_NAME \
 	--node-labels=cloud.google.com/compute-class=$COMPUTE_CLASS \
---node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
+  --node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
 	--enable-autoscaling \
 	--min-nodes=1 \
 	--max-nodes=2
@@ -74,12 +74,12 @@ gcloud container node-pools create v6e-1 \
 Create a GPU L4 [Spot](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms) node pool:
 
 ```
-gcloud container node-pools create l4-preemptible \
+gcloud container node-pools create l4-spot \
 	--cluster=$CLUSTER_NAME \
 	--location=$LOCATION \
 	--num-nodes=1 \
 	--machine-type "g2-standard-4" \
---preemptible \
+  --spot \
 	--accelerator "type=nvidia-l4,gpu-driver-version=LATEST" \
 	--node-labels=cloud.google.com/compute-class=$COMPUTE_CLASS \
 	--node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
@@ -225,7 +225,7 @@ spec:
        cloud.google.com/compute-class: vllm-fallback
      containers:
      - name: vllm-gpu
-       image: REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:GPU
+       image: $REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:GPU
        args:
        - --host=0.0.0.0
        - --port=8000
