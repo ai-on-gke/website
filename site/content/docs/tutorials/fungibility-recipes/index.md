@@ -65,7 +65,7 @@ gcloud container node-pools create v6e-1 \
 	--machine-type=ct6e-standard-1t \
 	--cluster=$CLUSTER_NAME \
 	--node-labels=cloud.google.com/compute-class=$COMPUTE_CLASS \
-  --node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
+	--node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
 	--enable-autoscaling \
 	--min-nodes=1 \
 	--max-nodes=2
@@ -79,7 +79,7 @@ gcloud container node-pools create l4-spot \
 	--location=$LOCATION \
 	--num-nodes=1 \
 	--machine-type "g2-standard-4" \
-  --spot \
+ 	--spot \
 	--accelerator "type=nvidia-l4,gpu-driver-version=LATEST" \
 	--node-labels=cloud.google.com/compute-class=$COMPUTE_CLASS \
 	--node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
