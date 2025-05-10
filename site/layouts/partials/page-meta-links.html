@@ -2,13 +2,25 @@
 {{/* Class names ending with `--KIND` are deprecated in favor of `__KIND`, but we're keeping them for a few releases after 0.9.0 */ -}}
 
 {{ if .File -}}
-{{ $path := strings.TrimPrefix (add hugo.WorkingDir "/") $.File.Filename -}}
-{{ $gh_repo := $.Param "github_repo" -}}
+
+{{ .Scratch.Set "path" (or .Page.Params.externalSource.filePath (strings.TrimPrefix (add hugo.WorkingDir "/") $.File.Filename)) }}
+
+{{ .Scratch.Set "branch" (or .Page.Params.externalSource.branch ($.Param "github_branch" | default "main")) }}
+{{ .Scratch.Set "gh_repo" (or .Page.Params.externalSource.repository ($.Param "github_repo")) }}
+
+{{ if.Page.Params.externalSource.repository }}
+  {{ .Scratch.Set "gh_repo" (printf "https://github.com/%s" .Page.Params.externalSource.repository) }}
+{{ end }}
+
+{{ $gh_repo := .Scratch.Get "gh_repo" }}
+{{ $path := .Scratch.Get "path" }}
+{{ $gh_branch := .Scratch.Get "branch" }}
+
 {{ $gh_url := $.Param "github_url" -}}
 {{ $gh_subdir := $.Param "github_subdir" | default "" -}}
 {{ $gh_project_repo := $.Param "github_project_repo" -}}
-{{ $gh_branch := $.Param "github_branch" | default "main" -}}
-<div class="td-page-meta ms-2 pb-1 pt-2 mb-0">
+
+<div class="td-page-meta ms-2 pb-1 mb-0">
 {{ if $gh_url -}}
   {{ warnf "Warning: use of `github_url` is deprecated. For details, see https://www.docsy.dev/docs/adding-content/repository-links/#github_url-optional" -}}
   <a href="{{ $gh_url }}" target="_blank"><i class="fa-solid fa-pen-to-square fa-fw"></i> {{ T "post_edit_this" }}</a>
@@ -30,7 +42,7 @@
 
   {{ $viewURL := printf "%s/tree/%s" $gh_repo $gh_repo_path -}}
   {{ $editURL := printf "%s/edit/%s" $gh_repo $gh_repo_path -}}
-  {{ $issuesURL := printf "%s/issues/new?title=%s" $gh_repo (safeURL $.Title ) -}}
+  {{ $issuesURL := printf "%s/issues/new?title=%s&template=documentation-issue-report.md" $gh_repo (safeURL $.Title ) -}}
   {{ $newPageStub := resources.Get "stubs/new-page-template.md" -}}
   {{ $newPageQS := querify "value" $newPageStub.Content "filename" "change-me.md" | safeURL -}}
   {{ $newPageURL := printf "%s/new/%s?%s" $gh_repo (path.Dir $gh_repo_path) $newPageQS -}}
@@ -48,7 +60,7 @@
     </svg>
      {{ T "post_create_issue" }}</a>
   {{ with $gh_project_repo -}}
-    {{ $project_issueURL := printf "%s/issues/new?labels=overall" . -}}
+    {{ $project_issueURL := printf "%s/issues/new?labels=overall&template=feature_request.md" . -}}
     <a href="{{ $project_issueURL }}" class="td-page-meta--project td-page-meta__project-issue" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M3.875 23L1 18.05L3.875 13H9.6L12.5 18.05L9.625 23H3.875ZM3.875 11L1 6.05L3.875 1H9.6L12.5 6.05L9.6 11H3.875ZM5.025 21H8.45L10.175 18.05L8.45 15H5.025L3.3 18.05L5.025 21ZM5.025 9H8.45L10.175 6.05L8.45 3H5.025L3.3 6.05L5.025 9ZM14.375 17L11.475 12.05L14.35 7H20.1L23 12.05L20.125 17H14.375ZM15.5 15H18.95L20.675 12.05L18.95 9H15.525L13.8 12.05L15.5 15Z" fill="#CA7B47"/>
         </svg>

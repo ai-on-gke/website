@@ -15,8 +15,11 @@
 
 languageCode: en-us
 title: GKE AI Labs
+baseUrl: https://gke-ai-labs.dev/
 
 docsDir: site
+enableGitInfo: true
+enableRobotsTXT: true
 
 contentDir: site/content
 publishDir: site/public
@@ -29,6 +32,8 @@ staticDir: site/static
 
 markup:
   goldmark:
+    renderer:
+      unsafe: true
     parser:
       attribute:
         block: true
@@ -51,14 +56,14 @@ params:
     taxonomyCloudTitle: 
       - Categories
     taxonomyPageHeader: [tags]
-  maxRelativeArticlesToDisplay: 5
+  maxRelativeArticlesToDisplay: 6
 
   
   offlineSearch: true
   ui:
-    sidebar_menu_compact: true
+    sidebar_menu_compact: false
     sidebar_search_disable: false
-    sidebar_menu_foldable: false
+    sidebar_menu_foldable: true
     ul_show: 2
     navbar_translucent_over_cover_disable: true
     breadcrumb_disable: false
@@ -68,6 +73,10 @@ params:
           enable: true
           # The responses that the user sees after clicking "yes" (the page was helpful) or "no" (the page was not helpful).
           'yes': >-
-            Glad to hear it!
+            Thank you for your feedback.
           'no': >-
-            Sorry to hear that. Please <a href="https://github.com/ai-on-gke/website/issues/new">tell us how we can improve</a>.
+            Thank you for your feedback.
+
+services:
+  googleAnalytics:
+    id: G-7BN0PBFHK1

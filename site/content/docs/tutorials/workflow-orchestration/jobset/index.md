@@ -4,9 +4,12 @@ title: "JobSet"
 description: "In this guide you will run a distributed ML training workload on GKE using the JobSet API Specifically, you will train a handwritten digit image classifier on the classic MNIST dataset using PyTorch. The training computation will be distributed across 4 nodes in a GKE cluster."
 weight: 30
 type: docs
+owner: >-
+    [Francisco Cabrera](https://github.com/fcabrera23)
 tags:
  - Orchestration
  - Tutorials
+draft: true
 ---
 In this guide you will run a distributed ML training workload on GKE using the [JobSet API](https://github.com/kubernetes-sigs/jobset).
 Specifically, you will train a handwritten digit image classifier on the classic MNIST dataset
@@ -20,12 +23,12 @@ using PyTorch. The training computation will be distributed across 4 nodes in a 
 ### 1. Create a GKE cluster with 4 nodes
 Run the command: 
 
-```gcloud container clusters create jobset-cluster --zone us-central1-c --num_nodes=4```
+```gcloud container clusters create jobset-cluster --zone us-central1-c --num_nodes=4 --labels=created-by=ai-on-gke,guide=jobset```
 
 You should see output indicating the cluster is being created (this can take ~10 minutes or so).
 
 ### 2. Install the JobSet CRD on your cluster
-Follow the [JobSet installation guide](https://github.com/kubernetes-sigs/jobset/blob/main/docs/setup/install.md).
+Follow the [JobSet installation guide](https://jobset.sigs.k8s.io/docs/installation/).
 
 ### 3. Apply the PyTorch MNIST example JobSet
 Run the command: 

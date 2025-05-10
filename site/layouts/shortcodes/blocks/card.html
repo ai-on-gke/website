@@ -8,15 +8,13 @@ $description := .Get "description" -}} {{ $col_id := .Get "col_id" -}} {{ $link
     {{ end -}}
   </div>
 
-  <div class="title" role="heading">{{ $title }}</div>
+  <div class="title" role="heading" aria-level="4">{{ $title }}</div>
 
   {{ if $description -}}
-  <div class="title2">{{ $description }}</div>
+  <div class="use-case-card-description">{{ $description }}</div>
   {{ end -}}
 
-  <a
-    href="{{ $link }}"
-    style="text-decoration: none"
-    ><button class="btn btn-primary">Explore</button></a
-  >
+
+    {{ partial "pages-with-same-tag.html" (dict "sectionTitle" $title "context" .) }}
+
 </div>

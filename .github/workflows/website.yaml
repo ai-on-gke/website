@@ -31,6 +31,9 @@ jobs:
       id-token: "write"
     steps:
       - uses: actions/checkout@v4
+        with:
+         submodules: recursive
+         fetch-depth: 0
       - name: Build sourcefiles
         run: |
           HOST_UID=$(id -u)
@@ -40,7 +43,7 @@ jobs:
             -e HOST_UID=${HOST_UID} \
             -e HOST_GID=${HOST_GID} \
             -u ${HOST_UID}:${HOST_GID} \
-            floryn90/hugo:ext-alpine build -e production
+            floryn90/hugo:0.145.0-ext-alpine build -e production
       - id: "auth"
         uses: "google-github-actions/auth@v2"
         with:

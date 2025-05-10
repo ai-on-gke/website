@@ -4,14 +4,14 @@ title: "Fine-tune gemma-2-9b and track as an experiment in MLFlow"
 description: "In this tutorial we will fine-tune gemma-2-9b using LoRA as an experiment in MLFlow. We will deploy MLFlow on a GKE cluster and set up MLFlow to store artifacts inside a GCS bucket. In the end, we will deploy a fine-tuned model using KServe."
 weight: 30
 type: docs
+owner: >-
+    [Vlado Djerek](https://github.com/volatilemolotov)
 resources:
 - src: "**img*.png"
 
 tags:
  - Evaluation
- - Experimentation
- - Orchestration
- - Finetuning
+ - Fine-tuning
  - Tutorials
 ---
 Data scientists often run a lot of experiments and it's essential to be sure that the best run won't be lost in numerous experiments. MLFlow helps to track experiments, datasets, metrics, and other data. GKE clusters can provide a lot of resources on demand.
@@ -25,16 +25,23 @@ Ensure you have a GCP project with a billing account. Enable the following APIs 
 - [Artifact Registry API](https://console.cloud.google.com/marketplace/product/google/artifactregistry.googleapis.com?returnUrl=/artifacts?invt%3DAbma5w%26inv%3D1%26project%3Dcvdjango&project=cvdjango&inv=1&invt=Abma5w&flow=gcp)
 
 Ensure you have the following tools installed on your workstation:
-```
+```bash
 gcloud CLI
-gcloud kubectl
+kubectl
 terraform
 helm
+git
 ```
 If you previously installed the gcloud CLI, get the latest version by running `gcloud components update`
 
 ## Set up
 If you don’t have a GCP project, you have to create one. Ensure that your project has access to GKE.
+
+Clone the repository with our guides and cd to the llamaindex/rag directory by running these commands:
+```bash
+git clone https://github.com/ai-on-gke/tutorials-and-examples.git
+cd tutorials-and-examples/mlflow/finetune-gemma
+```
 
 Run these commands to authenticate:
 ```bash
@@ -42,7 +49,11 @@ gcloud auth login
 gcloud auth application-default login
 ```
 
-Run `cd terraform-gke-cluster` and adjust in the `example_environments.tfvars` file the following variables:
+Enter the `terraform-gke-cluster` folder
+```bash
+cd terraform-gke-cluster
+```
+ and adjust in the `example_environments.tfvars` file the following variables:
 - `project_id` – your GCP project id.
 - `cluster_name` – any name for your cluster.
 - `kubernetes_namespace` – any GKE environment variable namespace.
@@ -336,7 +347,7 @@ gcloud artifacts repositories remove-iam-policy-binding gemma-deployment \
 
 Go to the `deploy-gemma2/kserve` directory. In this section we will use KServe to deploy our fine-tuned model.
 
-To install KServe, you can follow [the guide in our repo](https://github.com/volatilemolotov/ai-on-gke/blob/main/tutorials-and-examples/kserve/README.md#install-kserve). After the successful installation, we need to patch the deployment mode and create an ingress class.
+To install KServe, you can follow [the guide in our repo](https://gke-ai-labs.dev/docs/tutorials/inference-servers/kserve/). After the successful installation, we need to patch the deployment mode and create an ingress class.
 Run the command below:
 ```bash
 kubectl patch configmap/inferenceservice-config -n kserve --type=strategic -p '{"data": {"deploy": "{\"defaultDeploymentMode\": \"RawDeployment\"}"}}'

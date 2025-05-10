@@ -4,6 +4,8 @@ title: "vLLM GPU/TPU Fungibility"
 description: "This tutorial shows you who to serve a large language model (LLM) using both Tensor Processing Units (TPUs) and GPUs on Google Kubernetes Engine (GKE) using the same deployment with [vLLM](https://github.com/vllm-project/vllm)"
 weight: 30
 type: docs
+owner: >-
+    [Edwin Hernandez](https://github.com/Edwinhr716)
 tags:
  - Serving
  - Tutorials
@@ -20,7 +22,7 @@ This user guide shows you how to optimize AI inference by configuring Google Kub
 2. Time Per Output Token (TPOT) and Time to First Token (TTFT) characteristics could be different between GPU replicas and TPU replicas, although they belong in the same Deployment.  
 3. TPU servers and GPU servers exhibit different failure characteristics and special attention needs to be paid to these Deployments.  
 4. Since the TPU type is hardcoded as an environment variable, this yaml is not able to be fungible between different generations of TPUs (ie v5e to v6e)  
-5. Users should ensure they have access to the TPUs they need for scaling purposes. If there is a `GCE_STOCKOUT` error when provisioning TPUs, it could take up to 10 hours to fall back. Users can work around this issue by limiting autoscaling to the number of TPUs nodes they have access to. We plan to remove this limitation in the future.
+5. Users should ensure they have access to the TPUs they need for scaling purposes. If there is a GCE_STOCKOUT error when provisioning TPUs, it could take up to 10 hours to fall back from a TPU node to a GPU. Users can work around this issue by 1) limiting autoscaling to the number of TPUs nodes they have access to or 2) falling back from GPUs to TPUs. We plan to remove this limitation in the future.
 
 # **Prepare the Environment**
 
@@ -29,11 +31,11 @@ To set up your environment with Cloud Shell, follow these steps:
 1. In the Google Cloud console, launch a Cloud Shell session by clicking Cloud Shell activation icon Activate Cloud Shell in the Google Cloud console. This launches a session in the bottom pane of Google Cloud console.  
 2. Set the default environment variables:
 
-```
+```bash
 gcloud config set project PROJECT_ID
 export PROJECT_ID=$(gcloud config get project)
 export CLUSTER_NAME=vllm-fungibility
-export LOCATION=us-east1-c
+export LOCATION=<location-with-v6e> See https://cloud.google.com/tpu/docs/regions-zones
 export CLUSTER_VERSION=<GKE version that supports Trillium, 1.31.4-gke.1256000+>
 export REGION_NAME=REGION_NAME
 export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(projectNumber)")
@@ -45,52 +47,37 @@ export HF_TOKEN=HUGGING_FACE_TOKEN
 
 ## Create a GKE Cluster
 
-```
+```bash
 gcloud container clusters create $CLUSTER_NAME \
 --location=$LOCATION \
 --cluster-version=$VERSION \
---project=$PROJECT_ID
+--project=$PROJECT_ID \
+--labels=created-by=ai-on-gke,guide=fungibility-recipes
 ```
 
 ## Create v6e TPU, L4 Preemptible, and L4 on demand node pools
 
 All node pools will have autoscaling enabled in order to demonstrate that [custom compute class (CCC)](https://cloud.google.com/kubernetes-engine/docs/concepts/about-custom-compute-classes) is able to autoscale any type of node pool. We will also add a label and taint with the CCC name so that it can be used in the priority list.
 
-Create a TPU v6e-1 node pool:
+Create a TPU v6e-1 [Spot](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms) node pool:
 
-```
-gcloud container node-pools create v6e-1 \
+```bash
+gcloud container node-pools create v6e-1-spot \
 	--location=$LOCATION \
-	--num-nodes=1 \
+	--num-nodes=0 \
 	--machine-type=ct6e-standard-1t \
 	--cluster=$CLUSTER_NAME \
 	--node-labels=cloud.google.com/compute-class=$COMPUTE_CLASS \
 	--node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
 	--enable-autoscaling \
-	--min-nodes=1 \
-	--max-nodes=2
-```
-
-Create a GPU L4 [Spot](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms) node pool:
-
-```
-gcloud container node-pools create l4-spot \
-	--cluster=$CLUSTER_NAME \
-	--location=$LOCATION \
-	--num-nodes=1 \
-	--machine-type "g2-standard-4" \
- 	--spot \
-	--accelerator "type=nvidia-l4,gpu-driver-version=LATEST" \
-	--node-labels=cloud.google.com/compute-class=$COMPUTE_CLASS \
-	--node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
-	--enable-autoscaling \
 	--min-nodes=0 \
-	--max-nodes=2
+	--max-nodes=2 \
+  --spot
 ```
 
 Create a GPU L4 node pool:
 
-```
+```bash
 gcloud container node-pools create l4 \
 	--cluster=$CLUSTER_NAME \
 	--location=$LOCATION \
@@ -104,25 +91,39 @@ gcloud container node-pools create l4 \
 	--max-nodes=2
 ```
 
+# **Configure Kubectl to communicate with your cluster**
+To configure kubectl to communicate with your cluster, run the following command:
+
+```bash
+  gcloud container clusters get-credentials ${CLUSTER_NAME} --region=${REGION}
+```
+
+# **Create Kubernetes Secret for Hugging Face credentials**
+To create a Kubernetes Secret that contains the Hugging Face token, run the following command:
+
+```bash
+kubectl create secret generic hf-secret --from-literal=hf_api_token=${HF_TOKEN}
+```
+
+
 # **Setup Custom Compute Class**
 
-Inspect the following `ccc.yaml`, where we define the priority order of the nodepools.  v6e-1 scales up first, l4-spot second, and l4 scales up last.
+Inspect the following `ccc.yaml`, where we define the priority order of the nodepools.  l4 scales up first, and v6e-1-spot scales up last.
 
-```
+```yaml
 apiVersion: cloud.google.com/v1
 kind: ComputeClass
 metadata:
   name: vllm-fallback
 spec:
   priorities:
-  - nodepools: [v6e-1]
-  - nodepools: [l4-spot]
   - nodepools: [l4]
+  - nodepools: [v6e-1-spot]
 ```
 
 Apply the manifest
 
-```
+```bash
 kubectl apply -f ccc.yaml
 ```
 
@@ -134,7 +135,7 @@ We need a bash script that determines what type of hardware is present in the ma
 
 Inspect the `tpu_entrypoint.sh` and `tpu-image.Dockerfile` files:
 
-```
+```bash
 #!/usr/bin/env bash
 
 if ! [ -c /dev/vfio/0 ]; then
@@ -145,7 +146,7 @@ fi
 python3 -m vllm.entrypoints.openai.api_server $@
 ```
 
-```
+```docker
 FROM docker.io/vllm/vllm-tpu:2e33fe419186c65a18da6668972d61d7bbc31564
 COPY tpu_entrypoint.sh /vllm-workspace/tpu_entrypoint.sh
 RUN chmod +x /vllm-workspace/tpu_entrypoint.sh
@@ -154,13 +155,13 @@ ENTRYPOINT [ "/vllm-workspace/tpu_entrypoint.sh" ]
 
 Build the image
 
-```
+```bash
 docker build -f tpu-image.Dockerfile . -t vllm-tpu
 ```
 
 Push the TPU image to the Artifact Registry
 
-```
+```bash
 gcloud artifacts repositories create vllm --repository-format=docker --location=$REGION_NAME && \
 gcloud auth configure-docker $REGION_NAME-docker.pkg.dev && \
 docker image tag vllm-tpu $REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:TPU && \
@@ -171,7 +172,7 @@ docker push $REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:TPU
 
 Inspect the `gpu_entrypoint.sh` and `gpu-image.Dockerfile` files:
 
-```
+```bash
 #!/usr/bin/env bash
 
 if ! command -v nvidia-smi >/dev/null 2>&1; then
@@ -182,7 +183,7 @@ fi
 python3 -m vllm.entrypoints.openai.api_server $@
 ```
 
-```
+```docker
 FROM docker.io/vllm/vllm-openai:latest
 COPY gpu_entrypoint.sh /vllm-workspace/gpu_entrypoint.sh
 RUN chmod +x /vllm-workspace/gpu_entrypoint.sh
@@ -191,13 +192,13 @@ ENTRYPOINT [ "/vllm-workspace/gpu_entrypoint.sh" ]
 
 Build the image
 
-```
+```bash
 docker build -f gpu-image.Dockerfile . -t vllm-gpu
 ```
 
 Push the GPU image to the Artifact Registry
 
-```
+```bash
 docker image tag vllm-gpu $REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:GPU && \
 docker push $REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:GPU
 ```
@@ -206,7 +207,7 @@ docker push $REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:GPU
 
 Inspect the following manifest `vllm.yaml`
 
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -324,13 +325,13 @@ spec:
 
 Apply the manifest by running the following command: 
 
-```
+```bash
 kubectl apply -f vllm.yaml
 ```
 
 View the logs from the running model server:
 
-```
+```bash
 kubectl logs -f -l app=vllm
 ```
 
@@ -364,23 +365,15 @@ Follow this portion of the guide to set up HPA (Horizontal Pod Autoscaling) usin
 
 Run the following command to set up the custom stackdriver metrics adapter on your cluster. Note you need to have Kubernetes Engine Cluster Administrator and Kubernetes Engine Administrator in order to run this.
 
-```
+```bash
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml
-```
-
-Grant the Monitoring Viewer role to the service account that the stackdriver metrics adapter runs under.
-
-```
-gcloud projects add-iam-policy-binding projects/$PROJECT_ID \
- --role roles/monitoring.viewer \
- --member=principal://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$PROJECT_ID.svc.id.goog/subject/ns/custom-metrics/sa/custom-metrics-stackdriver-adapter
 ```
 
 ## Deploy a PodMonitoring spec to set up prometheus metric scraping 
 
 Now deploy a Pod Monitoring spec for the prometheus metrics scraper. Refer to [https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed](https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed) for more details on Google Managed Prometheus and setup. This should be enabled by default on the GKE cluster though. Save the following yaml as vllm\_pod\_monitor.yaml
 
-```
+```yaml
 apiVersion: monitoring.googleapis.com/v1
 kind: PodMonitoring
 metadata:
@@ -397,7 +390,7 @@ spec:
 
 Apply it to the cluster by running the following command: 
 
-```
+```bash
 kubectl apply -f vllm_pod_monitor.yaml 
 ```
 
@@ -407,7 +400,7 @@ With this configuration, GMP is now configured to scrap vLLM server metrics and 
 
 Create and run the following bash script (`load.sh`) which will send N number of parallel requests to the vLLM endpoint:
 
-```
+```bash
 #!/bin/bash
 N=1000  # Replace with the desired number of parallel processes
 export vllm_service=$(kubectl get service vllm-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
@@ -419,7 +412,7 @@ done
 wait
 ```
 
-```
+```bash
 nohup ./load.sh &
 ```
 
@@ -427,7 +420,7 @@ nohup ./load.sh &
 
 Now, create a HPA configuration yaml file `vllm-hpa.yaml` and apply it to the cluster. vLLM metrics in GMP are in the format of `vllm:<metric name>`. We will use `num_requests_waiting` which we recommend for scaling throughput. Alternatively, you could use `gpu_cache_usage_perc` for latency sensitive use cases. Despite the naming convention, this metric works for TPU as well.
 
-```
+```yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -451,7 +444,7 @@ spec:
 
 Deploy the Horizontal Pod Autoscaler configuration by running the following command:
 
-```
+```bash
  kubectl apply -f vllm-hpa.yaml 
 ```
 
@@ -459,8 +452,7 @@ GKE schedules another Pod to deploy, which triggers the node pool autoscaler to 
 
 Watch the progress of the Pod autoscaling: 
 
-```
-
+```bash
 kubectl get hpa --watch
 ```
 
@@ -484,13 +476,13 @@ To avoid incurring charges to your Google Cloud account for the resources that y
 
 Stop the bash script that simulates load:
 
-```
+```bash
 ps -ef | grep load.sh | awk '{print $2}' | xargs -n1 kill -9
 ```
 
 Delete the cluster:
 
-```
+```bash
 gcloud container clusters delete ${CLUSTER_NAME} \
   --location=${ZONE}
 ```

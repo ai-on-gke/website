@@ -4,11 +4,14 @@ title: "MaxDiffusion"
 description: "MaxDiffusion provides high-performance implementations of core components of diffusion models such as cross attention, convolutions, and high-throughput image data loading."
 weight: 30
 type: docs
+owner: >-
+    [Francisco Cabrera](https://github.com/fcabrera23)
 tags:
  - Serving
  - Experimentation
  - Tutorials
  - Inference Servers
+draft: true
 ---
 ## About MaxDiffusion
 Just as LLMs have revolutionized natural language processing, diffusion models are transforming the field of computer vision. To reduce our customers’ costs of deploying these models, Google created MaxDiffusion: a collection of open-source diffusion-model reference implementations. These implementations are written in JAX and are highly performant, scalable, and customizable – think MaxText for computer vision. 
@@ -63,7 +66,8 @@ gcloud container clusters create $CLUSTER_NAME --location ${REGION} \
   --cluster-version 1.29 \
   --num-nodes 1 --min-nodes 1 --max-nodes 3 \
   --ephemeral-storage-local-ssd=count=2 \
-  --scopes="gke-default,storage-rw"
+  --scopes="gke-default,storage-rw" \
+  --labels=created-by=ai-on-gke,guide=max-diffusion
 ```
 
 ### Nodepool
@@ -89,7 +93,7 @@ gcloud container node-pools list --region $REGION --cluster $CLUSTER_NAME
 ## Explaination on MaxDiffusion inference server sample code
 The sample Stable Diffusion XL inference [code template](https://github.com/google/maxdiffusion/blob/main/src/maxdiffusion/generate_sdxl_replicated.py) from MaxDiffusion repo is updated with FastAPI and uvicorn libraries to fit for API requests.
 
-The updated Stable Diffusion XL Inference [Code sample](https://github.com/GoogleCloudPlatform/ai-on-gke.git/blob/main/tutorials-and-examples/tpu-examples/maxdiffusion/build/server/main.py) provided here for reference.
+The updated Stable Diffusion XL Inference [Code sample](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/inference-servers/maxdiffusion/build/server/main.py) provided here for reference.
 
 ### Add FastAPI and Uvicorn libraries
 ### Add logging, health check

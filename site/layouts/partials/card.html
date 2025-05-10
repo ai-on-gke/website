@@ -1,0 +1,22 @@
+{{ $icon_path := .icon_path -}}
+{{ $title := .title -}}
+{{ $description := .description -}}
+{{ $link := .link -}}
+{{ $context := .context -}}
+{{ partial "pages-with-same-tag.html" (dict "sectionTitle" $title "context" .) }}
+<div class="option-primary-l -bg-primary-light"
+  style="height: 750px; overflow: hidden; font-size: 1.2rem;">
+  <div role="presentation">
+    {{ with resources.Get $icon_path -}} {{ ( . | minify).Content | safeHTML -}}
+    {{ end -}}
+  </div>
+  <div class="title single-page" role="heading">
+    {{ $title }}
+  </div>
+  {{ if $description -}}
+  <div class="use-case-card-description single-page">{{ $description }}</div>
+  {{ end -}}
+  <div class="use-case-links-container">
+    {{ partial "pages-with-same-tag.html" (dict "sectionTitle" $title "context" $context) }}
+  </div>
+</div>

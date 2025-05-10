@@ -23,10 +23,10 @@
     {{- /**/ -}}
   </a>
   <div class="td-navbar-nav-scroll" id="main_navbar">
-    <ul class="navbar-nav" role="menu">
+    <ul class="navbar-nav" role="menu" aria-label="Main navigation">
       {{ $p := . -}}
       {{ range .Site.Menus.main -}}
-      <li class="nav-item">
+      <li class="nav-item" role="menuitem">
         {{ $active := or ($p.IsMenuCurrent "main" .) ($p.HasMenuCurrent "main" .) -}}
         {{ $href := "" -}}
         {{ with .Page -}}
@@ -52,17 +52,17 @@
      
       {{ end -}}
       {{ if .Site.Params.versions -}}
-      <li class="nav-item dropdown d-none d-lg-block">
+      <li class="nav-item dropdown d-none d-lg-block" role="menuitem">
         {{ partial "navbar-version-selector.html" . -}}
       </li>
       {{ end -}}
       {{ if (gt (len .Site.Home.Translations) 0) -}}
-      <li class="nav-item dropdown d-none d-lg-block">
+      <li class="nav-item dropdown d-none d-lg-block" role="menuitem">
         {{ partial "navbar-lang-selector.html" . -}}
       </li>
       {{ end -}}
       {{ if .Site.Params.ui.showLightDarkModeMenu -}}
-      <li class="td-light-dark-menu nav-item dropdown">
+      <li class="td-light-dark-menu nav-item dropdown" role="menuitem">
         {{ partial "theme-toggler" . }}
       </li>
       {{ end -}}

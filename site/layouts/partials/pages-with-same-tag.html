@@ -1,8 +1,8 @@
 {{ $section := .sectionTitle }}
 {{ range $key, $value := .context.Site.Taxonomies.tags }}
 {{ if eq (strings.ToLower $key) (strings.ToLower $section) }}
-                    {{ range $value.Pages }}
-                            <a href="{{ .RelPermalink }}" class="use-case-link"> {{ .Title }} </a>
-                    {{ end }} 
-                {{ end }}
-    {{ end }}
+{{ range first 3 $value.Pages }}
+<a href="{{ .RelPermalink }}" class="use-case-link">{{ .Title }}</a>
+{{ end }}
+{{ end }}
+{{ end }}

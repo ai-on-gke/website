@@ -1,0 +1,38 @@
+{{ $commitLink := .Page.Params.externalSource.repository }}
+{{ $format := .Site.Params.time_format_default}}
+{{ $filePath := .Page.Params.externalSource.filePath }}
+{{ $branch := .Page.Params.externalSource.branch}}
+{{ $repository := .Page.Params.externalSource.repository }}
+{{ $url := printf "https://api.github.com/repos/%s/commits?path=%s&sha=%s" $repository $filePath $branch }}
+
+
+
+
+{{ if and $commitLink $filePath $branch $repository -}}
+<div class="td-page-meta__lastmod">
+  {{ with try (resources.GetRemote $url) }}
+  {{ with .Err }}
+  {{ errorf "%s" . }}
+  {{ else with .Value }}
+  {{ $content := .Content | safeHTML | transform.Unmarshal }}
+  {{ $commitLink := printf "https://github.com/%s/commit/%s" $commitLink  (index ($content) 0).sha }}
+  {{ $date := (index ($content) 0).commit.committer.date }}
+  {{ $date = time.AsTime $date }}
+  {{ T "post_last_mod" }}
+  <a data-proofer-ignore href="{{ $commitLink }}">
+    {{ $date.Format $format }}
+  </a>
+  {{ end }}
+  {{ end }}
+</div>
+{{ end }}
+
+{{ if and .GitInfo .Site.Params.github_repo (not .Params.notoc ) (not .Page.Params.externalSource) -}}
+<div class="td-page-meta__lastmod">
+  {{ T "post_last_mod" }}
+  <a data-proofer-ignore
+    href="{{ .Site.Params.github_repo }}/commit/{{ .GitInfo.Hash }}">
+    {{ .GitInfo.CommitDate.Format .Site.Params.time_format_default -}}
+  </a>
+</div>
+{{ end -}}

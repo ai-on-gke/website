@@ -1,5 +1,6 @@
 $custom-colors: (
-  'primary-light': #e4f8fd,
+  'primary-light': #fafafa,
+  'primary-home': #1d7db3,
 );
 
 $theme-colors: map-merge($theme-colors, $custom-colors);

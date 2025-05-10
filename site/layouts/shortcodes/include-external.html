@@ -1,0 +1,27 @@
+{{ $filePath := .Page.Params.externalSource.filePath }}
+{{ $branch := .Page.Params.externalSource.branch }}
+{{ $repository := .Page.Params.externalSource.repository }}
+
+{{ $folderPath := replaceRE `/[^/]*$` "" $filePath }}
+
+{{ $url := printf "https://raw.githubusercontent.com/%s/%s/%s" $repository $branch $filePath }}
+
+{{ with try (resources.GetRemote $url) }}
+{{ if eq .Value nil }}
+{{ errorf "Unable to get remote resource %q" $url }}
+{{ end }}
+{{ with .Err }}
+{{ errorf "%s" . }}
+{{ else with .Value }}
+
+{{ $newContent := replaceRE `\]\((\.\/|\b[^:][^\/][^\/]\b)(.*?)\)` (printf "](https://github.com/%s/blob/%s/%s/%s)" $repository $branch $folderPath "${2}") .Content }}
+{{ $newContent := replaceRE `(\]\(([A-Za-z0-9]*\.[a-z]+))` (printf "](https://github.com/%s/blob/%s/%s/%s" $repository $branch $folderPath "${2}") $newContent }}
+
+{{ $newContent := replaceRE `\[<img.*src=".*\/(.*\.[a-z]*)".*>\]\((.*)\)` (printf "![%s](images/%s)" "${2}" "${1}") $newContent }}
+
+{{ $newContent | safeHTML}}
+
+{{ end }}
+{{ else }}
+{{ errorf "Unable to get remote resource %q" $url }}
+{{ end }}

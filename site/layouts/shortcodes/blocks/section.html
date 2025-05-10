@@ -7,7 +7,7 @@ default "auto" -}} {{ $type := .Get "type" | default "container" -}} {{ $title
     <div class="{{ $type }}">
       {{/* Do NOT remove this comment! It ends the HTML block above. See
       https://spec.commonmark.org/0.30/#html-blocks, 7. */}}
-      <p class="section-title" role="heading">{{ $title }}</p>
+      <p class="section-title" role="heading" aria-level="3">{{ $title }}</p>
       <p class="section-description">{{ $description }}</p>
       {{ .Inner -}}
     </div>

@@ -4,9 +4,12 @@ title: "Indexed job"
 description: "In this guide you will run a distributed ML training workload on GKE using an [Indexed Job](https://kubernetes.io/blog/2021/04/19/introducing-indexed-jobs/). Specifically, you will train a handwritten digit image classifier on the classic MNIST dataset using PyTorch. The training computation will be distributed across 4 GPU nodes in a GKE cluster."
 weight: 30
 type: docs
+owner: >-
+    [Francisco Cabrera](https://github.com/fcabrera23)
 tags:
  - Orchestration
  - Tutorials
+draft: true
 ---
 In this guide you will run a distributed ML training workload on GKE using an [Indexed Job](https://kubernetes.io/blog/2021/04/19/introducing-indexed-jobs/).
 
@@ -23,7 +26,7 @@ using PyTorch. The training computation will be distributed across 4 GPU nodes i
 Run the command: 
 
 ```bash
-gcloud container clusters create demo --zone us-central1-c
+gcloud container clusters create demo --zone us-central1-c --labels=created-by=ai-on-gke,guide=indexed-job
 ```
 
 You should see output indicating the cluster is being created (this can take ~10 minutes or so).
@@ -43,9 +46,9 @@ gcloud container node-pools create gpu-pool \
 Creating this GPU node pool will take a few minutes.
 
 ### 3. Build and push the Docker image to GCR
-Make a local copy of the [mnist.py](mnist.py) file which defines a traditional convolutional neural network, as the training logic which trains the model on the classic [MNIST](https://en.wikipedia.org/wiki/MNIST_database) dataset.
+Make a local copy of the [mnist.py](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/workflow-orchestration/indexed-job/mnist.py#L4) file which defines a traditional convolutional neural network, as the training logic which trains the model on the classic [MNIST](https://en.wikipedia.org/wiki/MNIST_database) dataset.
 
-Next, make a local copy of the [Dockerfile](Dockerfile) and run the following commands to build the container image and push it to your GCR repository:
+Next, make a local copy of the [Dockerfile](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/tutorials-and-examples/workflow-orchestration/indexed-job/Dockerfile) and run the following commands to build the container image and push it to your GCR repository:
 
 ```bash
 export PROJECT_ID=<your GCP project ID>

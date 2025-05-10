@@ -57,13 +57,12 @@ with .Site.Params.ui.feedback -}}
   yesButton.addEventListener('click', () => {
     yesResponse.classList.add('feedback--response__visible');
     disableButtons();
-    {{ $maxValue := .max_value | default 100 -}}
-    sendFeedback({{ $maxValue }});
+    sendFeedback('Yes');
   });
   noButton.addEventListener('click', () => {
     noResponse.classList.add('feedback--response__visible');
     disableButtons();
-    sendFeedback(0);
+    sendFeedback('No');
   });
 </script>
 {{ end -}}

@@ -1,0 +1,122 @@
+<div class="user-satisfaction-container">
+    <div class="toggler" onclick="toggleUserSatisfaction()">
+        {{ with resources.Get "icons/user-satisfaction/arrow-down.svg" -}}
+        {{ ( . | minify).Content | safeHTML -}}
+        {{ end -}}
+    </div>
+    <div class="widget-content" style="display: none;">
+        <p class="title">How satisfied are you with the content of the website?
+        </p>
+        <div class="user-satisfaction">
+            <div class="option">
+                {{ with resources.Get "icons/user-satisfaction/very-satisfied.svg" -}}
+                {{ ( . | minify).Content | safeHTML -}}
+                {{ end -}}
+                <p class="option-text">Very satisfied</p>
+            </div>
+            <div class="option">
+                {{ with resources.Get "icons/user-satisfaction/somewhat-satisfied.svg" -}}
+                {{ ( . | minify).Content | safeHTML -}}
+                {{ end -}}
+                <p class="option-text">Somewhat satisfied</p>
+            </div>
+            <div class="option">
+                {{ with resources.Get "icons/user-satisfaction/neither-satisfied-nor-dissatisfied.svg" -}}
+                {{ ( . | minify).Content | safeHTML -}}
+                {{ end -}}
+                <p class="option-text">Neither satisfied nor dissatisfied</p>
+            </div>
+            <div class="option">
+                {{ with resources.Get "icons/user-satisfaction/somewhat-dissatisfied.svg" -}}
+                {{ ( . | minify).Content | safeHTML -}}
+                {{ end -}}
+                <p class="option-text">Somewhat dissatisfied</p>
+            </div>
+            <div class="option">
+                {{ with resources.Get "icons/user-satisfaction/very-dissatisfied.svg" -}}
+                {{ ( . | minify).Content | safeHTML -}}
+                {{ end -}}
+                <p class="option-text">Very dissatisfied</p>
+            </div>
+            <div class="option">
+                {{ with resources.Get "icons/user-satisfaction/dont-know.svg" -}}
+                {{ ( . | minify).Content | safeHTML -}}
+                {{ end -}}
+                <p class="option-text">I don’t know yet</p>
+            </div>
+        </div>
+        <div class="button-section">
+            <button class="btn btn-primary"
+                style="background-color: #f0f4f9; border: none; color: #0b57d0; box-shadow:none;"
+                onclick="toggleUserSatisfaction()">Cancel</button>
+            <button class="btn btn-primary submit-button"
+                onclick="sendUserData()">Submit</button>
+        </div>
+    </div>
+    <div class="widget-response" style="display: none; text-align: center;">Thank you for your feedback!</div>
+</div>
+<script>
+    if (localStorage.getItem("feedbackSent")) {
+        const container = document.querySelector('.user-satisfaction-container');
+        container.style.display = 'none';
+    }
+
+    let selectedOption = null;
+    const container = document.querySelector('.user-satisfaction-container');
+    const options = container.querySelectorAll('.option');
+
+    options.forEach(option => {
+        option.addEventListener('click', function () {
+            if (selectedOption) {
+                selectedOption.classList.remove('selected');
+            }
+            this.classList.add('selected');
+            selectedOption = this;
+        });
+    });
+
+    function sendUserData() {
+        const container = document.querySelector('.user-satisfaction-container');
+        const buttonSection = container.querySelector('.submit-button');
+        const widgetContent = container.querySelector('.widget-content');
+        const widgetResponse = container.querySelector('.widget-response');
+        buttonSection.disabled = true;
+
+        if (selectedOption) {
+            const selectedText = selectedOption.querySelector('.option-text').textContent;
+
+            gtag('event', 'user-satisfaction', {
+                'event_label': window.location.pathname,
+                'value': selectedText
+            });
+            localStorage.setItem("feedbackSent", true);
+            buttonSection.disabled = false;
+            widgetContent.style.display = 'none';
+            widgetResponse.style.display = 'flex';
+        }
+    }
+    function toggleUserSatisfaction() {
+
+
+        const container = document.querySelector('.user-satisfaction-container');
+        const toggler = container.querySelector('.toggler');
+        const widgetContent = container.querySelector('.widget-content');
+
+        if (localStorage.getItem("feedbackSent")) {
+            container.style.display = 'none';
+            return;
+        }
+
+        if (widgetContent.style.display === 'none' || widgetContent.style.display === '') {
+            widgetContent.style.display = 'flex';
+            container.style.marginTop = '-450px';
+            container.style.height = '450px';
+            toggler.className = 'toggler';
+        } else {
+            widgetContent.style.display = 'none';
+            container.style.height = '36px';
+            container.style.marginTop = '-36px';
+            toggler.className = 'toggler closed';
+        }
+    }
+</script>
