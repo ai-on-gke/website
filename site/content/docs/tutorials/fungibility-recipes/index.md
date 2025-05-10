@@ -68,7 +68,7 @@ gcloud container node-pools create v6e-1-spot \
 	--machine-type=ct6e-standard-1t \
 	--cluster=$CLUSTER_NAME \
 	--node-labels=cloud.google.com/compute-class=$COMPUTE_CLASS \
---node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
+	--node-taints=cloud.google.com/compute-class=$COMPUTE_CLASS:NoSchedule \
 	--enable-autoscaling \
 	--min-nodes=0 \
 	--max-nodes=2 \
@@ -226,7 +226,7 @@ spec:
        cloud.google.com/compute-class: vllm-fallback
      containers:
      - name: vllm-gpu
-       image: REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:GPU
+       image: $REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:GPU
        args:
        - --host=0.0.0.0
        - --port=8000
