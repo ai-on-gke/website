@@ -1,3 +1,17 @@
+---
+linkTitle: "ADK"
+title: "Deploying a containerized agent built with the Google Agent Development Kit (ADK)"
+description: "This tutorial guides you through deploying a containerized agent built with the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/) to [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview). GKE provides a managed environment for deploying, managing, and scaling your containerized applications using Google infrastructure."
+weight: 30
+type: docs
+owner: >-
+    [Vlado Djerek](https://github.com/volatilemolotov)
+tags:
+ - Evaluation
+ - ADK
+ - Tutorials
+---
+
 Source code: [https://github.com/ai-on-gke/tutorials-and-examples/tree/akamalov/adk/adk](https://github.com/ai-on-gke/tutorials-and-examples/tree/akamalov/adk/adk) 
 
 \====================================================
