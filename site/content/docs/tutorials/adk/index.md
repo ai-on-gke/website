@@ -12,15 +12,11 @@ tags:
  - Tutorials
 ---
 
-Source code: [https://github.com/ai-on-gke/tutorials-and-examples/tree/akamalov/adk/adk](https://github.com/ai-on-gke/tutorials-and-examples/tree/akamalov/adk/adk) 
-
-\====================================================
-
-# Deploying Google Agent Development Kit (ADK) Agents on Google Kubernetes Engine (GKE)
+## Deploying Google Agent Development Kit (ADK) Agents on Google Kubernetes Engine (GKE)
 
 This tutorial guides you through deploying a containerized agent built with the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/) to [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview). GKE provides a managed environment for deploying, managing, and scaling your containerized applications using Google infrastructure.  
 
-# Overview
+## Overview
 
 In this tutorial we will deploy a simple agent to GKE. The agent will be a FastAPI application that uses Gemini 2.0 Flash as the LLM. We will use Vertex AI as the LLM provider.
 
@@ -31,7 +27,7 @@ This tutorial will cover:
 * Deploying the agent to a GKE cluster.  
 * Testing your deployed agent.
 
-# Before you begin
+## Before you begin
 
 Ensure you have the following prerequisites in place:
 
@@ -52,18 +48,18 @@ Ensure that you are signed in using the gcloud CLI tool. Run the following comma
 gcloud auth application-default login
 ```
 
-# Infrastructure Setup
+## Infrastructure Setup
 
-## Clone the repository
+### Clone the repository
 
-### Clone the repository with our guides and cd to the llamaindex/rag directory by running these commands:
+Clone the repository with our guides and cd to the llamaindex/rag directory by running these commands:
 
 ```
 git clone https://github.com/ai-on-gke/tutorials-and-examples.git
 cd tutorials-and-examples/adk
 ```
 
-## Filesystem structure
+### Filesystem structure
 
 ```
 adk/
@@ -71,7 +67,7 @@ adk/
 └── app/          # Empty directory that we will create to put files created during the tutorial
 ```
 
-## Enable Necessary APIs
+### Enable Necessary APIs
 
 Enable the APIs required for GKE, Artifact Registry, Cloud Build, and Vertex AI
 
@@ -83,7 +79,7 @@ gcloud services enable \
     aiplatform.googleapis.com
 ```
 
-# Create cluster and other resources
+## Create cluster and other resources
 
 In this section we will use Terraform to automate the creation of infrastructure resources. For more details how it is done please refer to the terraform config in the terraform/ folder. By default, the configuration provisions an Autopilot GKE cluster, but it can be changed to standard by setting autopilot\_cluster \= false.
 
@@ -148,7 +144,7 @@ project_id = "<your-project-id>"
 gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location)
 ```
 
-# Deploy and Configure the Agent Application
+## Deploy and Configure the Agent Application
 
 The desired structure of the final application should be:
 
@@ -352,7 +348,7 @@ kubectl apply -f ../app/deployment.yaml
 kubectl rollout status deployment/adk-agent
 ```
 
-# Testing your Deployed Agent
+## Testing your Deployed Agent
 
 1. Forward port of the deployed application service:
 
@@ -375,15 +371,15 @@ If you experience any unexpected behavior, check the pod logs for your agent usi
 kubectl logs -l app=adk-agent
 ```
 
-# Troubleshooting
+## Troubleshooting
 
 These are some common issues you might encounter when deploying your agent to GKE:
 
-## 403 Permission Denied for Gemini 2.0 Flash
+### 403 Permission Denied for Gemini 2.0 Flash
 
 This usually means that the Kubernetes service account does not have the necessary permission to access the Vertex AI API. Ensure that you have created the service account and bound it to the Vertex AI User role as described in the Configure Kubernetes Service Account for Vertex AI section. If you are using AI Studio, ensure that you have set the GOOGLE\_API\_KEY environment variable in the deployment manifest and it is valid.
 
-## Attempt to write a readonly database
+### Attempt to write a readonly database
 
 You might see there is no session id created in the UI and the agent does not respond to any messages. This is usually caused by the SQLite database being read-only. This can happen if you run the agent locally and then create the container image which copies the SQLite database into the container. The database is then read-only in the container.
 
@@ -405,7 +401,7 @@ or (recommended) you can add a .dockerignore file to your project directory to e
 
 Build the container image and deploy the application again.
 
-# Cleaning up
+## Cleaning up
 
 1. Destroy the provisioned infrastructure.
 
