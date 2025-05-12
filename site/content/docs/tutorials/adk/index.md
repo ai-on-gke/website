@@ -79,7 +79,7 @@ gcloud services enable \
 
 ## Create cluster and other resources
 
-In this section we will use Terraform to automate the creation of infrastructure resources. For more details how it is done please refer to the terraform config in the terraform/ folder. By default, the configuration provisions an Autopilot GKE cluster, but it can be changed to standard by setting autopilot\_cluster \= false.
+In this section we will use Terraform to automate the creation of infrastructure resources. For more details how it is done please refer to the terraform config in the `terraform/` folder. By default, the configuration provisions an Autopilot GKE cluster, but it can be changed to standard by setting `autopilot_cluster = false`.
 
 It creates:
 
@@ -96,8 +96,8 @@ cd terraform
 
    
 
-2. Specify the following values inside the default\_env.tfvars file (or make a separate copy):  
-   * \<PROJECT\_ID\> – replace with your project id (you can find it in the project settings).
+2. Specify the following values inside the `default_env.tfvars` file (or make a separate copy):  
+   * `<PROJECT_ID>` – replace with your project id (you can find it in the project settings).
 
 Other values can be changed, if needed, but can be left with default values.
 
@@ -156,7 +156,7 @@ app/
 └── Dockerfile                 # Container build instructions
 ```
 
-1. Create the app/main.py file. This file sets up the FastAPI application using get\_fast\_api\_app() from ADK.  
+1. Create the `app/main.py` file. This file sets up the FastAPI application using `get_fast_api_app()` from ADK.  
    
 
 ```py
@@ -197,17 +197,17 @@ if __name__ == "__main__":
 
 2. Create agent files.  
    When finished, your agent code has to meet these requirements:   
-* Agent code is in a file called agent.py within your agent directory.  
-* Your agent variable is named root\_agent.  
-* \_\_init\_\_.py is within your agent directory and contains from . import agent.  
+* Agent code is in a file called `agent.py` within your agent directory.  
+* Your agent variable is named `root_agent`.  
+* `__init__.py` is within your agent directory and contains `from . import agent`.  
     
-  1. Create the app directory:
+  1. Create the `app` directory:
 
 ```
 mkdir ../app
 ```
 
-3. Create the app/capital\_agent/agent.py file:
+3. Create the `app/capital_agent/agent.py` file:
 
 ```
 from google.adk.agents import LlmAgent
@@ -221,19 +221,19 @@ capital_agent = LlmAgent(
 root_agent = capital_agent
 ```
 
-4. Crete app/capital\_agent/\_\_init\_.py file:
+4. Crete `app/capital_agent/__init__.py` file:
 
 ```
 from . import agent
 ```
 
-5. Create app/requirements.txt file with necessary Python packages:
+5. Create `app/requirements.txt` file with necessary Python packages:
 
 ```
 google_adk
 ```
 
-6. Create app/Dockerfile to build app container image:
+6. Create `app/Dockerfile` to build app container image:
 
 ```
 # Use an official Python runtime as a parent image
@@ -276,7 +276,7 @@ gcloud builds submit \
     ../app
 ```
 
-8. Run this command to create  app/deplyment.yaml file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
+8. Run this command to create `app/deplyment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
 
 ```
 cat <<  EOF > ../app/deployment.yaml
