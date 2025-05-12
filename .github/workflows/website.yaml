@@ -74,7 +74,7 @@ jobs:
           VERSIONS=$(gcloud app versions list \
             --service default \
             --sort-by '~version.createTime' \
-            --format 'value(version.id)' | tail -n +6)
+            --format 'value(version.id)' | tail -n +21)
           
           if [ -n "$VERSIONS" ]; then
             echo "Deleting old versions: $VERSIONS"
@@ -84,7 +84,7 @@ jobs:
                 --quiet || echo "Failed to delete version $version"
             done
           else
-            echo "No versions to delete; 5 or fewer versions exist."
+            echo "No versions to delete; 20 or fewer versions exist."
           fi
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
