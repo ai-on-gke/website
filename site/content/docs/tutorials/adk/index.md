@@ -199,7 +199,7 @@ if __name__ == "__main__":
 mkdir ../app
 ```
 
-  2. Create the app/capital\_agent/agent.py file:
+3. Create the app/capital\_agent/agent.py file:
 
 ```
 from google.adk.agents import LlmAgent
@@ -213,19 +213,19 @@ capital_agent = LlmAgent(
 root_agent = capital_agent
 ```
 
-  3. Crete app/capital\_agent/\_\_init\_.py file:
+4. Crete app/capital\_agent/\_\_init\_.py file:
 
 ```
 from . import agent
 ```
 
-3. Create app/requirements.txt file with necessary Python packages:
+5. Create app/requirements.txt file with necessary Python packages:
 
 ```
 google_adk
 ```
 
-4. Create app/Dockerfile to build app container image:
+6. Create app/Dockerfile to build app container image:
 
 ```
 # Use an official Python runtime as a parent image
@@ -257,7 +257,7 @@ EXPOSE 8080
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 ```
 
-5. Build and Push the Container Image
+7. Build and Push the Container Image
 
 Build your Docker image using Google Cloud Build and push it to the Artifact Registry repository that is created by the Terraform:
 
@@ -268,7 +268,7 @@ gcloud builds submit \
     ../app
 ```
 
-6. Run this command to create  app/deplyment.yaml file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
+8. Run this command to create  app/deplyment.yaml file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
 
 ```
 cat <<  EOF > ../app/deployment.yaml
@@ -326,13 +326,13 @@ spec:
 EOF
 ```
 
-7. Apply the manifest:
+9. Apply the manifest:
 
 ```
 kubectl apply -f ../app/deployment.yaml
 ```
 
-8. Wait for deployment to be completed. It may take some time:
+10. Wait for deployment to be completed. It may take some time:
 
 ```
 kubectl rollout status deployment/adk-agent
@@ -343,7 +343,7 @@ kubectl rollout status deployment/adk-agent
 1. Forward port of the deployed application service:
 
 ```
-kubectl port-forward svc/adk-agent 8080:80
+kubectl port-forward svc/adk-agent 8080:80
 ```
 
 2. Go to the [http://localhost:8080/](http://localhost:8080/) and test the web UI. You can test your agent by simply navigating to the kubernetes service URL in your web browser.
