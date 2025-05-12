@@ -195,11 +195,10 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 ```
 
-2. Create agent files.  
-   When finished, your agent code has to meet these requirements:   
-* Agent code is in a file called `agent.py` within your agent directory.  
-* Your agent variable is named `root_agent`.  
-* `__init__.py` is within your agent directory and contains `from . import agent`.  
+2. Create agent files. When finished, your agent code has to meet these requirements:
+    * Agent code is in a file called `agent.py` within your agent directory.  
+    * Your agent variable is named `root_agent`.  
+    * `__init__.py` is within your agent directory and contains `from . import agent`.  
     
   1. Create the `app` directory:
 
