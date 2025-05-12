@@ -29,9 +29,7 @@ This tutorial will cover:
 
 ## Before you begin
 
-Ensure you have the following prerequisites in place:
-
-1. Ensure you have the following tools installed on your workstation  
+Ensure you have the following tools installed on your workstation  
    * [gcloud CLI](https://cloud.google.com/sdk/docs/install)  
    * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)  
    * [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
