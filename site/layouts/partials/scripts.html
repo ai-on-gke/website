@@ -170,3 +170,18 @@ for (let c of containers) {
     });
   });
 </script>
+<script>
+  localStorage.getItem('calloutFooterClosed') === 'true' ? document.querySelector('.callout-footer').style.display = 'none' : document.querySelector('.callout-footer').style.display = 'flex';
+  const calloutCloseButton = document.querySelector('.call-out-close-button');
+  
+  if (calloutCloseButton) {
+    calloutCloseButton.addEventListener('click', function () {
+      const calloutFooter = document.querySelector('.callout-footer');
+      if (calloutFooter) {
+        calloutFooter.style.display = 'none';
+      }
+      localStorage.setItem('calloutFooterClosed', 'true');
+    });
+  }
+
+</script>
