@@ -1040,9 +1040,10 @@ nav.foldable-nav .ul-1 .with-child > label:before {
   font-size: 13px;
   width: 100%;
   padding: 5px 15px;
-  background-color: rgb(90, 90, 90);
+  background-color: rgb(130, 130, 130);
   font-weight: 600;
   justify-items: center;
+  justify-content: space-between;
   height: 36px;
   z-index: 11;
   line-height: 30px;
@@ -1050,20 +1051,7 @@ nav.foldable-nav .ul-1 .with-child > label:before {
   overflow: hidden;
 
   .call-out-close-button {
-    background-color: rgb(48, 48, 48);
-    width: 100px;
-    color: white;
-    border-radius: 2px;
-    justify-items: center;
-    margin-left: 5px;
-    height: 25px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    margin-top: 0px;
-    line-height: 13px;
-    font-weight: 600;
-    font-size: 13px;
-    border-style: solid;
-    border-color: rgb(48, 48, 48);
+    margin-top: 7px;
+    cursor: pointer;
   }
 }
