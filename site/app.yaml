@@ -5,17 +5,21 @@ handlers:
     static_files: public/index.html
     upload: public/*
     require_matching_file: true
+    secure: always
 
   - url: /(.*)
     static_files: public/\1/index.html
     upload: public/*
     require_matching_file: true
+    secure: always
   
   - url: /(.*)/
     static_files: public/\1/index.html
     upload: public/*
     require_matching_file: true
+    secure: always
 
   - url: /
     static_dir: public/
     require_matching_file: true
+    secure: always
