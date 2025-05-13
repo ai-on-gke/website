@@ -84,7 +84,7 @@ In this section we will use Terraform to automate the creation of infrastructure
 It creates:
 
 * Cluster IAM Service Account – manages permissions for the GKE cluster.  
-* Application’s IAM Service Account \- manages permissions for the deployed application.  
+* Application’s IAM Service Account – manages permissions for the deployed application.
 * [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store data.  
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the application.  
     
@@ -161,6 +161,7 @@ app/
 
 ```py
 import os
+import sys
 
 import uvicorn
 from fastapi import FastAPI
@@ -168,8 +169,22 @@ from google.adk.cli.fast_api import get_fast_api_app
 
 # Get the directory where main.py is located
 AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
-# Example session DB URL (e.g., SQLite)
-SESSION_DB_URL = "sqlite:///./sessions.db"
+
+def _get_env_or_fail(name: str):
+    value = os.environ.get(name)
+    if value is None:
+        print(f"Environment variable '{name}' must be set", file=sys.stderr)
+        exit(1)
+    return value
+
+DB_HOST=os.environ.get("DB_HOST", "localhost")
+DB_PORT=os.environ.get("DB_PORT", "5432")
+DB_USER=_get_env_or_fail("DB_USER")
+DB_PSWD=_get_env_or_fail("DB_PSWD")
+DB_NAME=_get_env_or_fail("DB_NAME")
+
+# Create connection string for the database
+SESSION_DB_URL = f"postgresql://{DB_USER}:{DB_PSWD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 # Example allowed origins for CORS
 ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
 # Set web=True if you intend to serve a web interface, False otherwise
@@ -211,10 +226,20 @@ mkdir ../app
 ```
 from google.adk.agents import LlmAgent
 
+# Define a tool function
+def get_capital_city(country: str) -> str:
+  """Retrieves the capital city for a given country."""
+  # Replace with actual logic (e.g., API call, database lookup)
+  capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
+  return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
+
+
 capital_agent = LlmAgent(
     model="gemini-2.0-flash",
     name="capital_agent",
-    description="Answers user questions about the capital city of a given country."
+    description="Answers user questions about the capital city of a given country.",
+    instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
+    tools=[get_capital_city] # Provide the function directly
 )
 
 root_agent = capital_agent
@@ -229,7 +254,12 @@ from . import agent
 5. Create `app/requirements.txt` file with necessary Python packages:
 
 ```
-google_adk
+google_adk>=0.1.0
+fastapi>=0.95.0
+uvicorn>=0.22.0
+pydantic>=2.0.0
+litellm>=0.1.0
+sqlalchemy[postgresql]>=2.0
 ```
 
 6. Create `app/Dockerfile` to build app container image:
@@ -240,6 +270,11 @@ FROM python:3.10-slim
 
 # Set the working directory in the container
 WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y libpq-dev build-essential \ 
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements file into the container at /app
 COPY requirements.txt .
@@ -300,11 +335,11 @@ spec:
         image: $(terraform output -raw image_repository_full_name)/adk-agent:latest
         resources:
           limits:
-            memory: "128Mi"
+            memory: "256Mi"
             cpu: "500m"
             ephemeral-storage: "128Mi"
           requests:
-            memory: "128Mi"
+            memory: "256Mi"
             cpu: "500m"
             ephemeral-storage: "128Mi"
         ports:
@@ -318,6 +353,42 @@ spec:
             value: $(terraform output -raw gke_cluster_location)
           - name: GOOGLE_GENAI_USE_VERTEXAI
             value: "true"
+          - name: DB_HOST
+            value: localhost
+          - name: DB_PORT
+            value: "5432"
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: username
+          - name: DB_PSWD
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: password
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: database
+      # A sidecar container to connect to CloudSQL postgresql database
+      - name: cloud-sql-proxy
+        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1
+        args:
+          - "--private-ip"
+          - "--structured-logs"
+          - "--port=5432"
+          - "$(terraform output -raw cloudsql_instance_fqdn)"
+        securityContext:
+          runAsNonRoot: true
+        resources:
+          limits:
+            cpu: "1"
+            memory: "2Gi"
+          requests:
+            cpu: "1"
+            memory: "2Gi"
 ---
 apiVersion: v1
 kind: Service
