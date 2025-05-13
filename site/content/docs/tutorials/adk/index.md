@@ -163,7 +163,13 @@ app/
 └── Dockerfile                 # Container build instructions
 ```
 
-1. Create the `app/main.py` file. This file sets up the FastAPI application using `get_fast_api_app()` from ADK.  
+1. Create the `app` directory:
+
+```
+mkdir ../app
+```
+
+2. Create the `app/main.py` file. This file sets up the FastAPI application using `get_fast_api_app()` from ADK.  
    
 
 ```py
@@ -217,18 +223,12 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 ```
 
-2. Create agent files. When finished, your agent code has to meet these requirements:
+3. Create agent files. When finished, your agent code has to meet these requirements:
     * Agent code is in a file called `agent.py` within your agent directory.  
     * Your agent variable is named `root_agent`.  
     * `__init__.py` is within your agent directory and contains `from . import agent`.  
-    
-  1. Create the `app` directory:
 
-```
-mkdir ../app
-```
-
-3. Create the `app/capital_agent/agent.py` file:
+4. Create the `app/capital_agent/agent.py` file:
 
 ```
 from google.adk.agents import LlmAgent
@@ -252,13 +252,13 @@ capital_agent = LlmAgent(
 root_agent = capital_agent
 ```
 
-4. Crete `app/capital_agent/__init__.py` file:
+5. Crete `app/capital_agent/__init__.py` file:
 
 ```
 from . import agent
 ```
 
-5. Create `app/requirements.txt` file with necessary Python packages:
+6. Create `app/requirements.txt` file with necessary Python packages:
 
 ```
 google_adk>=0.1.0
@@ -269,7 +269,7 @@ litellm>=0.1.0
 sqlalchemy[postgresql]>=2.0
 ```
 
-6. Create `app/Dockerfile` to build app container image:
+7. Create `app/Dockerfile` to build app container image:
 
 ```
 # Use an official Python runtime as a parent image
@@ -306,7 +306,7 @@ EXPOSE 8080
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 ```
 
-7. Build and Push the Container Image
+8. Build and Push the Container Image
 
 Build your Docker image using Google Cloud Build and push it to the Artifact Registry repository that is created by the Terraform:
 
@@ -317,7 +317,7 @@ gcloud builds submit \
     ../app
 ```
 
-8. Run this command to create `app/deplyment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
+9. Run this command to create `app/deplyment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
 
 ```
 cat <<  EOF > ../app/deployment.yaml
@@ -411,13 +411,13 @@ spec:
 EOF
 ```
 
-9. Apply the manifest:
+10. Apply the manifest:
 
 ```
 kubectl apply -f ../app/deployment.yaml
 ```
 
-10. Wait for deployment to be completed. It may take some time:
+11. Wait for deployment to be completed. It may take some time:
 
 ```
 kubectl rollout status deployment/adk-agent
