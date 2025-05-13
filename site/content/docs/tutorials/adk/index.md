@@ -128,14 +128,19 @@ terraform apply -var-file=default_env.tfvars
 And you should see your resources created:
 
 ```
-Apply complete! Resources: 106 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 27 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-cloudsql_instance_name = "adk-tutorial-tf"
+cloudsql_instance_fqdn = "<PROJECT ID>:us-central1:adk-tf"
 gke_cluster_location = "us-central1"
-gke_cluster_name = "adk-tutorial-tf"
-project_id = "<your-project-id>"
+gke_cluster_name = "adk-tf"
+image_repository_full_name = "us-docker.pkg.dev/<PROJECT ID>/adk-tf"
+image_repository_location = "us"
+image_repository_name = "adk-tf"
+k8s_service_account_name = "adk-tf"
+project_id = <PROJECT ID>
+
 ```
 
 6. Configure your kubectl context:
