@@ -440,6 +440,8 @@ To verify your agent is working as intended, you can:
 1. Select your agent from the dropdown menu.  
 2. Type a message and verify that you receive an expected response from your agent.
 
+![alt text](webui.png)
+
 If you experience any unexpected behavior, check the pod logs for your agent using:
 
 ```
