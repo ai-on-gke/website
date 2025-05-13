@@ -50,7 +50,7 @@ gcloud auth application-default login
 
 ### Clone the repository
 
-Clone the repository with our guides and cd to the llamaindex/rag directory by running these commands:
+Clone the repository with our guides and cd to the `adk/` directory by running these commands:
 
 ```
 git clone https://github.com/ai-on-gke/tutorials-and-examples.git
