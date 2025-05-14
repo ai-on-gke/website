@@ -423,6 +423,22 @@ kubectl apply -f ../app/deployment.yaml
 kubectl rollout status deployment/adk-agent
 ```
 
+NOTE: To keep the code simple, our web app does have readiness probe endpoint, so it may need additional time to initialize, even after successful start of the pod. To make sure that it is initialized, run the command to see the logs:
+
+```
+kubectl logs -l app=adk-agent
+```
+
+They should be similar to:
+
+```
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+```
+
+
 ## Testing your Deployed Agent
 
 1. Forward port of the deployed application service:
