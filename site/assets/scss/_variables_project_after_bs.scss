@@ -17,3 +17,9 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
     max-width: 95%!important;
   }
 }
+
+.callout-footer {
+  @include media-breakpoint-down(md) {
+    display: none;
+  }
+}

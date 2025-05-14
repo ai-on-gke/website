@@ -67,6 +67,24 @@ jobs:
         with:
           deliverables: site/app.yaml
           project_id: ${{ secrets.GCP_PROJECT }}
-
+      - name: Clean up old App Engine versions
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT }}
+          
+          VERSIONS=$(gcloud app versions list \
+            --service default \
+            --sort-by '~version.createTime' \
+            --format 'value(version.id)' | tail -n +21)
+          
+          if [ -n "$VERSIONS" ]; then
+            echo "Deleting old versions: $VERSIONS"
+            for version in $VERSIONS; do
+              gcloud app versions delete "$version" \
+                --service default \
+                --quiet || echo "Failed to delete version $version"
+            done
+          else
+            echo "No versions to delete; 20 or fewer versions exist."
+          fi
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"

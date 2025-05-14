@@ -8,10 +8,11 @@ $breadcrumb-active-color: "#202124";
 $enable-negative-margins: true;
 
 @font-face {
-  font-family: 'Material Symbols Outlined';
+  font-family: "Material Symbols Outlined";
   font-style: normal;
   font-weight: 100 700;
-  src: url(https://fonts.gstatic.com/icon/font?kit=kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVYLAXbrM8iV6U6gNQPXPjG3gCZtDImxX--thrnsQ&skey=b8dc2088854b122f&v=v241) format('woff2');
+  src: url(https://fonts.gstatic.com/icon/font?kit=kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVYLAXbrM8iV6U6gNQPXPjG3gCZtDImxX--thrnsQ&skey=b8dc2088854b122f&v=v241)
+    format("woff2");
 }
 
 .td-content .highlight pre {
@@ -720,7 +721,7 @@ h5 {
 }
 
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
+  font-family: "Material Symbols Outlined";
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -731,7 +732,7 @@ h5 {
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -webkit-font-feature-settings: 'liga';
+  -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
 }
 
@@ -1013,13 +1014,13 @@ body {
 }
 
 nav.foldable-nav .ul-1 .with-child > label:before {
-  right: .1em;
-  left: auto!important;
+  right: 0.1em;
+  left: auto !important;
   cursor: pointer;
 }
 
 .td-sidebar-nav__section-title a {
- color: rgba(33, 37, 41, 0.75) !important;
+  color: rgba(33, 37, 41, 0.75) !important;
 }
 
 .td-sidebar-nav .td-sidebar-link__page {
@@ -1028,4 +1029,29 @@ nav.foldable-nav .ul-1 .with-child > label:before {
 
 .td-sidebar-nav-active-item {
   color: #2f80ed !important;
+}
+
+.callout-footer {
+  display: none;
+  position: fixed;
+  top: 64px;
+  gap: 15px;
+  color: #fff;
+  font-size: 13px;
+  width: 100%;
+  padding: 5px 15px;
+  background-color: rgb(130, 130, 130);
+  font-weight: 600;
+  justify-items: center;
+  justify-content: space-between;
+  height: 36px;
+  z-index: 11;
+  line-height: 30px;
+  padding-bottom: 20px;
+  overflow: hidden;
+
+  .call-out-close-button {
+    margin-top: 7px;
+    cursor: pointer;
+  }
 }
