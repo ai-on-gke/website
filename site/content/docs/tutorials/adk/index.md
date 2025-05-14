@@ -50,17 +50,17 @@ gcloud auth application-default login
 
 ### Clone the repository
 
-Clone the repository with our guides and cd to the `adk/` directory by running these commands:
+Clone the repository with our guides and cd to the `adk/vertex/` directory by running these commands:
 
 ```
 git clone https://github.com/ai-on-gke/tutorials-and-examples.git
-cd tutorials-and-examples/adk
+cd tutorials-and-examples/adk/vertex
 ```
 
 ### Filesystem structure
 
 ```
-adk/
+adk/vertex/
 ├── terraform/    # Terraform configuration for automated deployment of an infrastructure
 └── app/          # Empty directory that we will create to put files created during the tutorial
 ```
