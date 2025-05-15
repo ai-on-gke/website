@@ -10,7 +10,7 @@ tags:
  - Benchmarking
  - 65,000-nodes
  - AI
-draft: true
+draft: false
 ---
 
 This guide describes the benchmark of Google Kubernetes Engine (GKE) at a massive scale (65,000 nodes) with simulated AI workloads via Terraform automation and ClusterLoader2 performance testing tool.
