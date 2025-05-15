@@ -1,18 +1,24 @@
 ---
-linkTitle: "CPU based benchmark"
-title: "CPU based benchmark"
-description: "This guide outlines the process of benchmarking a 65,000-node Google Kubernetes Engine (GKE) cluster using CPU-only machines to simulate AI workloads and evaluate the Kubernetes control plane's performance. It details how to deploy the cluster with Terraform, run diverse simulated AI workloads (including training and inference) using ClusterLoader2, and collect performance metrics to assess scalability and stability. The benchmark results, stored in the perf-tests repository, provide insights into pod state transitions, scheduling throughput, and API server latency under extreme load, allowing for a comprehensive evaluation of the control plane's capabilities."
+linkTitle: "65k-nodes-benchmark"
+title: "GKE at 65,000 Nodes: Simulated AI Workload Benchmark"
+description: "This guide outlines the process of benchmarking a 65,000-node Google Kubernetes Engine (GKE) cluster using CPU-only machines to simulate AI workloads and evaluate the Kubernetes control plane's performance. It details how to deploy the cluster with Terraform, run diverse simulated AI workloads (including training and inference) using ClusterLoader2, and collect performance metrics to assess scalability and stability. The benchmark results provide insights into pod state transitions, scheduling throughput, and API server latency under extreme load, allowing for a comprehensive evaluation of the control plane's capabilities."
 weight: 30
 owner: >-
-    [Francisco Cabrera](https://github.com/fcabrera23)
+    [Besher Massri](https://github.com/besher-massri)
 type: docs
 tags:
  - Benchmarking
+ - 65,000-nodes
+ - AI
 draft: true
 ---
-This repository contains the code and configuration files for benchmarking Google Kubernetes Engine (GKE) at a massive scale (65,000 nodes) with simulated AI workloads via Terraform automation and ClusterLoader2 performance testing tool.
 
-You can find the current set of supported cluster deployments under `infra/65k-cpu-cluster` and the ClusterLoader2 benchmark under `benchmark/tools/CL2-benchmark`.
+This guide describes the benchmark of Google Kubernetes Engine (GKE) at a massive scale (65,000 nodes) with simulated AI workloads via Terraform automation and ClusterLoader2 performance testing tool.
+
+
+The findings from this benchmark were published on the [Google Cloud Blog](https://cloud.google.com/blog/products/containers-kubernetes/benchmarking-a-65000-node-gke-cluster-with-ai-workloads).
+
+
 
 ## Introduction
 
@@ -44,8 +50,8 @@ The benchmark is designed to mimic real-life scenarios encountered in the LLM de
 1. **Clone this repository:**
 
 ```bash
-git clone https://github.com/GoogleCloudPlatform/ai-on-gke.git
-cd 65k-benchmarks/simulated-ai-workload
+git clone https://github.com/ai-on-gke/scalability-benchmarks.git
+cd scalability-benchmarks
 ```
 2. **Create and configure `terraform.tfvars`:**
 
@@ -54,7 +60,7 @@ Create a `terraform.tfvars` file. `./sample-tfvars/65k-sample.tfvars` is provide
 
 
 ```bash
-cd Terraform
+cd infrastructure/65k-cpu-cluster/
 cp ./sample-tfvars/65k-sample.tfvars terraform.tfvars
 ```
 
@@ -114,7 +120,7 @@ export CL2_TRAINING_WORKLOAD_SINGLE_WORKLOAD_SIZE=65000
 ./run-e2e-with-prometheus-fw-rule.sh cluster-loader2 \
   --nodes=65000 \
   --report-dir=./output/ \
-  --testconfig=../ai-on-gke/65k-benchmarks/simulated-ai-workload/CL2/config.yaml \
+  --testconfig=../scalability-benchmarks/CL2/65k-benchmark/config.yaml \
   --provider=gke \
   --enable-prometheus-server=true \
   --kubeconfig=${HOME}/.kube/config \
@@ -146,6 +152,6 @@ To avoid incurring unnecessary costs, it's important to clean up the resources c
 You can delete the cluster using Terraform:
 
 ```bash
-cd 65k-benchmarks/simulated-ai-workload/Terraform/
+cd infrastructure/65k-cpu-cluster/ # Ensure you are in the correct directory
 terraform destroy
 ```
