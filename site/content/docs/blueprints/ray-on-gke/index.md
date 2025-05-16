@@ -130,7 +130,7 @@ See the following guides and tutorials for running Ray applications on GKE:
 * [Getting Started with KubeRay](https://docs.ray.io/en/latest/cluster/kubernetes/getting-started.html)
 * [Serve an LLM on L4 GPUs with Ray](https://cloud.google.com/kubernetes-engine/docs/how-to/serve-llm-l4-ray)
 * [Logging & Monitoring for Ray clusters](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/guides/observability)
-* [TPU Guide](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/guides/tpu)
+* [TPU Guide](https://github.com/ai-on-gke/kuberay-tpu-webhook)
 * [Priority Scheduling with RayJob and Kueue](https://docs.ray.io/en/master/cluster/kubernetes/examples/rayjob-kueue-priority-scheduling.html)
 * [Gang Scheduling with RayJob and Kueue](https://docs.ray.io/en/master/cluster/kubernetes/examples/rayjob-kueue-gang-scheduling.html)
 * [RayTrain with GCSFuse CSI driver](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/guides/raytrain-with-gcsfusecsi)
