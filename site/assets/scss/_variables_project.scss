@@ -141,6 +141,10 @@ $enable-negative-margins: true;
   letter-spacing: 0.0156rem !important;
 }
 
+.article-meta {
+  max-width: 95% !important;
+}
+
 .home-link {
   color: #fff !important;
   text-underline-offset: 0.8rem;
