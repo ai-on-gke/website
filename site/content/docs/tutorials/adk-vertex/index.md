@@ -62,7 +62,13 @@ cd tutorials-and-examples/adk/vertex
 ```
 adk/vertex/
 ├── terraform/    # Terraform configuration for automated deployment of an infrastructure
-└── app/          # Empty directory that we will create to put files created during the tutorial
+└── app/          # The desired structure of the final application. 
+    ├── capital_agent/             # Agent's module name
+    │   ├── __init__.py
+    │   └── agent.py               # Your agent logic
+    ├── main.py                    # FastAPI application entry point
+    ├── requirements.txt           # Python dependencies
+    └── Dockerfile                 # Container build instructions
 ```
 
 ### Enable Necessary APIs
@@ -81,15 +87,17 @@ gcloud services enable \
 
 In this section we will use Terraform to automate the creation of infrastructure resources. For more details how it is done please refer to the terraform config in the `terraform/` folder. By default, the configuration provisions an Autopilot GKE cluster, but it can be changed to standard by setting `autopilot_cluster = false`.
 
-It creates:
+It creates the following resources. For more information such as resource names and other details, please refer to the [Terraform config](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/adk/vertex/terraform):
 
-* Cluster IAM Service Account – manages permissions for the GKE cluster.  
-* Application’s IAM Service Account – manages permissions for the deployed application to access:
-    - [VertexAI](https://cloud.google.com/vertex-ai/docs) LLM model.
-    - [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance with PostgreSQL database.
+* Service Accounts:
+    - Cluster IAM Service Account – manages permissions for the GKE cluster.  
+    - Application’s IAM Service Account  – manages permissions for the deployed application to access:
+        - [VertexAI](https://cloud.google.com/vertex-ai/docs) LLM model.
+        - [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance with PostgreSQL database.
 * [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store data.  
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the application.  
     
+
 1. Go the the terraform directory:
 
 ```
@@ -151,25 +159,7 @@ gcloud container clusters get-credentials $(terraform output -raw gke_cluster_na
 
 ## Deploy and Configure the Agent Application
 
-The desired structure of the final application should be:
-
-```
-app/
-├── capital_agent/             # Agent's module name
-│   ├── __init__.py
-│   └── agent.py               # Your agent logic
-├── main.py                    # FastAPI application entry point
-├── requirements.txt           # Python dependencies
-└── Dockerfile                 # Container build instructions
-```
-
-1. Create the `app` directory:
-
-```
-mkdir ../app
-```
-
-2. Create the `app/main.py` file. This file sets up the FastAPI application using `get_fast_api_app()` from ADK.  
+1. Create the `app/main.py` file. This file sets up the FastAPI application using `get_fast_api_app()` from ADK.  
    
 
 ```py
@@ -223,42 +213,46 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 ```
 
-3. Create agent files. When finished, your agent code has to meet these requirements:
+2. Create agent files.
+
+   When finished, your agent code has to meet these requirements:
     * Agent code is in a file called `agent.py` within your agent directory.  
     * Your agent variable is named `root_agent`.  
-    * `__init__.py` is within your agent directory and contains `from . import agent`.  
-
-4. Create the `app/capital_agent/agent.py` file:
-
-```
-from google.adk.agents import LlmAgent
-
-# Define a tool function
-def get_capital_city(country: str) -> str:
-  """Retrieves the capital city for a given country."""
-  # Replace with actual logic (e.g., API call, database lookup)
-  capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
-  return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
+    * `__init__.py` is within your agent directory and contains `from . import agent`.
 
 
-capital_agent = LlmAgent(
-    model="gemini-2.0-flash",
-    name="capital_agent",
-    description="Answers user questions about the capital city of a given country.",
-    instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
-    tools=[get_capital_city] # Provide the function directly
-)
+    2.1. Create the `app/capital_agent/agent.py` file:
 
-root_agent = capital_agent
-```
+    ```
+    from google.adk.agents import LlmAgent
+    
+    # Define a tool function
+    def get_capital_city(country: str) -> str:
+      """Retrieves the capital city for a given country."""
+      # Replace with actual logic (e.g., API call, database lookup)
+      capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
+      return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
+    
+    
+    capital_agent = LlmAgent(
+        model="gemini-2.0-flash",
+        name="capital_agent",
+        description="Answers user questions about the capital city of a given country.",
+        instruction="You are an agent that provides the capital city of a country.",
+        tools=[get_capital_city] # Provide the function directly
+    )
+    
+    root_agent = capital_agent
+    ```
 
-5. Crete `app/capital_agent/__init__.py` file:
+    2.2. Create `app/capital_agent/__init__.py` file:
 
-```
-from . import agent
-```
 
-6. Create `app/requirements.txt` file with necessary Python packages:
+    ```
+    from . import agent
+    ```
+
+4. Create `app/requirements.txt` file with necessary Python packages:
 
 ```
 google_adk>=0.1.0
@@ -269,7 +263,7 @@ litellm>=0.1.0
 sqlalchemy[postgresql]>=2.0
 ```
 
-7. Create `app/Dockerfile` to build app container image:
+4. Create `app/Dockerfile` to build app container image:
 
 ```
 # Use an official Python runtime as a parent image
@@ -306,7 +300,7 @@ EXPOSE 8080
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 ```
 
-8. Build and Push the Container Image
+5. Build and Push the Container Image
 
 Build your Docker image using Google Cloud Build and push it to the Artifact Registry repository that is created by the Terraform:
 
@@ -317,7 +311,7 @@ gcloud builds submit \
     ../app
 ```
 
-9. Run this command to create `app/deplyment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
+6. Run this command to create `app/deplyment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
 
 ```
 cat <<  EOF > ../app/deployment.yaml
@@ -420,13 +414,13 @@ spec:
 EOF
 ```
 
-10. Apply the manifest:
+7. Apply the manifest:
 
 ```
 kubectl apply -f ../app/deployment.yaml
 ```
 
-11. Wait for deployment to be completed. It may take some time:
+8. Wait for deployment to be completed. It may take some time:
 
 ```
 kubectl rollout status deployment/adk-agent
