@@ -136,11 +136,10 @@ terraform apply -var-file=default_env.tfvars
 And you should see your resources created:
 
 ```
-Apply complete! Resources: 27 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-cloudsql_instance_fqdn = "<PROJECT ID>:us-central1:adk-tf"
 gke_cluster_location = "us-central1"
 gke_cluster_name = "adk-tf"
 image_repository_full_name = "us-docker.pkg.dev/<PROJECT ID>/adk-tf"
@@ -252,44 +251,27 @@ fastapi>=0.95.0
 uvicorn>=0.22.0
 pydantic>=2.0.0
 litellm>=0.1.0
-sqlalchemy[postgresql]>=2.0
 ```
 
 4. Create `app/Dockerfile` to build app container image:
 
 ```
-# Use an official Python runtime as a parent image
-FROM python:3.10-slim
-
-# Set the working directory in the container
+FROM python:3.13-slim
 WORKDIR /app
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y libpq-dev build-essential \ 
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
-# Copy the requirements file into the container at /app
 COPY requirements.txt .
-
-# Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the current directory contents into the container at /app
+RUN adduser --disabled-password --gecos "" myuser && \
+    chown -R myuser:myuser /app
+
 COPY . .
 
-# Make port 8080 available to the world outside this container
-EXPOSE 8080
+USER myuser
 
-# Define environment variables if needed (e.g., for Vertex AI project and location)
-# These can also be set in the Kubernetes manifest
-# ENV GOOGLE_CLOUD_PROJECT="your-gcp-project"
-# ENV GOOGLE_CLOUD_LOCATION="your-gcp-region"
-# ENV ADK_LLM_PROVIDER="VERTEX_AI" # or "AI_STUDIO"
-# ENV VERTEX_AI_MODEL_NAME="gemini-1.0-pro" # or other model
+ENV PATH="/home/myuser/.local/bin:$PATH"
 
-# Run main.py when the container launches
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
 ```
 
 5. Build and Push the Container Image
