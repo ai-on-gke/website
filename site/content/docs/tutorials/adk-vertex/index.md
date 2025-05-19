@@ -93,8 +93,6 @@ It creates the following resources. For more information such as resource names 
     - Cluster IAM Service Account (derives name from a cluster name, e.g. `tf-gke-<cluster name>`) – manages permissions for the GKE cluster.
     - Application’s IAM Service Account (default name `adk-tf` and can be changed in the terraform config) – manages permissions for the deployed application to access:
         - [VertexAI](https://cloud.google.com/vertex-ai/docs) LLM model.
-        - [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance with PostgreSQL database.
-* [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store data.  
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the application.  
     
 
