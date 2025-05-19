@@ -15,5 +15,9 @@ externalSource:
     repository: "ai-on-gke/nvidia-ai-solutions"
     branch: "main"
     filePath: "nemo/README.md"
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/blueprints/nemo
+    editorFile: index.md
 ---
 {{% include-external %}}

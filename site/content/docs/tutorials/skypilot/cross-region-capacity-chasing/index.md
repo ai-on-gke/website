@@ -9,6 +9,10 @@ type: docs
 tags:
  - Orchestration
  - Tutorials
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/tutorials/skypilot/cross-region-capacity-chasing
+    editorFile: index.md
 ---
 Due to the limited availability of accelerator resources, customers face significant challenges in securing sufficient capacity to run their AI/ML workloads. They often require:
 

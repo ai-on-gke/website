@@ -10,6 +10,10 @@ tags:
     - Ray on GKE
     - Blueprints
 draft: false
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/blueprints/ray-on-gke
+    editorFile: index.md
 ---
 This directory contains examples, guides and best practices for running [Ray](https://www.ray.io/) on Google Kubernetes Engine.
 Most examples use the [`ray-on-gke`](https://github.com/ai-on-gke/quick-start-guides/tree/main/ray-on-gke) terraform module to install KubeRay and deploy RayCluster resources.

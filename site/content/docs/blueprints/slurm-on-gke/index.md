@@ -9,6 +9,10 @@ owner: >-
 tags:
  - Blueprints
 draft: false
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/blueprints/slurm-on-gke
+    editorFile: index.md
 ---
 ## Introduction
 

@@ -11,6 +11,10 @@ tags:
     - Tutorials
     - Inference Servers
 draft: false
+cloudShell:
+    enabled: true
+    folder: site/content/docs/tutorials/inference-servers/checkpoints
+    editorFile: index.md
 ---
 
 ## Overview
