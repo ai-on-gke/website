@@ -90,8 +90,8 @@ In this section we will use Terraform to automate the creation of infrastructure
 It creates the following resources. For more information such as resource names and other details, please refer to the [Terraform config](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/adk/vertex/terraform):
 
 * Service Accounts:
-    - Cluster IAM Service Account – manages permissions for the GKE cluster.  
-    - Application’s IAM Service Account  – manages permissions for the deployed application to access:
+    - Cluster IAM Service Account (derives name from a cluster name, e.g. `tf-gke-<cluster name>`) – manages permissions for the GKE cluster.
+    - Application’s IAM Service Account (default name `adk-tf` and can be changed in the terraform config) – manages permissions for the deployed application to access:
         - [VertexAI](https://cloud.google.com/vertex-ai/docs) LLM model.
         - [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance with PostgreSQL database.
 * [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store data.  
@@ -164,7 +164,6 @@ gcloud container clusters get-credentials $(terraform output -raw gke_cluster_na
 
 ```py
 import os
-import sys
 
 import uvicorn
 from fastapi import FastAPI
@@ -172,22 +171,8 @@ from google.adk.cli.fast_api import get_fast_api_app
 
 # Get the directory where main.py is located
 AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-def _get_env_or_fail(name: str):
-    value = os.environ.get(name)
-    if value is None:
-        print(f"Environment variable '{name}' must be set", file=sys.stderr)
-        exit(1)
-    return value
-
-DB_HOST=os.environ.get("DB_HOST", "localhost")
-DB_PORT=os.environ.get("DB_PORT", "5432")
-DB_USER=_get_env_or_fail("DB_USER")
-DB_PSWD=_get_env_or_fail("DB_PSWD")
-DB_NAME=_get_env_or_fail("DB_NAME")
-
-# Create connection string for the database
-SESSION_DB_URL = f"postgresql://{DB_USER}:{DB_PSWD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+# Example session DB URL (e.g., SQLite)
+SESSION_DB_URL = "sqlite:///./sessions.db"
 # Example allowed origins for CORS
 ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
 # Set web=True if you intend to serve a web interface, False otherwise
@@ -238,7 +223,14 @@ if __name__ == "__main__":
         model="gemini-2.0-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
-        instruction="You are an agent that provides the capital city of a country.",
+        instruction="""You are an agent that provides the capital city of a country.
+                 When a user asks for the capital of a country:
+                 1. Identify the country name from the user's query.
+                 2. Use the `get_capital_city` tool to find the capital.
+                 3. Respond clearly to the user, stating the capital city.
+                 Example Query: "What's the capital of France?"
+                 Example Response: "The capital of France is Paris."
+            """,
         tools=[get_capital_city] # Provide the function directly
     )
     
@@ -354,25 +346,6 @@ spec:
             value: $(terraform output -raw gke_cluster_location)
           - name: GOOGLE_GENAI_USE_VERTEXAI
             value: "true"
-          - name: DB_HOST
-            value: localhost
-          - name: DB_PORT
-            value: "5432"
-          - name: DB_USER
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: username
-          - name: DB_PSWD
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: password
-          - name: DB_NAME
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: database
         readinessProbe:
           httpGet:
             path: /
@@ -382,23 +355,6 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 5
           successThreshold: 1
-      # A sidecar container to connect to CloudSQL postgresql database
-      - name: cloud-sql-proxy
-        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1
-        args:
-          - "--private-ip"
-          - "--structured-logs"
-          - "--port=5432"
-          - "$(terraform output -raw cloudsql_instance_fqdn)"
-        securityContext:
-          runAsNonRoot: true
-        resources:
-          limits:
-            cpu: "1"
-            memory: "2Gi"
-          requests:
-            cpu: "1"
-            memory: "2Gi"
 ---
 apiVersion: v1
 kind: Service
