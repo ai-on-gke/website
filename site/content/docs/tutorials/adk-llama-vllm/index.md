@@ -259,7 +259,7 @@ Note, that our tool has dummy data:
 city_weather = {
         "paris": "The weather in Paris is sunny with a temperature of 25 degrees Celsius (77 degrees Fahrenheit).",
         "ottawa": "In Ottawa, it's currently cloudy with a temperature of 18 degrees Celsius (64 degrees Fahrenheit) and a chance of rain.",
-        "tokyo": "Tokyo is experiencing humid conditions with a temperature of 28 degrees Celsius (82 degrees Fahrenheit)."
+        "tokyo": "Tokyo is experiencing humid conditions with a temperature of 28 degrees Celsius (82 degrees Fahrenheit) and possible rainfall."
     }
 ```
 
