@@ -8,6 +8,10 @@ owner: >-
     [Francisco Cabrera](https://github.com/fcabrera23)
 tags:
  - Blueprints
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/blueprints/jupyter-on-gke
+    editorFile: index.md
 ---
 This repository contains a Terraform template for running [JupyterHub](https://jupyter.org/hub) on Google Kubernetes Engine.
 

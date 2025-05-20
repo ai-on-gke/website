@@ -11,6 +11,10 @@ tags:
  - NVIDIA
  - NIM on GKE
  - LLM
+cloudShell:
+    enabled: true
+    folder: site/content/docs/blueprints/nims-on-gke/nim-llm
+    editorFile: _index.md
 ---
 ## Before you begin
 

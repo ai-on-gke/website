@@ -10,6 +10,10 @@ tags:
     - RAG on GKE
     - Blueprints
 draft: false
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/blueprints/rag-on-gke
+    editorFile: index.md
 ---
 
 This is a sample to deploy a Retrieval Augmented Generation (RAG) application on GKE. 

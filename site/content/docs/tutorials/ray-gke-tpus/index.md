@@ -10,6 +10,10 @@ tags:
     - Ray on TPUs with GKE
     - Blueprints
 draft: false
+cloudShell:
+    enabled: true
+    folder: site/content/docs/tutorials/ray-gke-tpus
+    editorFile: index.md
 ---
 This directory contains instructions for running [KubeRay](https://github.com/ray-project/kuberay) with [TPUs](https://cloud.google.com/tpu?hl=en) on Google Kubernetes Engine. This includes instructions for installing the [KubeRay TPU webhook](https://github.com/ai-on-gke/kuberay-tpu-webhook/tree/main) to enable multi-host TPU workloads.
 

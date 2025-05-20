@@ -16,5 +16,9 @@ externalSource:
     repository: "ai-on-gke/nvidia-ai-solutions"
     branch: "main"
     filePath: "nim/blueprints/digitalhuman/README.md"
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/blueprints/nims-on-gke/nim-customer-service
+    editorFile: _index.md
 ---
 {{% include-external %}}

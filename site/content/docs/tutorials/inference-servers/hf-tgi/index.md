@@ -9,6 +9,10 @@ type: docs
 tags: 
     - Orchestration
     - Tutorials
+cloudShell:
+    enabled: true
+    folder: site/content/docs/tutorials/inference-servers/hf-tgi
+    editorFile: index.md
 ---
 
 ## Overview
