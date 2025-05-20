@@ -10,6 +10,10 @@ tags:
  - Serving
  - Tutorials
  - Inference Servers
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/tutorials/fungibility-recipes
+    editorFile: index.md
 ---
 
 # **Background**

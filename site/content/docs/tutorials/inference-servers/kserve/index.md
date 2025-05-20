@@ -9,6 +9,10 @@ owner: >-
 tags:
  - Serving
  - Tutorials
+cloudShell:
+    enabled: true
+    folder: site/content/docs/tutorials/inference-servers/kserve
+    editorFile: index.md
 ---
 KServe is a highly scalable, standards-based platform for model inference on Kubernetes. Installing KServe on GKE Autopilot can be challenging due to the security policies enforced by Autopilot. This tutorial will guide you step by step through the process of installing KServe in a GKE Autopilot cluster.
 

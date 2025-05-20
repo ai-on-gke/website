@@ -9,6 +9,10 @@ type: docs
 tags:
   - Storage
   - Tutorials
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/tutorials/hyperdisk-ml
+    editorFile: index.md
 ---
 
 ## Overview

@@ -12,6 +12,10 @@ tags:
  - Gemma
  - Fine-tuning
 draft: false
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/tutorials/finetuning-gemma-3-1b-it-on-l4
+    editorFile: index.md
 ---
 We’ll walk through fine-tuning a Gemma 3-1B-it model using GKE using L4 GPU. L4 GPU are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs, at a fraction of the cost of using a higher end GPU.
 

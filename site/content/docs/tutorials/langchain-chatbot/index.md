@@ -10,6 +10,10 @@ tags:
  - Serving
  - Langchain
  - Tutorials
+cloudShell:
+    enabled: true
+    folder: site/content/docs/tutorials/langchain-chatbot
+    editorFile: index.md
 ---
 - [Introduction](#introduction)
   - [Architecture overview](#architecture-overview)
