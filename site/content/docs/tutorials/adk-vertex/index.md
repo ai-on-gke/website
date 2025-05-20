@@ -248,7 +248,6 @@ google_adk>=0.1.0
 fastapi>=0.95.0
 uvicorn>=0.22.0
 pydantic>=2.0.0
-litellm>=0.1.0
 ```
 
 4. Create `app/Dockerfile` to build app container image:
