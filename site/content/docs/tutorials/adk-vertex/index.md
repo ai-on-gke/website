@@ -381,6 +381,8 @@ To verify your agent is working as intended, you can:
 
 ![alt text](webui.png)
 
+As you can see from the screenshot, the agent works as expected and gives answers only for cities that are listed in the tool function.
+
 If you experience any unexpected behavior, check the pod logs for your agent using:
 
 ```
