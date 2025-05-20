@@ -10,6 +10,10 @@ tags:
  - Orchestration
  - Tutorials
 draft: false
+cloudShell:
+    enabled: true
+    folder: site/content/docs/tutorials/models-as-oci
+    editorFile: index.md
 ---
 ## Package and Deploy from Hugging Face to Artifact Registry and GKE
 

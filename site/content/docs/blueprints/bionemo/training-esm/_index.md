@@ -16,5 +16,9 @@ externalSource:
     repository: "ai-on-gke/nvidia-ai-solutions"
     branch: "main"
     filePath: "bionemo/pretraining/README.md"
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/blueprints/bionemo/training-esm
+    editorFile: _index.md
 ---
 {{% include-external %}}

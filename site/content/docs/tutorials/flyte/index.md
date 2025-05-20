@@ -9,6 +9,10 @@ type: docs
 tags:
   - Orchestration
   - Tutorials
+cloudShell: 
+    enabled: true
+    folder: site/content/docs/tutorials/flyte
+    editorFile: index.md
 ---
 ## Overview
 
