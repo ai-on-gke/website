@@ -49,6 +49,8 @@ export HF_TOKEN=<MY_HF_TOKEN>
 export CLUSTER_NAME=llama-ray-cluster
 ```
 
+Update the <PROJECT-ID> placeholder in `default_env.tfvars` with your own Google Cloud Project ID Name.
+
 Initialize Terraform and apply the configuration:
 
 ```bash
