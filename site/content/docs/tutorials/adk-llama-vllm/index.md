@@ -130,10 +130,31 @@ curl http://127.0.0.1:8000/v1/chat/completions \
     "model": "meta-llama/Llama-3.1-8B-Instruct",
     "messages": [
         {
+          "role": "system",
+          "content": "You are a helpful agent that provides weather report in a city using a tool.\nThe user will provide a city name in a JSON format like {\"city\": \"city_name\"}.\n1. Extract the city name.\n2. Use the `get_weather` tool to find the weather.\n3. Answer on user request based on the weather"
+        },
+        {
           "role": "user",
-          "content": "Why is the sky blue?"
+          "content": "I am going to vacation in Ottawa. Should I get a jucket?"
         }
-    ]
+    ],
+    "tools": [
+    {
+      "type": "function",
+      "function": {
+          "name": "get_weather",
+          "description": "Retrieves the weather condition of a given city.",
+          "parameters": {
+              "type": "object",
+              "properties": {
+                  "city": {
+                      "type": "string"
+                  }
+              }
+          }
+      }
+    }
+  ]
 }' | jq
 ```
 
@@ -141,9 +162,9 @@ The output should look like this:
 
 ```log
 {
-  "id": "chatcmpl-850e02518e4145de94926b60c1ccab8c",
+  "id": "chatcmpl-68d0bb63f71c4a249c06e337793d7b8f",
   "object": "chat.completion",
-  "created": 1747225977,
+  "created": 1747855947,
   "model": "meta-llama/Llama-3.1-8B-Instruct",
   "choices": [
     {
@@ -151,18 +172,27 @@ The output should look like this:
       "message": {
         "role": "assistant",
         "reasoning_content": null,
-        "content": "The sky appears blue due to a phenomenon called Rayleigh scattering, which is the scattering of light by small particles or molecules in the atmosphere. Here's a simplified explanation:\n\n1. **Sunlight enters the Earth's atmosphere**: When sunlight enters the Earth's atmosphere, it consists of a spectrum of colors, including red, orange, yellow, green, blue, and violet.\n2. **Light interacts with tiny molecules**: The tiny molecules of gases such as nitrogen (N2) and oxygen (O2) in the atmosphere scatter the light in all directions.\n3. **Blue light is scattered more**: The shorter (blue) wavelengths of light are scattered more than the longer (red) wavelengths. This is because the smaller molecules are more effective at scattering the shorter wavelengths.\n4. **Our eyes see the scattered light**: As the scattered light reaches our eyes, we see the blue color. This is because our eyes are more sensitive to blue light than to other colors.\n5. **Red light reaches our eyes directly**: The longer wavelengths of light (red and orange) are able to travel longer distances without being scattered, so they reach our eyes directly, giving the sky a hint of red or orange during sunrise and sunset.\n\nSo, the blue color of the sky is a result of the scattering of sunlight by the tiny molecules in the atmosphere, which favors the shorter wavelengths of light, such as blue.\n\nIt's worth noting that the color of the sky can change depending on various factors, such as:\n\n* **Time of day**: During sunrise and sunset, the sky can take on hues of red, orange, and pink due to the scattering of light by atmospheric particles.\n* **Atmospheric conditions**: Dust, pollution, and water vapor in the atmosphere can affect the color of the sky.\n* **Altitude**: The color of the sky can change at higher altitudes due to the thinner atmosphere.\n\nI hope this explanation helps you understand why the sky is blue!",
-        "tool_calls": []
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "chatcmpl-tool-6c2a05f14bb844d68f052fe2253a7cdb",
+            "type": "function",
+            "function": {
+              "name": "get_weather",
+              "arguments": "{\"city\": \"Ottawa\"}"
+            }
+          }
+        ]
       },
       "logprobs": null,
-      "finish_reason": "stop",
-      "stop_reason": null
+      "finish_reason": "tool_calls",
+      "stop_reason": 128008
     }
   ],
   "usage": {
-    "prompt_tokens": 41,
-    "total_tokens": 438,
-    "completion_tokens": 397,
+    "prompt_tokens": 248,
+    "total_tokens": 268,
+    "completion_tokens": 20,
     "prompt_tokens_details": null
   },
   "prompt_logprobs": null
