@@ -12,20 +12,20 @@ By the end of this tutorial, you will:
 
 ## Prerequisites
 
-- A terminal with `kubectl`, `helm` and `gcloud` installed. Cloud Shell is recommended.
+- A terminal with `kubectl`, `helm` and `gcloud` and `terraform` installed.
 - A [Hugging Face](https://huggingface.co/) account with a token that has `Read` permission to access the Llama-3.1-8B-Instruct model.
 - Sufficient GPU quota in your Google Cloud project. See [About GPUs](https://cloud.google.com/kubernetes-engine/docs/concepts/gpus#gpu_quota) and [Allocation quotas](https://cloud.google.com/compute/resource-usage#gpu_quota).
 - Access to the code repository: `https://github.com/ai-on-gke/tutorials-and-examples.git`.
 
-## Step 1: Set Up the GKE Standard Cluster
+## Step 1: Set Up the Infrastructure with Terraform
 
-Start by setting up environment variables and creating a GKE Standard cluster with a GPU-enabled node pool.
+Start by setting up the GKE cluster, service account, IAM roles, and Artifact Registry using Terraform.
 
 Download the code and navigate to the tutorial directory:
 
 ```bash
 git clone https://github.com/ai-on-gke/tutorials-and-examples.git
-cd tutorials-and-examples/ray-serve
+cd tutorials-and-examples/ray-serve/terraform
 ```
 
 Set the environment variables, replacing `<my-project-id>` and `<MY_HF_TOKEN>`:
@@ -38,41 +38,24 @@ export HF_TOKEN=<MY_HF_TOKEN>
 export CLUSTER_NAME=llama-ray-cluster
 ```
 
-Create a GKE Standard cluster with a GPU node pool (two `g2-standard-24` nodes, each with 2 L4 GPUs):
+Initialize Terraform and apply the configuration:
 
 ```bash
-gcloud container clusters create-auto $CLUSTER_NAME \                                         
-  --project=$PROJECT_ID \
-  --region=$REGION \                              
-  --release-channel=rapid
+terraform init
+terraform apply --var-file=./default_env.tfvars
 ```
+
+Review the plan and type yes to confirm. This will create:
+
+- A GKE Autopilot cluster named llama-ray-cluster.
+- A service account adk-ray-agent-sa.
+- An IAM role binding granting the service account roles/artifactregistry.reader.
+- An Artifact Registry repository llama-ray.
 
 Configure `kubectl` to communicate with the cluster:
 
 ```bash
 gcloud container clusters get-credentials $CLUSTER_NAME --region=$REGION --project $PROJECT_ID
-```
-
-Create a service account for Ray to access the container image:
-
-```bash
-gcloud iam service-accounts create adk-ray-agent-sa \
-  --project=$PROJECT_ID \
-  --description="Service account for Ray Serve"
-```
-
-Also, create service account in GKE:
-
-```bash
-kubectl create serviceaccount adk-ray-agent-sa -n default
-```
-
-Grant the service account access to Artifact Registry:
-
-```bash
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:adk-ray-agent-sa@$PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/artifactregistry.reader"
 ```
 
 Create a Kubernetes secret for the Hugging Face token:
@@ -87,20 +70,10 @@ kubectl create secret generic hf-secret \
 
 Build and push the container image for the Ray Serve application to Artifact Registry.
 
-Create an Artifact Registry repository:
-
-```bash
-gcloud artifacts repositories create llama-ray \
-  --project=$PROJECT_ID \
-  --repository-format=docker \
-  --location=us \
-  --description="Llama Ray Serve Repo"
-```
-
 Navigate to the ray-serve-vllm directory:
 
 ```bash
-cd ./ray-serve-vllm
+cd ../ray-serve-vllm
 ```
 
 Build and push the container image:
@@ -359,24 +332,11 @@ The deployment uses one VLLM instance (`num_replicas: 1`) with tensor parallelis
 
 ## Clean Up
 
-To avoid incurring charges, delete the GKE cluster:
+To avoid incurring charges, delete the GKE cluster and associated resources:
 
 ```bash
-gcloud container clusters delete ${CLUSTER_NAME} \
-  --region=${REGION}
+cd ../terraform
+terraform destroy --var-file=./default_env.tfvars
 ```
 
-Remove IAM Policy Binding for the Service Account:
-
-```bash
-gcloud projects remove-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:adk-ray-agent-sa@$PROJECT_ID.iam.gserviceaccount.com" \
-  --role="roles/artifactregistry.reader"
-```
-
-Delete the Service Account:
-
-```bash
-gcloud iam service-accounts delete adk-ray-agent-sa@$PROJECT_ID.iam.gserviceaccount.com \
-  --project=$PROJECT_ID
-```
+Verify the destruction plan and type "yes" to confirm.
