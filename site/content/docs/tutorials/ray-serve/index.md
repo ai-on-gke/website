@@ -32,10 +32,30 @@ By the end of this tutorial, you will:
 
 ```
 ray-serve/
-├── adk_agent      # ADK agent deployment and cloudbuild configuration
-├─── example_agent # Agent code
-├── ray-serve-vllm # Ray image cloudbuild and service manifest
-└── terraform/     # Terraform configuration for automated deployment of infrastructure
+├── adk_agent/                 # ADK agent deployment and cloudbuild configuration
+| ├── example_agent/           # Agent code
+|   ├── _init_.py
+|   ├── agent-deployment.yaml
+|   ├── agent.py
+| ├── cloudbuild.yml
+| ├── Dockerfile
+| ├── main.py
+| ├── requirements.txt
+| ├── ray-serve-vllm/           # Ray image cloudbuild and service manifest
+|   ├── cloudbuild.yml
+|   ├── Dockerfile
+|   ├── ray-service.yaml
+|   ├── requirements.txt
+|   ├── serve-chat-completion.py
+| ├── terarform/
+|   ├── artifact_registry.tf
+|   ├── default_env.tfvars
+|   ├── main.tf
+|   ├── network.tf
+|   ├── outputs.tf
+|   ├── providers.tf
+|   ├── variables.tf
+|   └── workdload_identity.tf
 ```
 
 
@@ -141,36 +161,49 @@ Verify the deployment:
 
 - Check the Ray service status:
 
-```bash
-kubectl get rayservice llama-31-8b -o yaml
-```
+  ```bash
+  kubectl get rayservice llama-31-8b -o yaml
+  ```
 
 The `serviceStatus` should be `running`.
 
 - Check the raycluster:
 
-```bash
-kubectl get raycluster
-```
-And you should see output similar to this:
-```log
-NAME                           DESIRED WORKERS   AVAILABLE WORKERS   CPUS   MEMORY   GPUS   STATUS   AGE
-llama-31-8b-raycluster-qgzmk   1                 1                   10     33Gi     2      ready    58m
-```
+  ```bash
+  kubectl get raycluster
+  ```
+  And you should see output similar to this:
+  ```bash
+  NAME                           DESIRED WORKERS   AVAILABLE WORKERS   CPUS   MEMORY   GPUS   STATUS   AGE
+  llama-31-8b-raycluster-qgzmk   1                 1                   10     33Gi     2      ready    58m
+  ```
 
 - Check the pods:
 
-```bash
-kubectl get pods
-```
+  ```bash
+  kubectl get pods
+  ```
 
-You should see two pods: one Ray Head Pod and one Ray Worker Pod where Worker pods run the LLM and allow for scaling as the requests grow in volume and Head pod is used for management and should stay at a single replica.
+  You should see two pods: one Ray Head Pod and one Ray Worker Pod where Worker pods run the LLM and allow for scaling as the requests grow in volume and Head pod is used for management and should stay at a single replica.
+
+  ```bash
+  NAME                                                  READY   STATUS    RESTARTS   AGE
+  kuberay-operator-bb8d4d9c4-7h2vg                      1/1     Running   0          9m33s
+  llama-31-8b-raycluster-w9jzw-gpu-group-worker-9l5zx   1/1     Running   0          9m7s
+  llama-31-8b-raycluster-w9jzw-head-45rx4               1/1     Running   0          9m8s
+  ```
 
 - Check the config map for the chat template:
 
-```bash
-kubectl get configmaps
-```
+  ```bash
+  kubectl get configmaps
+  ```
+  Which should display output similar to:
+  ```bash
+  NAME                   DATA   AGE
+  kube-root-ca.crt       1      4h47m
+  llama-chat-templates   1      3h18m
+  ```
 
 ## Step 3: Test the Ray Serve Deployment
 
@@ -252,19 +285,35 @@ Verify the deployment:
 
 - Check the pods:
 
-```bash
-kubectl get pods
-```
+  ```bash
+  kubectl get pods
+  ```
 
-You should see three pods: the two Ray pods and the ADK agent pod.
-
+  You should see three pods: the two Ray pods and the ADK agent pod.
+  ```bash
+  NAME                                                  READY   STATUS    RESTARTS   AGE
+  adk-agent-6ddffd9b5b-m2txm                            1/1     Running   0          2m56s
+  kuberay-operator-bb8d4d9c4-7h2vg                      1/1     Running   0          14m
+  llama-31-8b-raycluster-w9jzw-gpu-group-worker-9l5zx   1/1     Running   0          14m
+  llama-31-8b-raycluster-w9jzw-head-45rx4               1/1     Running   0          14m
+  ```
 - Check the services:
 
-```bash
-kubectl get services
-```
+  ```bash
+  kubectl get services
+  ```
 
-You should see six services, including the ADK agent LoadBalancer service.
+  You should see six services, including the ADK agent LoadBalancer service.
+
+  ```bash
+  NAME                                    TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                                         AGE
+  adk-agent                               LoadBalancer   34.118.231.166   34.72.141.248   80:30319/TCP                                    2m4s
+  kuberay-operator                        ClusterIP      34.118.227.98    <none>          8080/TCP                                        14m
+  kubernetes                              ClusterIP      34.118.224.1     <none>          443/TCP                                         4h53m
+  llama-31-8b-head-svc                    ClusterIP      None             <none>          10001/TCP,8265/TCP,6379/TCP,8080/TCP,8000/TCP   95s
+  llama-31-8b-raycluster-w9jzw-head-svc   ClusterIP      None             <none>          10001/TCP,8265/TCP,6379/TCP,8080/TCP,8000/TCP   13m
+  llama-31-8b-serve-svc                   ClusterIP      34.118.226.99    <none>          8000/TCP                                        95s
+  ```
 
 Get the external IP of the ADK agent LoadBalancer:
 
@@ -330,6 +379,8 @@ kubectl port-forward <raycluster-head-pod> 8265:8265
 ```
 
 Access the dashboard at `http://127.0.0.1:8265` to view logs, metrics and debug Ray applications. This will allow you to see a visual representation on how your Ray cluster is performing.
+
+![Ray Dashboard](ray_dashboard.png)
 
 ## GPU Resource Utilization
 
