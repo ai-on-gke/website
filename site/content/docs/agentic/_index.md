@@ -1,6 +1,6 @@
 ---
-title: "Agentic Workloads"
-linkTitle: "Agentic Workloads"
+title: "Agents"
+linkTitle: "Agents"
 weight: 10
 type: docs-root
 notoc: true
