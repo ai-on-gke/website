@@ -20,11 +20,8 @@ tutorials-and-examples/adk/llama/vllm/
 │   ├── main.py
 │   └── requirements.txt
 ├── deploy-llm/
-├──── templates/
-│       ├── tool_chat_template_llama3.1_json.jinja
-│       └── agent.py
 │   └── deploy-llm.yaml
-├── deploy-agent/
+├── terraform/
 │   ├── backend.tf
 │   ├── example_vars.tfvars
 │   ├── main.tf
@@ -92,17 +89,13 @@ kubectl create secret generic hf-token-secret-artur \
     --dry-run=client -o yaml | kubectl apply -f -
 ```
 
-Run this command to create the configmap with all templates:
-
-```bash
-kubectl create configmap llm-templates --from-file=templates
-```
-
 Now we can create our deployment and service with our LLM by running this command:
 
 ```bash
 kubectl apply -f deploy-llm.yaml
 ```
+
+> Note that in this manifest we also create a configmap with a chat template for our LLM.
 
 You can check the status of the deployment by running `logs -f` command on the pod.
 Once your logs look like this:
