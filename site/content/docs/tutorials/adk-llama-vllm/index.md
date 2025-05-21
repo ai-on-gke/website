@@ -12,15 +12,17 @@ The project structure:
 ```
 tutorials-and-examples/adk/llama/vllm/
 ├── deploy-agent/
-├──── weather_agent/
-│       ├── __init__.py
-│       └── agent.py
 │   ├── Dockerfile
 │   ├── deploy-agent.yaml
 │   ├── main.py
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── weather_agent/
+│       ├── __init__.py
+│       └── agent.py
+│
 ├── deploy-llm/
 │   └── deploy-llm.yaml
+│
 ├── terraform/
 │   ├── backend.tf
 │   ├── example_vars.tfvars
