@@ -74,7 +74,7 @@ export CLUSTER_NAME=<CLUSTER_NAME>
 gcloud container clusters get-credentials ${CLUSTER_NAME} --location=us-central1
 ```
 
-# Deploy an LLM to a GKE cluster
+# Deploy an LLM to a GKE Autopilot cluster
 
 In this tutorial we will use vLLM for the deployment and [meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) (you have to visit their site and request an access) as a core LLM. So far, you are currently in the `terraform` folder. Go to the `deploy-llm` folder. In this folder you can see the following:
 
