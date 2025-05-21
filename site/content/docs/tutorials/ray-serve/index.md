@@ -1,6 +1,6 @@
 ---
 linkTitle: "Agent ADK on GKE with Ray with Llama and vLLM"
-title: "Deploy Llama-3.1-8B-Instruct on Google Kubernetes Engine (GKE) using Ray Serve and vLLM"
+title: "Building Agents with Agent Development Kit (ADK) on GKE using Ray Serve for Self-Hosted LLMs"
 description: "This tutorial demonstrates how to deploy the Llama-3.1-8B-Instruct model on Google Kubernetes Engine (GKE) using Ray Serve and vLLM for efficient inference. Additionally, it shows how to integrate an ADK agent to interact with the model, supporting both basic chat completions and tool usage. The setup leverages a GKE Standard cluster with GPU-enabled nodes to handle the computational requirements."
 weight: 30
 type: docs
@@ -15,7 +15,7 @@ This tutorial demonstrates how to deploy the Llama-3.1-8B-Instruct model on Goog
 
 By the end of this tutorial, you will:
 
-1. Set up a GKE Standard cluster with a GPU node pool.
+1. Set up a GKE Autopilot cluster with a GPU node pool.
 2. Deploy the Llama-3.1-8B-Instruct model using Ray Serve and vLLM.
 3. Deploy an ADK agent that communicates with the Ray Serve endpoint.
 4. Test the setup with basic chat completion and tool usage scenarios.
@@ -27,6 +27,17 @@ By the end of this tutorial, you will:
 - A [Hugging Face](https://huggingface.co/) account with a token that has `Read` permission to access the Llama-3.1-8B-Instruct model.
 - Sufficient GPU quota in your Google Cloud project. See [About GPUs](https://cloud.google.com/kubernetes-engine/docs/concepts/gpus#gpu_quota) and [Allocation quotas](https://cloud.google.com/compute/resource-usage#gpu_quota).
 - Access to the code repository: https://github.com/ai-on-gke/tutorials-and-examples
+
+### Filesystem structure
+
+```
+ray-serve/
+├── adk_agent      # ADK agent deployment and cloudbuild configuration
+├─── example_agent # Agent code
+├── ray-serve-vllm # Ray image cloudbuild and service manifest
+└── terraform/     # Terraform configuration for automated deployment of infrastructure
+```
+
 
 ## Step 1: Set Up the Infrastructure with Terraform
 
@@ -111,8 +122,8 @@ helm repo update
 # Confirm the repo exists
 helm search repo kuberay --devel
 
-# Install both CRDs and KubeRay operator v1.1.0.
-helm install kuberay-operator kuberay/kuberay-operator --version 1.1.0
+# Install both CRDs and KubeRay operator v1.3.2.
+helm install kuberay-operator kuberay/kuberay-operator --version 1.3.2
 
 # Check the KubeRay operator Pod in `default` namespace
 kubectl get pods
@@ -141,6 +152,11 @@ The `serviceStatus` should be `running`.
 ```bash
 kubectl get raycluster
 ```
+And you should see output similar to this:
+```log
+NAME                           DESIRED WORKERS   AVAILABLE WORKERS   CPUS   MEMORY   GPUS   STATUS   AGE
+llama-31-8b-raycluster-qgzmk   1                 1                   10     33Gi     2      ready    58m
+```
 
 - Check the pods:
 
@@ -148,7 +164,7 @@ kubectl get raycluster
 kubectl get pods
 ```
 
-You should see two pods: one Ray Head Pod and one Ray Worker Pod.
+You should see two pods: one Ray Head Pod and one Ray Worker Pod where Worker pods run the LLM and allow for scaling as the requests grow in volume and Head pod is used for management and should stay at a single replica.
 
 - Check the config map for the chat template:
 
@@ -166,34 +182,7 @@ Set up port forwarding to the Ray Serve endpoint:
 kubectl port-forward service/llama-31-8b-serve-svc 8000:8000
 ```
 
-### Test 1: Basic Chat Completion
-
-In a new terminal, send a chat completion request:
-
-```bash
-curl http://127.0.0.1:8000/v1/chat/completions \
--X POST \
--H "Content-Type: application/json" \
--d '{
-    "model": "meta-llama/Llama-3.1-8B-Instruct",
-    "messages": [
-        {
-          "role": "user",
-          "content": "What is the capital of France?"
-        }
-    ]
-}'
-```
-
-The response should be properly formatted with `"finish_reason": "stop"`, indicating the chat template is loaded correctly.
-
-And you should get something like this in response:
-
-```bash
-{"id":"chatcmpl-6e269a7d-bba0-4d69-8c93-9f2e37da83d2","object":"chat.completion","created":1747236875,"model":"meta-llama/Llama-3.1-8B-Instruct","choices":[{"index":0,"message":{"role":"assistant","reasoning_content":null,"content":"The capital of France is Paris.","tool_calls":[]},"logprobs":null,"finish_reason":"stop","stop_reason":null}],"usage":{"prompt_tokens":42,"total_tokens":50,"completion_tokens":8,"prompt_tokens_details":null},"prompt_logprobs":null}
-```
-
-### Test 2: Tool Usage Capability
+### Test: Tool Usage Capability
 
 Send a weather query that requires tool usage:
 
@@ -323,11 +312,14 @@ curl http://$EXTERNAL_IP:80/run \
   }'
 ```
 
-The response should be similar to the Ray Serve test, with `"finish_reason": "stop"`. Example:
+The response should be similar to the Ray Serve test. Example:
 
 ```bash
 [{"content":{"parts":[{"functionCall":{"id":"chatcmpl-tool-63bff6965a04437eb9e16aa8e8e4786b","args":{"city":"Seattle"},"name":"get_current_weather"}}],"role":"model"},"partial":false,"invocation_id":"e-18006854-6c17-4d27-8a8f-342bd252106a","author":"weather_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"long_running_tool_ids":[],"id":"YOqORD5M","timestamp":1747352916.229682},{"content":{"parts":[{"functionResponse":{"id":"chatcmpl-tool-63bff6965a04437eb9e16aa8e8e4786b","name":"get_current_weather","response":{"result":"The weather in Seattle is currently 12°C with rainy conditions."}}}],"role":"user"},"invocation_id":"e-18006854-6c17-4d27-8a8f-342bd252106a","author":"weather_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"x9zqpTMd","timestamp":1747352917.060611},{"content":{"parts":[{"text":"The function call returns the current weather in Seattle."}],"role":"model"},"partial":false,"invocation_id":"e-18006854-6c17-4d27-8a8f-342bd252106a","author":"weather_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"CbXReduJ","timestamp":1747352917.067558}]
 ```
+Here is how the request path looks like:
+
+![Request Path](ray_request_path.png)
 
 ## Step 6: Monitor and Debug
 
@@ -337,7 +329,7 @@ Use the Ray Dashboard for observability:
 kubectl port-forward <raycluster-head-pod> 8265:8265
 ```
 
-Access the dashboard at `http://127.0.0.1:8265` to view logs and metrics.
+Access the dashboard at `http://127.0.0.1:8265` to view logs, metrics and debug Ray applications. This will allow you to see a visual representation on how your Ray cluster is performing.
 
 ## GPU Resource Utilization
 
