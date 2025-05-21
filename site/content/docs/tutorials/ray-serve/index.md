@@ -1,5 +1,16 @@
-# Agent ADK on GKE with Ray with Llama and vLLM
-
+---
+linkTitle: "Agent ADK on GKE with Ray with Llama and vLLM"
+title: "Deploy Llama-3.1-8B-Instruct on Google Kubernetes Engine (GKE) using Ray Serve and vLLM"
+description: "This tutorial demonstrates how to deploy the Llama-3.1-8B-Instruct model on Google Kubernetes Engine (GKE) using Ray Serve and vLLM for efficient inference. Additionally, it shows how to integrate an ADK agent to interact with the model, supporting both basic chat completions and tool usage. The setup leverages a GKE Standard cluster with GPU-enabled nodes to handle the computational requirements."
+weight: 30
+type: docs
+owner: >-
+    [Vlado Djerek](https://github.com/volatilemolotov)
+tags:
+ - Evaluation
+ - ADK
+ - Tutorials
+---
 This tutorial demonstrates how to deploy the Llama-3.1-8B-Instruct model on Google Kubernetes Engine (GKE) using Ray Serve and vLLM for efficient inference. Additionally, it shows how to integrate an ADK agent to interact with the model, supporting both basic chat completions and tool usage. The setup leverages a GKE Standard cluster with GPU-enabled nodes to handle the computational requirements.
 
 By the end of this tutorial, you will:
