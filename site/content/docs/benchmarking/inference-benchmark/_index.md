@@ -6,7 +6,7 @@ weight: 30
 type: docs
 draft: false
 owner: >-
-    [Kaushik Mitra](https://github.com/kaushikmitr)
+    [Jason Kramberger](https://github.com/jjk-g)
 tags:
     - Inference
     - Benchmarking
