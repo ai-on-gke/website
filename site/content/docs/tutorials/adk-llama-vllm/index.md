@@ -290,6 +290,26 @@ city_weather = {
 
 So our agent should not provide information about other cities.
 
+In this screen below we ask only one query to check logs inside the LLM's and the agent's pods.
+![](./image2.png)
+
+```log
+# kubectl logs <agent's pod name>
+-- Tool Call: get_weather(city='Tokyo') --
+-- Tool Result: 'Tokyo sees humid conditions with a high of 28 degrees Celsius (82 degrees Fahrenheit) and possible rainfall.' --
+INFO:     127.0.0.1:34362 - "GET /apps/weather_agent/users/user/sessions/20e202a5-16c1-4fee-ad34-7d1fcc778619 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34362 - "GET /debug/trace/session/20e202a5-16c1-4fee-ad34-7d1fcc778619 HTTP/1.1" 200 OK
+```
+
+
+```log
+# kubectl logs <llm's pod name>
+INFO 05-21 13:22:23 [logger.py:39] Received request chatcmpl-c829f9082dec4425a2e38e26032baf65: prompt: '<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nEnvironment: ipython\nCutting Knowledge Date: December 2023\nToday Date: 21 May 2025\n\nYou are a helpful agent that provides weather report in a city using a tool.\nThe user will provide a city name in a JSON format like {"city": "city_name"}.\n1. Extract the city name.\n2. Use the `get_weather` tool to find the weather. Don\'t use other tools!\n3. Answer on user request based on the weather\n\n\nYou are an agent. Your internal name is "weather_agent_tool".\n\n The description about you is "Retrieves weather in a city using a specific tool."<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nGiven the following functions, please respond with a JSON for a function call with its proper arguments that best answers the given prompt.\n\nRespond in the format {"name": function name, "parameters": dictionary of argument name and its value}. Do not use variables.\n\n{\n    "type": "function",\n    "function": {\n        "name": "get_weather",\n        "description": "Retrieves the weather condition of a given city.",\n        "parameters": {\n            "type": "object",\n            "properties": {\n                "city": {\n                    "type": "string"\n                }\n            }\n        }\n    }\n}\n\nI\'m going to travel to Tokyo, do I need to bring an umbrella?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n{"name": "get_weather", "parameters": {"city": "Tokyo"}}<|eot_id|><|start_header_id|>ipython<|end_header_id|>\n\n{"output": "{\\"result\\": \\"Tokyo sees humid conditions with a high of 28 degrees Celsius (82 degrees Fahrenheit) and possible rainfall.\\"}"}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n', params: SamplingParams(n=1, presence_penalty=0.0, frequency_penalty=0.0, repetition_penalty=1.0, temperature=0.6, top_p=0.9, top_k=-1, min_p=0.0, seed=None, stop=[], stop_token_ids=[], bad_words=[], include_stop_str_in_output=False, ignore_eos=False, max_tokens=32421, min_tokens=0, logprobs=None, prompt_logprobs=None, skip_special_tokens=True, spaces_between_special_tokens=True, truncate_prompt_tokens=None, guided_decoding=None, extra_args=None), prompt_token_ids: None, lora_request: None, prompt_adapter_request: None.
+INFO 05-21 13:22:23 [async_llm.py:252] Added request chatcmpl-c829f9082dec4425a2e38e26032baf65.
+INFO:     10.23.0.144:43860 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+```
+
+As you can see, ...
 # Clean up
 
 Remove the read-only access to the Artifact Registry repository by running this command:
