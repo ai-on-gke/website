@@ -1,5 +1,16 @@
-# Building Agents with Agent Development Kit (ADK) on GKE using Self-Hosted LLM
-
+---
+linkTitle: "Agent ADK using GKE Autopilot Cluster with Llama and vLLM"
+title: "Building Agents with Agent Development Kit (ADK) on GKE Autopilot cluster using Self-Hosted LLM"
+description: "This tutorial demonstrates how to deploy the Llama-3.1-8B-Instruct model on Google Kubernetes Engine (GKE) and vLLM for efficient inference. Additionally, it shows how to integrate an ADK agent to interact with the model, supporting both basic chat completions and tool usage. The setup leverages a GKE Standard cluster with GPU-enabled nodes to handle the computational requirements."
+weight: 30
+type: docs
+owner: >-
+    [Vlado Djerek](https://github.com/volatilemolotov)
+tags:
+ - Evaluation
+ - ADK
+ - Tutorials
+---
 # Overview
 
 In this tutorial we are going to create an agent that will receive user queries about weather conditions in various locations, parse the location and temperature unit (C/F) from the prompt and answer accordingly.
@@ -54,7 +65,7 @@ git clone https://github.com/ai-on-gke/tutorials-and-examples.git
 cd ./tutorials-and-examples/adk/llama/vllm
 ```
 
-To create a GKE cluster for this tutorial, you should go to the `terraform` folder, copy `example_vars.tfvars` file as `vars.tfvars`. Replace the following variables with your actual values:
+To create a GKE Autopilot cluster for this tutorial, you should go to the `terraform` folder, copy `example_vars.tfvars` file as `vars.tfvars`. Replace the following variables with your actual values:
 
 * `<PROJECT_ID>`: with your Google project ID
 * `<CLUSTER_NAME>`: with any name you would like to
@@ -81,8 +92,8 @@ In this section we will use vLLM for the deployment and [meta-llama/Llama-3.1-8B
 * `templates` folder: it stores all templates for LLMs. Currently it has only one template for Llama-3.1-8B-Instruct. The templates are necessary to use tools, because it formats the LLM’s output.
 * `deploy-llm.yaml`: this manifest creates a deployment with vLLM that serves Llama-3.1-8B-Instruct and a service that allows us to access this model via http protocol.
 
-To successfully deploy our model, we need to create a Huggingface secret inside the GKE cluster and a configmap that contains all templates.
-Run these commands to create the Huggingface secret:
+To successfully deploy our model, we need to create a HuggingFace secret inside the GKE cluster and a configmap that contains all templates.
+Run these commands to create the HuggingFace secret:
 
 ```bash
 export HF_TOKEN=<YOUR_HF_TOKEN>
@@ -91,7 +102,8 @@ kubectl create secret generic hf-token-secret-artur \
     --dry-run=client -o yaml | kubectl apply -f -
 ```
 
-Now we can create our deployment and service with our LLM by running this command:
+Now we can create our deployment and service with our LLM by running this command which runs vLLM with `--tool-call-parser=llama3_json`, `--enable-auto-tool-choice` and `--chat-template`. To learn more about options used check out [vLLM documentation](https://docs.vllm.ai/en/stable/features/tool_calling.html):
+
 
 ```bash
 kubectl apply -f deploy-llm.yaml
@@ -309,8 +321,7 @@ INFO 05-21 13:22:23 [async_llm.py:252] Added request chatcmpl-c829f9082dec4425a2
 INFO:     10.23.0.144:43860 - "POST /v1/chat/completions HTTP/1.1" 200 OK
 ```
 
-As you can see, ...
-# Clean up
+## Clean up
 
 Remove the read-only access to the Artifact Registry repository by running this command:
 
