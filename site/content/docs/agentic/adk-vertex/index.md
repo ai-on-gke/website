@@ -98,102 +98,94 @@ It creates the following resources. For more information such as resource names 
 
 1. Go the the terraform directory:
 
-```
-cd terraform
-```
-
-   
+    ```bash
+    cd terraform
+    ``` 
 
 2. Specify the following values inside the `default_env.tfvars` file (or make a separate copy):  
    * `<PROJECT_ID>` – replace with your project id (you can find it in the project settings).
 
-Other values can be changed, if needed, but can be left with default values.
+    Other values can be changed, if needed, but can be left with default values.
 
 3. Init terraform modules:
 
-```
-terraform init
-```
-
-   
+    ```bash
+    terraform init
+    ``` 
 
 4. Optionally run the plan command to view an execution plan:
-
-```
-terraform plan -var-file=default_env.tfvars
-```
-
-   
+    
+    ```bash
+    terraform plan -var-file=default_env.tfvars
+    ```
 
 5. Execute the plan:
 
-```
-terraform apply -var-file=default_env.tfvars
-```
+    ```bash
+    terraform apply -var-file=default_env.tfvars
+    ```
 
-And you should see your resources created:
+    And you should see your resources created:
 
-```
-Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
-
-Outputs:
-
-gke_cluster_location = "us-central1"
-gke_cluster_name = "adk-tf"
-image_repository_full_name = "us-docker.pkg.dev/<PROJECT ID>/adk-tf"
-image_repository_location = "us"
-image_repository_name = "adk-tf"
-k8s_service_account_name = "adk-tf"
-project_id = <PROJECT ID>
-
-```
+    ```
+    Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
+    
+    Outputs:
+    
+    gke_cluster_location = "us-central1"
+    gke_cluster_name = "adk-tf"
+    image_repository_full_name = "us-docker.pkg.dev/<PROJECT ID>/adk-tf"
+    image_repository_location = "us"
+    image_repository_name = "adk-tf"
+    k8s_service_account_name = "adk-tf"
+    project_id = <PROJECT ID>
+    ```
 
 6. Configure your kubectl context:
 
-```
-gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location)
-```
+    ```bash
+    gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location)
+    ```
 
 ## Deploy and Configure the Agent Application
 
 1. Create the `app/main.py` file. This file sets up the FastAPI application using `get_fast_api_app()` from ADK.  
-   
 
-```py
-import os
-
-import uvicorn
-from fastapi import FastAPI
-from google.adk.cli.fast_api import get_fast_api_app
-
-# Get the directory where main.py is located
-AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
-# Example session DB URL (e.g., SQLite)
-SESSION_DB_URL = "sqlite:///./sessions.db"
-# Example allowed origins for CORS
-ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
-# Set web=True if you intend to serve a web interface, False otherwise
-SERVE_WEB_INTERFACE = True
-
-# Call the function to get the FastAPI app instance
-# Ensure the agent directory name ('capital_agent') matches your agent folder
-app: FastAPI = get_fast_api_app(
-    agent_dir=AGENT_DIR,
-    session_db_url=SESSION_DB_URL,
-    allow_origins=ALLOWED_ORIGINS,
-    web=SERVE_WEB_INTERFACE,
-)
-
-# You can add more FastAPI routes or configurations below if needed
-# Example:
-# @app.get("/hello")
-# async def read_root():
-#     return {"Hello": "World"}
-
-if __name__ == "__main__":
-    # Use the PORT environment variable provided by Cloud Run, defaulting to 8080
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
-```
+    ```python
+    import os
+    
+    import uvicorn
+    from fastapi import FastAPI
+    from google.adk.cli.fast_api import get_fast_api_app
+    
+    # Get the directory where main.py is located
+    AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
+    # Example session DB URL (e.g., SQLite)
+    SESSION_DB_URL = "sqlite:///./sessions.db"
+    # Example allowed origins for CORS
+    ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
+    # Set web=True if you intend to serve a web interface, False otherwise
+    SERVE_WEB_INTERFACE = True
+    
+    # Call the function to get the FastAPI app instance
+    # Ensure the agent directory name ('capital_agent') matches your agent folder
+    app: FastAPI = get_fast_api_app(
+        agent_dir=AGENT_DIR,
+        session_db_url=SESSION_DB_URL,
+        allow_origins=ALLOWED_ORIGINS,
+        web=SERVE_WEB_INTERFACE,
+    )
+    
+    # You can add more FastAPI routes or configurations below if needed
+    # Example:
+    # @app.get("/hello")
+    # async def read_root():
+    #     return {"Hello": "World"}
+    
+    if __name__ == "__main__":
+        # Use the PORT environment variable provided by Cloud Run, defaulting to 8080
+        uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    ```
 
 2. Create agent files.
 
@@ -202,191 +194,189 @@ if __name__ == "__main__":
     * Your agent variable is named `root_agent`.  
     * `__init__.py` is within your agent directory and contains `from . import agent`.
 
+        2.1. Create the `app/capital_agent/agent.py` file:
 
-    2.1. Create the `app/capital_agent/agent.py` file:
+        ```python
+        from google.adk.agents import LlmAgent
+        
+        # Define a tool function
+        def get_capital_city(country: str) -> str:
+          """Retrieves the capital city for a given country."""
+          # Replace with actual logic (e.g., API call, database lookup)
+          capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
+          return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
+        
+        
+        capital_agent = LlmAgent(
+            model="gemini-2.0-flash",
+            name="capital_agent",
+            description="Answers user questions about the capital city of a given country.",
+            instruction="""You are an agent that provides the capital city of a country.
+                     When a user asks for the capital of a country:
+                     1. Identify the country name from the user's query.
+                     2. Use the `get_capital_city` tool to find the capital.
+                     3. Respond clearly to the user, stating the capital city.
+                     Example Query: "What's the capital of France?"
+                     Example Response: "The capital of France is Paris."
+                """,
+            tools=[get_capital_city] # Provide the function directly
+        )
+        
+        root_agent = capital_agent
+        ```
 
-    ```
-    from google.adk.agents import LlmAgent
+        2.2. Create `app/capital_agent/__init__.py` file:
     
-    # Define a tool function
-    def get_capital_city(country: str) -> str:
-      """Retrieves the capital city for a given country."""
-      # Replace with actual logic (e.g., API call, database lookup)
-      capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
-      return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
-    
-    
-    capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
-        name="capital_agent",
-        description="Answers user questions about the capital city of a given country.",
-        instruction="""You are an agent that provides the capital city of a country.
-                 When a user asks for the capital of a country:
-                 1. Identify the country name from the user's query.
-                 2. Use the `get_capital_city` tool to find the capital.
-                 3. Respond clearly to the user, stating the capital city.
-                 Example Query: "What's the capital of France?"
-                 Example Response: "The capital of France is Paris."
-            """,
-        tools=[get_capital_city] # Provide the function directly
-    )
-    
-    root_agent = capital_agent
-    ```
-
-    2.2. Create `app/capital_agent/__init__.py` file:
-
-
-    ```
-    from . import agent
-    ```
+        ```python
+        from . import agent
+        ```
 
 4. Create `app/requirements.txt` file with necessary Python packages:
 
-```
-google_adk>=0.1.0
-fastapi>=0.95.0
-uvicorn>=0.22.0
-pydantic>=2.0.0
-```
+    ```python
+    google_adk>=0.1.0
+    fastapi>=0.95.0
+    uvicorn>=0.22.0
+    pydantic>=2.0.0
+    ```
 
 4. Create `app/Dockerfile` to build app container image:
 
-```
-FROM python:3.13-slim
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-RUN adduser --disabled-password --gecos "" myuser && \
-    chown -R myuser:myuser /app
-
-COPY . .
-
-USER myuser
-
-ENV PATH="/home/myuser/.local/bin:$PATH"
-
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
-```
+    ```Dockerfile
+    FROM python:3.13-slim
+    WORKDIR /app
+    
+    COPY requirements.txt .
+    RUN pip install --no-cache-dir -r requirements.txt
+    
+    RUN adduser --disabled-password --gecos "" myuser && \
+        chown -R myuser:myuser /app
+    
+    COPY . .
+    
+    USER myuser
+    
+    ENV PATH="/home/myuser/.local/bin:$PATH"
+    
+    CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
+    ```
 
 5. Build and Push the Container Image
 
-Build your Docker image using Google Cloud Build and push it to the Artifact Registry repository that is created by the Terraform:
+    Build your Docker image using Google Cloud Build and push it to the Artifact Registry repository that is created by the Terraform:
 
-```
-gcloud builds submit \
-    --tag $(terraform output -raw image_repository_full_name)/adk-agent:latest \
-    --project=$(terraform output -raw project_id) \
-    ../app
-```
+    ```bash
+    gcloud builds submit \
+        --tag $(terraform output -raw image_repository_full_name)/adk-agent:latest \
+        --project=$(terraform output -raw project_id) \
+        ../app
+    ```
 
 6. Run this command to create `app/deplyment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
 
-```
-cat <<  EOF > ../app/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: adk-agent
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: adk-agent
-  template:
+    ```bash
+    cat <<  EOF > ../app/deployment.yaml
+    apiVersion: apps/v1
+    kind: Deployment
     metadata:
-      labels:
-        app: adk-agent
+      name: adk-agent
     spec:
-      serviceAccount: $(terraform output -raw k8s_service_account_name)
-      containers:
-      - name: adk-agent
-        imagePullPolicy: Always
-        image: $(terraform output -raw image_repository_full_name)/adk-agent:latest
-        resources:
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
-            ephemeral-storage: "128Mi"
-          requests:
-            memory: "256Mi"
-            cpu: "500m"
-            ephemeral-storage: "128Mi"
-        ports:
-        - containerPort: 8080
-        env:
-          - name: PORT
-            value: "8080"
-          - name: GOOGLE_CLOUD_PROJECT
-            value: $(terraform output -raw project_id)
-          - name: GOOGLE_CLOUD_LOCATION
-            value: $(terraform output -raw gke_cluster_location)
-          - name: GOOGLE_GENAI_USE_VERTEXAI
-            value: "true"
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 5
-          successThreshold: 1
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: adk-agent
-spec:       
-  type: ClusterIP
-  ports:
-    - port: 80
-      targetPort: 8080
-  selector:
-    app: adk-agent
-EOF
-```
+      replicas: 1
+      selector:
+        matchLabels:
+          app: adk-agent
+      template:
+        metadata:
+          labels:
+            app: adk-agent
+        spec:
+          serviceAccount: $(terraform output -raw k8s_service_account_name)
+          containers:
+          - name: adk-agent
+            imagePullPolicy: Always
+            image: $(terraform output -raw image_repository_full_name)/adk-agent:latest
+            resources:
+              limits:
+                memory: "256Mi"
+                cpu: "500m"
+                ephemeral-storage: "128Mi"
+              requests:
+                memory: "256Mi"
+                cpu: "500m"
+                ephemeral-storage: "128Mi"
+            ports:
+            - containerPort: 8080
+            env:
+              - name: PORT
+                value: "8080"
+              - name: GOOGLE_CLOUD_PROJECT
+                value: $(terraform output -raw project_id)
+              - name: GOOGLE_CLOUD_LOCATION
+                value: $(terraform output -raw gke_cluster_location)
+              - name: GOOGLE_GENAI_USE_VERTEXAI
+                value: "true"
+            readinessProbe:
+              httpGet:
+                path: /
+                port: 8080
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 5
+              successThreshold: 1
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: adk-agent
+    spec:       
+      type: ClusterIP
+      ports:
+        - port: 80
+          targetPort: 8080
+      selector:
+        app: adk-agent
+    EOF
+    ```
 
 7. Apply the manifest:
 
-```
-kubectl apply -f ../app/deployment.yaml
-```
+    ```bash
+    kubectl apply -f ../app/deployment.yaml
+    ```
 
 8. Wait for deployment to be completed. It may take some time:
 
-```
-kubectl rollout status deployment/adk-agent
-```
+    ```bash
+    kubectl rollout status deployment/adk-agent
+    ```
 
 ## Testing your Deployed Agent
 
 1. Forward port of the deployed application service:
 
-```
-kubectl port-forward svc/adk-agent 8080:80
-```
+    ```bash
+    kubectl port-forward svc/adk-agent 8080:80
+    ```
 
 2. Go to the [http://localhost:8080/](http://localhost:8080/) and test the web UI. You can test your agent by simply navigating to the kubernetes service URL in your web browser.
 
-The ADK dev UI allows you to interact with your agent, manage sessions, and view execution details directly in the browser.
+    The ADK dev UI allows you to interact with your agent, manage sessions, and view execution details directly in the browser.
+    
+    To verify your agent is working as intended, you can:
+    
+    1. Select your agent from the dropdown menu.  
+    2. Type a message and verify that you receive an expected response from your agent.
+    
+    ![alt text](webui.png)
+    
+    As you can see from the screenshot, the agent works as expected and gives answers only for cities that are listed in the tool function.
+    
+    If you experience any unexpected behavior, check the pod logs for your agent using:
 
-To verify your agent is working as intended, you can:
-
-1. Select your agent from the dropdown menu.  
-2. Type a message and verify that you receive an expected response from your agent.
-
-![alt text](webui.png)
-
-As you can see from the screenshot, the agent works as expected and gives answers only for cities that are listed in the tool function.
-
-If you experience any unexpected behavior, check the pod logs for your agent using:
-
-```
-kubectl logs -l app=adk-agent
-```
+    ```bash
+    kubectl logs -l app=adk-agent
+    ```
 
 ## Troubleshooting
 
@@ -400,7 +390,7 @@ This usually means that the Kubernetes service account does not have the necessa
 
 You might see there is no session id created in the UI and the agent does not respond to any messages. This is usually caused by the SQLite database being read-only. This can happen if you run the agent locally and then create the container image which copies the SQLite database into the container. The database is then read-only in the container.
 
-```
+```bash
 sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) attempt to write a readonly database
 [SQL: UPDATE app_states SET state=?, update_time=CURRENT_TIMESTAMP WHERE app_states.app_name = ?]
 
@@ -410,7 +400,7 @@ To fix this issue, you can either:
 
 Delete the SQLite database file from your local machine before building the container image. This will create a new SQLite database when the container is started.
 
-```
+```bash
 rm -f sessions.db
 ```
 
@@ -422,6 +412,6 @@ Build the container image and deploy the application again.
 
 1. Destroy the provisioned infrastructure.
 
-```
-terraform destroy -var-file=default_env.tfvars
-```
+    ```bash
+    terraform destroy -var-file=default_env.tfvars
+    ```
