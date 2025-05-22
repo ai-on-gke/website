@@ -4,8 +4,9 @@ title: "Llamaindex in GKE cluster"
 description: "This tutorial will guide you through creating a robust Retrieval-Augmented Generation (RAG) system using LlamaIndex and deploying it on Google Kubernetes Engine (GKE). "
 weight: 30
 type: docs
-owner: >-
-    [Vlado Djerek](https://github.com/volatilemolotov)
+owner: 
+  - name: "Vlado Djerek"
+    link: https://github.com/volatilemolotov
 tags:
  - Serving
  - Llama

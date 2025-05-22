@@ -5,8 +5,9 @@ description: "NVIDIA NeMo™ is an end-to-end platform for development of custom
 weight: 30
 type: docs
 draft: false
-owner: >-
-    [Sujit Khasnis](https://github.com/sujituk)
+owner:
+  - name: "Sujit Khasnis"
+    link: "https://github.com/sujituk"
 tags:
     - NVIDIA
     - NeMo on GKE

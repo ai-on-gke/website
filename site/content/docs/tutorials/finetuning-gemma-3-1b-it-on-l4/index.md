@@ -3,8 +3,9 @@ linkTitle: "Fine-tuning Gemma 3-1B-it on L4"
 title: "Fine-tuning Gemma 3-1B-it on L4"
 description: "This tutorial guides you through fine-tuning the Gemma 3-1B-it language model on Google Kubernetes Engine (GKE) using L4 GPU, leveraging Parameter Efficient Fine Tuning (PEFT) and LoRA. It covers setting up a GKE cluster, containerizing the fine-tuning code, running the fine-tuning job, and uploading the resulting model to Hugging Face. Finally, it demonstrates how to deploy and interact with the fine-tuned model using vLLM on GKE."
 weight: 30
-owner: >-
-    [Francisco Cabrera](https://github.com/fcabrera23)
+owner:
+  - name: "Francisco Cabrera"
+    link: "https://github.com/fcabrera23"
 type: docs
 tags:
  - Experimentation

@@ -1,8 +1,10 @@
 <div style="display: flex; gap: 6px; flex-shrink: 0; font-size: 11px">
     {{ if .Params.owner }}
-    <p>{{ T "post_byline_by" }}
-        {{ .Params.owner | markdownify }}
-    </p>
+    {{ T "post_byline_by" }}
+        {{ range .Params.owner }}
+        {{ $nameLink := (print "[" .name "](" .link ")")}}
+        {{ $nameLink | markdownify }}
+        {{ end }}
     {{ end }}
     {{ partial "page-meta-lastmod.html" . }}
 </div>

@@ -4,8 +4,9 @@ title: "Hyperdisk ML"
 description: "This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in Cloud Storage and then use it in a GKE cluster."
 weight: 30
 type: docs
-owner: >-
-    [Francisco Cabrera](https://github.com/fcabrera23)
+owner:
+  - name: "Francisco Cabrera"
+    link: "https://github.com/fcabrera23"
 tags:
  - Storage
  - Tutorials
