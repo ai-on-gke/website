@@ -4,8 +4,9 @@ title: "Kserve"
 description: "This tutorial will guide you step by step through the process of installing KServe in a GKE Autopilot cluster."
 weight: 30
 type: docs
-owner: >-
-    [Francisco Cabrera](https://github.com/fcabrera23)
+owner:
+  - name: "Francisco Cabrera"
+    link: "https://github.com/fcabrera23"
 tags:
  - Serving
  - Tutorials

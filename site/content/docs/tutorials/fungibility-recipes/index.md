@@ -4,8 +4,9 @@ title: "vLLM GPU/TPU Fungibility"
 description: "This tutorial shows you who to serve a large language model (LLM) using both Tensor Processing Units (TPUs) and GPUs on Google Kubernetes Engine (GKE) using the same deployment with [vLLM](https://github.com/vllm-project/vllm)"
 weight: 30
 type: docs
-owner: >-
-    [Edwin Hernandez](https://github.com/Edwinhr716)
+owner:
+  - name: "Edwin Hernandez" 
+    link: "https://github.com/Edwinhr716"
 tags:
  - Serving
  - Tutorials

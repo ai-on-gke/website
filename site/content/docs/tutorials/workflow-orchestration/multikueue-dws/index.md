@@ -4,8 +4,9 @@ title: "Multikueue, DWS and GKE Autopilot"
 description: "In this guide you will learn how to set up a multi-cluster environment where job computation is distributed across three GKE clusters in different regions using MultiKueue, Dynamic Workload Scheduler (DWS), and GKE Autopilot."
 weight: 30
 type: docs
-owner: >-
-    [Jean-Baptiste Leroy](https://github.com/leroyjb)
+owner:
+  - name: "Jean-Baptiste Leroy"
+    link: "https://github.com/leroyjb"
 tags:
  - Orchestration
  - Tutorials

@@ -4,8 +4,9 @@ title: "Building Agents with Agent Development Kit (ADK) on GKE using Ray Serve 
 description: "This tutorial demonstrates how to deploy the Llama-3.1-8B-Instruct model on Google Kubernetes Engine (GKE) using Ray Serve and vLLM for efficient inference. Additionally, it shows how to integrate an ADK agent to interact with the model, supporting both basic chat completions and tool usage. The setup leverages a GKE Standard cluster with GPU-enabled nodes to handle the computational requirements."
 weight: 30
 type: docs
-owner: >-
-    [Vlado Djerek](https://github.com/volatilemolotov)
+owner: 
+  - name: "Vlado Djerek"
+    link: https://github.com/volatilemolotov
 tags:
  - Evaluation
  - ADK

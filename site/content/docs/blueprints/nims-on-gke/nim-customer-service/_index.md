@@ -5,8 +5,9 @@ description: "This sample walks through creatinb intelligent, interactive avatar
 weight: 30
 type: docs
 draft: false
-owner: >-
-    [Sujit Khasnis](https://github.com/sujituk)
+owner:
+  - name: "Sujit Khasnis"
+    link: "https://github.com/sujituk"
 tags:
     - NVIDIA
     - NIM on GKE

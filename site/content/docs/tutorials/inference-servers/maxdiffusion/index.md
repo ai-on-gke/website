@@ -4,8 +4,9 @@ title: "MaxDiffusion"
 description: "MaxDiffusion provides high-performance implementations of core components of diffusion models such as cross attention, convolutions, and high-throughput image data loading."
 weight: 30
 type: docs
-owner: >-
-    [Francisco Cabrera](https://github.com/fcabrera23)
+owner:
+  - name: "Francisco Cabrera"
+    link: "https://github.com/fcabrera23"
 tags:
  - Serving
  - Experimentation

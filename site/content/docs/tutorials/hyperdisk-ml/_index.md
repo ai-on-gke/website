@@ -3,8 +3,9 @@ linkTitle: "Hyperdisk ML Disk"
 title: "Populate a Hyperdisk ML Disk from Google Cloud Storage"
 description: "This guide uses the Google Cloud API to create a Hyperdisk ML disk from data in Cloud Storage and then use it in a GKE cluster. Refer to [this documentation](https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/hyperdisk-ml) for instructions all in the GKE API."
 weight: 30
-owner: >-
-    [Brian Kaufman](https://github.com/bkauf)
+owner:
+  - name: "Brian Kaufman"
+    link: "https://github.com/bkauf"
 type: docs
 tags:
   - Storage

@@ -5,8 +5,9 @@ description: "A model server agnostic inference benchmarking tool that can be us
 weight: 30
 type: docs
 draft: false
-owner: >-
-    [Jason Kramberger](https://github.com/jjk-g)
+owner: 
+   - name: "Jason Kramberger"
+     link: "https://github.com/jjk-g"
 tags:
     - Inference
     - Benchmarking
