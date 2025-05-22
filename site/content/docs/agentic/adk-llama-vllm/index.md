@@ -106,11 +106,11 @@ kubectl create secret generic hf-token-secret-artur \
 
 Now we can create our deployment and service with our LLM by running this command which runs vLLM with `--tool-call-parser=llama3_json`, `--enable-auto-tool-choice` and `--chat-template`. To learn more about options used check out [vLLM documentation](https://docs.vllm.ai/en/stable/features/tool_calling.html):
 
-
 ```bash
 kubectl apply -f deploy-llm.yaml
 ```
 
+> [!NOTE]
 > Note that in this manifest we also create a configmap with a chat template for our LLM.
 
 You can check the status of the deployment by running `logs -f` command on the pod.
