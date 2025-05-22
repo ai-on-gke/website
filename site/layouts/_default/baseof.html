@@ -10,6 +10,7 @@
     {{ partial "hooks/body-start.html" . }}
     <header>
       {{ partial "navbar.html" . }}
+      {{ partial "callout-footer.html" . }}
     </header>
     <div class="container-fluid td-default td-outer">
       <main role="main" class="td-main">
@@ -17,7 +18,7 @@
       </main>
       {{ partial "footer.html" . }}
     </div>
-    {{ partial "callout-footer.html" . }}
+    
     {{ partial "user-satisfaction.html" . }}
    
     {{ partialCached "scripts.html" . }}
