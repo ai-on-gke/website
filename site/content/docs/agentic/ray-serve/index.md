@@ -135,76 +135,76 @@ Deploy the Ray Serve application:
 2. Replace `<PROJECT_ID>` with your Google Cloud project name.
 3. Install kuberay-operator via Helm:
 
-```bash
-# Add the Helm repo
-helm repo add kuberay https://ray-project.github.io/kuberay-helm/
-helm repo update
-
-# Confirm the repo exists
-helm search repo kuberay --devel
-
-# Install both CRDs and KubeRay operator v1.3.2.
-helm install kuberay-operator kuberay/kuberay-operator --version 1.3.2
-
-# Check the KubeRay operator Pod in `default` namespace
-kubectl get pods
-# NAME                                READY   STATUS    RESTARTS   AGE
-# kuberay-operator-6fcbb94f64-mbfnr   1/1     Running   0          17s
-```
+    ```bash
+    # Add the Helm repo
+    helm repo add kuberay https://ray-project.github.io/kuberay-helm/
+    helm repo update
+    
+    # Confirm the repo exists
+    helm search repo kuberay --devel
+    
+    # Install both CRDs and KubeRay operator v1.3.2.
+    helm install kuberay-operator kuberay/kuberay-operator --version 1.3.2
+    
+    # Check the KubeRay operator Pod in `default` namespace
+    kubectl get pods
+    # NAME                                READY   STATUS    RESTARTS   AGE
+    # kuberay-operator-6fcbb94f64-mbfnr   1/1     Running   0          17s
+    ```
 
 4. Apply the manifest:
+  
+    ```bash
+    kubectl apply -f ray-service.yaml
+    ```
 
-```bash
-kubectl apply -f ray-service.yaml
-```
-
-Verify the deployment:
-
-- Check the Ray service status:
-
-  ```bash
-  kubectl get rayservice llama-31-8b -o yaml
-  ```
-
-The `serviceStatus` should be `running`.
-
-- Check the raycluster:
-
-  ```bash
-  kubectl get raycluster
-  ```
-  And you should see output similar to this:
-  ```bash
-  NAME                           DESIRED WORKERS   AVAILABLE WORKERS   CPUS   MEMORY   GPUS   STATUS   AGE
-  llama-31-8b-raycluster-qgzmk   1                 1                   10     33Gi     2      ready    58m
-  ```
-
-- Check the pods:
-
-  ```bash
-  kubectl get pods
-  ```
-
-  You should see two pods: one Ray Head Pod and one Ray Worker Pod where Worker pods run the LLM and allow for scaling as the requests grow in volume and Head pod is used for management and should stay at a single replica.
-
-  ```bash
-  NAME                                                  READY   STATUS    RESTARTS   AGE
-  kuberay-operator-bb8d4d9c4-7h2vg                      1/1     Running   0          9m33s
-  llama-31-8b-raycluster-w9jzw-gpu-group-worker-9l5zx   1/1     Running   0          9m7s
-  llama-31-8b-raycluster-w9jzw-head-45rx4               1/1     Running   0          9m8s
-  ```
-
-- Check the config map for the chat template:
-
-  ```bash
-  kubectl get configmaps
-  ```
-  Which should display output similar to:
-  ```bash
-  NAME                   DATA   AGE
-  kube-root-ca.crt       1      4h47m
-  llama-chat-templates   1      3h18m
-  ```
+  Verify the deployment:
+  
+  - Check the Ray service status:
+  
+      ```bash
+      kubectl get rayservice llama-31-8b -o yaml
+      ```
+  
+  The `serviceStatus` should be `running`.
+  
+  - Check the raycluster:
+  
+    ```bash
+    kubectl get raycluster
+    ```
+    And you should see output similar to this:
+    ```bash
+    NAME                           DESIRED WORKERS   AVAILABLE WORKERS   CPUS   MEMORY   GPUS   STATUS   AGE
+    llama-31-8b-raycluster-qgzmk   1                 1                   10     33Gi     2      ready    58m
+    ```
+  
+  - Check the pods:
+  
+    ```bash
+    kubectl get pods
+    ```
+  
+    You should see two pods: one Ray Head Pod and one Ray Worker Pod where Worker pods run the LLM and allow for scaling as the requests grow in volume and Head pod is used for management and should stay at a single replica.
+  
+    ```bash
+    NAME                                                  READY   STATUS    RESTARTS   AGE
+    kuberay-operator-bb8d4d9c4-7h2vg                      1/1     Running   0          9m33s
+    llama-31-8b-raycluster-w9jzw-gpu-group-worker-9l5zx   1/1     Running   0          9m7s
+    llama-31-8b-raycluster-w9jzw-head-45rx4               1/1     Running   0          9m8s
+    ```
+  
+  - Check the config map for the chat template:
+  
+    ```bash
+    kubectl get configmaps
+    ```
+    Which should display output similar to:
+    ```bash
+    NAME                   DATA   AGE
+    kube-root-ca.crt       1      4h47m
+    llama-chat-templates   1      3h18m
+    ```
 
 ## Step 3: Test the Ray Serve Deployment
 
@@ -332,44 +332,45 @@ The ADK agent framework uses sessions to manage state and context. The /run endp
 
 - Create a session for test user:
 
-```bash
-curl http://$EXTERNAL_IP:80/apps/example-agent/users/user1/sessions \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{}'
-```
+  ```bash
+  curl http://$EXTERNAL_IP:80/apps/example-agent/users/user1/sessions \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d '{}'
+  ```
 
-The response is expected to be something like this:
+  The response is expected to be something like this:
+  
+    ```bash
+    {"id":"836c4e74-5ee3-4bc8-96c2-94d77f079e34","app_name":"example-agent","user_id":"user1","state":{},"events":[],"last_update_time":1747352210.0}
+    ```
 
-```bash
-{"id":"836c4e74-5ee3-4bc8-96c2-94d77f079e34","app_name":"example-agent","user_id":"user1","state":{},"events":[],"last_update_time":1747352210.0}
-```
+- Copy the session id and send the example request:
 
-Copy the session id and send the example request:
+  ```bash
+  curl http://$EXTERNAL_IP:80/run \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d '{
+      "app_name": "example-agent",
+      "user_id": "user1",
+      "session_id": "836c4e74-5ee3-4bc8-96c2-94d77f079e34",
+      "new_message": {
+        "parts": [{"text": "What is the weather like in Seattle?"}],
+        "role": "user"
+      }
+    }'
+  ```
 
-```bash
-curl http://$EXTERNAL_IP:80/run \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{
-    "app_name": "example-agent",
-    "user_id": "user1",
-    "session_id": "836c4e74-5ee3-4bc8-96c2-94d77f079e34",
-    "new_message": {
-      "parts": [{"text": "What is the weather like in Seattle?"}],
-      "role": "user"
-    }
-  }'
-```
+  The response should be similar to the Ray Serve test. Example:
 
-The response should be similar to the Ray Serve test. Example:
-
-```bash
-[{"content":{"parts":[{"functionCall":{"id":"chatcmpl-tool-63bff6965a04437eb9e16aa8e8e4786b","args":{"city":"Seattle"},"name":"get_current_weather"}}],"role":"model"},"partial":false,"invocation_id":"e-18006854-6c17-4d27-8a8f-342bd252106a","author":"weather_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"long_running_tool_ids":[],"id":"YOqORD5M","timestamp":1747352916.229682},{"content":{"parts":[{"functionResponse":{"id":"chatcmpl-tool-63bff6965a04437eb9e16aa8e8e4786b","name":"get_current_weather","response":{"result":"The weather in Seattle is currently 12°C with rainy conditions."}}}],"role":"user"},"invocation_id":"e-18006854-6c17-4d27-8a8f-342bd252106a","author":"weather_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"x9zqpTMd","timestamp":1747352917.060611},{"content":{"parts":[{"text":"The function call returns the current weather in Seattle."}],"role":"model"},"partial":false,"invocation_id":"e-18006854-6c17-4d27-8a8f-342bd252106a","author":"weather_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"CbXReduJ","timestamp":1747352917.067558}]
-```
-Here is how the request path looks like:
-
-![Request Path](ray_request_path.png)
+  ```bash
+  [{"content":{"parts":[{"functionCall":{"id":"chatcmpl-tool-63bff6965a04437eb9e16aa8e8e4786b","args":{"city":"Seattle"},"name":"get_current_weather"}}],"role":"model"},"partial":false,"invocation_id":"e-18006854-6c17-4d27-8a8f-342bd252106a","author":"weather_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"long_running_tool_ids":[],"id":"YOqORD5M","timestamp":1747352916.229682},{"content":{"parts":[{"functionResponse":{"id":"chatcmpl-tool-63bff6965a04437eb9e16aa8e8e4786b","name":"get_current_weather","response":{"result":"The weather in Seattle is currently 12°C with rainy conditions."}}}],"role":"user"},"invocation_id":"e-18006854-6c17-4d27-8a8f-342bd252106a","author":"weather_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"x9zqpTMd","timestamp":1747352917.060611},{"content":{"parts":[{"text":"The function call returns the current weather in Seattle."}],"role":"model"},"partial":false,"invocation_id":"e-18006854-6c17-4d27-8a8f-342bd252106a","author":"weather_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"CbXReduJ","timestamp":1747352917.067558}]
+  ```
+  
+  Here is how the request path looks like:
+  
+  ![Request Path](ray_request_path.png)
 
 ## Step 6: Monitor and Debug
 
