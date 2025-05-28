@@ -2,7 +2,7 @@
 linkTitle: "Flowise"
 title: "Deploy Flowise AI to GKE"
 description: "This tutorial will provide instructions on how to deploy and use [FlowiseAI](https://flowiseai.com/) on GKE (Google Kubernetes Engine) to build and operate AI applications using a low-code/no-code approach."
-weight: 30
+weight: 40
 type: docs
 owner: 
   - name: "Vlado Djerek"
@@ -13,7 +13,7 @@ tags:
  - Tutorials
 cloudShell:
     enabled: true
-    folder: site/content/docs/tutorials/flowise
+    folder: site/content/docs/agentic/flowise
     editorFile: index.md
 ---
 
