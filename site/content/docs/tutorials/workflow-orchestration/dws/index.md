@@ -40,6 +40,13 @@ For more configuration options visit [Kueue's installation guide.](https://kueue
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) command line utility is installed.
 - [terraform](https://developer.hashicorp.com/terraform/install) command line installed.
 
+## Check out the necessary code files:
+
+```bash
+git clone https://github.com/ai-on-gke/tutorials-and-examples.git
+cd tutorials-and-examples/workflow-orchestration/dws-example
+```
+
 ## Create Clusters
 
 ```bash
