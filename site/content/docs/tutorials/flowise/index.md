@@ -35,14 +35,14 @@ This tutorial is designed for developers and platform engineers interested in le
 
 ```
 ├── agentflow.json  # Example Flowise Agentflow.
+├── terraform/      # Terraform config that creates required infrastructure.
 ├───── cloudsql.tf
 ├───── default_env.tfvars
 ├───── main.tf
 ├───── network.tf
 ├───── outputs.tf
 ├───── variables.tf
-├───── workload_idenity.tf
-└── terraform/      # Terraform config that creates required infrastructure.
+└───── workload_idenity.tf
 ```
 
 ## Before you begin
