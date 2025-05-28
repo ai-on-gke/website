@@ -2,7 +2,7 @@
 linkTitle: "Agent ADK using GKE Autopilot Cluster with Llama and vLLM"
 title: "Building Agents with Agent Development Kit (ADK) on GKE Autopilot cluster using Self-Hosted LLM"
 description: "This tutorial demonstrates how to deploy the Llama-3.1-8B-Instruct model on Google Kubernetes Engine (GKE) and vLLM for efficient inference. Additionally, it shows how to integrate an ADK agent to interact with the model, supporting both basic chat completions and tool usage. The setup leverages a GKE Standard cluster with GPU-enabled nodes to handle the computational requirements."
-weight: 30
+weight: 20
 type: docs
 owner: 
   - name: "Vlado Djerek"
