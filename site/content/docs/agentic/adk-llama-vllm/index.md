@@ -4,7 +4,7 @@ title: "Building Agents with Agent Development Kit (ADK) on GKE Autopilot cluste
 description: "This tutorial demonstrates how to deploy the Llama-3.1-8B-Instruct model on Google Kubernetes Engine (GKE) and vLLM for efficient inference. Additionally, it shows how to integrate an ADK agent to interact with the model, supporting both basic chat completions and tool usage. The setup leverages a GKE Standard cluster with GPU-enabled nodes to handle the computational requirements."
 weight: 20
 type: docs
-owner: 
+owner:
   - name: "Vlado Djerek"
     link: https://github.com/volatilemolotov
 
@@ -99,7 +99,7 @@ Run these commands to create the HuggingFace secret:
 
 ```bash
 export HF_TOKEN=<YOUR_HF_TOKEN>
-kubectl create secret generic hf-token-secret-artur \
+kubectl create secret generic hf-token-secret \
     --from-literal=token=${HF_TOKEN} \
     --dry-run=client -o yaml | kubectl apply -f -
 ```
