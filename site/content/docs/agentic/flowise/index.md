@@ -211,32 +211,49 @@ It creates the following resources. For more information such as resource names 
 
 ## Trying multi-agent example
 
+### Load the example agentflow
+
 1. Open web UI at [http://localhost:3000](http://localhost:3000)   
 2. Create new Agentflow by clicking on the “Add New” button in the “Agentflows” section:
 
-![alt text](1.png)
+![alt text](1_create_agentflow.png)
 
 3. Click on the `Load Agents` button and select our example Agentflow from the file `tutorials-and-examples/flowise/agentflow.json` in the repository. This is basically a builtin `Software Team` template from the Flowise marketplace but it uses VertexAI API to access LLMs.   
    
 
-![alt text](2.png)
+![alt text](2_load.png)
 
-4. Our example Agentflow must be loaded now. Save and give it a name by clicking the save button in order to start using it:  
-   
-
-![alt text](3.png)
-
-5. Open the chat window and provide some prompt and supervisor with workers must start working on it:  
-   
-
-![alt text](4.png)
-
-The `Supervisor` node has to process the initial prompt and make a task for the `Senior Software Engineer` node. When the task is ready, the supervisor has to pass its result to the `Code Reviewer` node. 
+4. Our example Agentflow must be loaded now. Save and give it a name by clicking the save button in order to start using it:
+![alt text](3_save_agentflow.png)
 
 Note: 
 
 * Our Terraform config assigns the VertexAI user role to our service account, so the `ChatGoogleVertexAI` chat model block should work without any credentials.  
-* Use the `Max iterations` parameter of the `Worker` nodes in order to prevent infinite loops.
+* Use the `Max iterations` parameter in the `Additional Parameters` of the `Supervisor` node in order to prevent infinite loops.
+
+### Use the Agentflow
+
+The `Supervisor` node has to process the initial prompt and make a task for the `Senior Software Engineer` node. When the task is ready, the supervisor has to pass its result to the `Code Reviewer` node and repeat it until the code is approved.
+
+1. Open the chat window ...
+   
+![alt text](4_open_chat.png)
+
+ ... and expand it for convenience:
+ 
+![alt text](5_expand_chat.png)
+
+2. Enter the propmt. In our example we ask to write a Snake game.
+
+In the beginning the `Supervisor` requests to write the code from the `Senior Software Engineer` worker:
+![alt text](6_supervisor_sde.png)
+
+Then the code is passed by the `Supervisor` to the `Code Reviever` worker:
+![alt text](7_supervisor_reviewer.png)
+
+Then, after some iterations, the `Code Reviewer` should approve the code:
+![alt text](8_approve.png)
+
 
 
 ## Cleaning up
