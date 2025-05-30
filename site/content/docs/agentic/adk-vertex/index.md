@@ -171,7 +171,7 @@ It creates the following resources. For more information such as resource names 
     # Call the function to get the FastAPI app instance
     # Ensure the agent directory name ('capital_agent') matches your agent folder
     app: FastAPI = get_fast_api_app(
-        agent_dir=AGENT_DIR,
+        agents_dir=AGENT_DIR,
         session_db_url=SESSION_DB_URL,
         allow_origins=ALLOWED_ORIGINS,
         web=SERVE_WEB_INTERFACE,
@@ -273,7 +273,7 @@ It creates the following resources. For more information such as resource names 
         ../app
     ```
 
-6. Run this command to create `app/deplyment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
+6. Run this command to create `app/deployment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:
 
     ```bash
     cat <<  EOF > ../app/deployment.yaml
