@@ -2,7 +2,7 @@
 linkTitle: "Flowise"
 title: "Deploy Flowise AI to GKE"
 description: "This tutorial will provide instructions on how to deploy and use [FlowiseAI](https://flowiseai.com/) on GKE (Google Kubernetes Engine) to build and operate AI applications using a low-code/no-code approach."
-weight: 30
+weight: 40
 type: docs
 owner: 
   - name: "Vlado Djerek"
@@ -13,7 +13,7 @@ tags:
  - Tutorials
 cloudShell:
     enabled: true
-    folder: site/content/docs/tutorials/flowise
+    folder: site/content/docs/agentic/flowise
     editorFile: index.md
 ---
 
@@ -35,7 +35,14 @@ This tutorial is designed for developers and platform engineers interested in le
 
 ```
 ├── agentflow.json  # Example Flowise Agentflow.
-└── terraform/      # Terraform config that creates required infrastructure.
+├── terraform/      # Terraform config that creates required infrastructure.
+├───── cloudsql.tf
+├───── default_env.tfvars
+├───── main.tf
+├───── network.tf
+├───── outputs.tf
+├───── variables.tf
+└───── workload_idenity.tf
 ```
 
 ## Before you begin
@@ -50,13 +57,13 @@ This tutorial is designed for developers and platform engineers interested in le
 
 If you previously installed the gcloud CLI, get the latest version by running:
 
-```
+```bash
 gcloud components update
 ```
 
 Ensure that you are signed in using the gcloud CLI tool. Run the following command:
 
-```
+```bash
 gcloud auth application-default login
 ```
 
@@ -64,9 +71,9 @@ gcloud auth application-default login
 
 ### Clone the repository
 
-### Clone the repository with our guides and cd to the `flowise/` directory by running these commands:
+Clone the repository with our guides and cd to the `flowise/` directory by running these commands:
 
-```
+```bash
 git clone https://github.com/ai-on-gke/tutorials-and-examples.git
 cd tutorials-and-examples/flowise
 ```
@@ -75,7 +82,7 @@ cd tutorials-and-examples/flowise
 
 Enable the APIs required for GKE, Artifact Registry, Cloud Build, and Vertex AI
 
-```
+```bash
 gcloud services enable \
     container.googleapis.com \
     aiplatform.googleapis.com
@@ -97,111 +104,110 @@ It creates the following resources. For more information such as resource names 
 
 1. Go the the terraform directory:
 
-```
-cd terraform
-```
+    ```bash
+    cd terraform
+    ```
    
 
 2. Specify the following values inside the `default_env.tfvars` file (or make a separate copy):  
-   1. `<PROJECT_ID>` – replace with your project id (you can find it in the project settings).  
+    `<PROJECT_ID>` – replace with your project id (you can find it in the project settings).  
         
 3. Init terraform modules:
 
-```
-terraform init
-```
+    ```bash
+    terraform init
+    ```
 
 4. Optionally run the `plan` command to view an execution plan:
 
-```
-terraform plan -var-file=default_env.tfvars
-```
+    ```bash
+    terraform plan -var-file=default_env.tfvars
+    ```
 
 5. Execute the plan:
 
-```
-terraform apply -var-file=default_env.tfvars
-```
+    ```bash
+    terraform apply -var-file=default_env.tfvars
+    ```
 
-And you should see your resources created:
+    And you should see your resources created:
 
-```
+    ```bash
 
-Apply complete! Resources: 106 added, 0 changed, 0 destroyed.
+    Apply complete! Resources: 106 added, 0 changed, 0 destroyed.
 
-Outputs:
+    Outputs:
 
-cloudsql_database_name = "flowise"
-cloudsql_database_secret_name = "db-secret"
-cloudsql_database_user = "flowise"
-cloudsql_instance_ip = "<ip>"
-gke_cluster_location = "us-central1"
-gke_cluster_name = "flowise-tf"
-k8s_service_account_name = "flowise-tf"
-project_id = "<your project_id>"
-```
+    cloudsql_database_name = "flowise"
+    cloudsql_database_secret_name = "db-secret"
+    cloudsql_database_user = "flowise"
+    cloudsql_instance_ip = "<ip>"
+    gke_cluster_location = "us-central1"
+    gke_cluster_name = "flowise-tf"
+    k8s_service_account_name = "flowise-tf"
+    project_id = "<your project_id>"
+    ```
 
 6. Configure your kubectl context:
 
-```
-gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location) --project $(terraform output -raw project_id)
-```
+    ```bash
+    gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location) --project $(terraform output -raw project_id)
+    ```
 
 ## Flowise Deployment and Configuration
 
 1. Add Flowise helm repository:
 
-```
-
-helm repo add cowboysysop https://cowboysysop.github.io/charts/
-```
+    ```bash
+    helm repo add cowboysysop https://cowboysysop.github.io/charts/
+    ```
 
 2. Create yml file with values to customize the Flowise helm chart:
 
-```
-cat <<EOF > ../values.yml
-externalPostgresql:
-  enabled: true
-  host: $(terraform output -raw cloudsql_instance_ip)
-  port: 5432
-  username: $(terraform output -raw cloudsql_database_user)
-  existingSecret: $(terraform output -raw cloudsql_database_secret_name)
-  existingSecretKeyPassword: password
-  database: $(terraform output -raw cloudsql_database_name)
-  readinessProbe:
-    enabled: true
-    initialDelaySeconds: 120
-serviceAccount:
-  create: false
-  name: $(terraform output -raw k8s_service_account_name)
-EOF
-```
+    ```bash
+    cat <<EOF > ../values.yml
+    externalPostgresql:
+      enabled: true
+      host: $(terraform output -raw cloudsql_instance_ip)
+      port: 5432
+      username: $(terraform output -raw cloudsql_database_user)
+      existingSecret: $(terraform output -raw cloudsql_database_secret_name)
+      existingSecretKeyPassword: password
+      database: $(terraform output -raw cloudsql_database_name)
+      readinessProbe:
+        enabled: true
+        initialDelaySeconds: 120
+    serviceAccount:
+      create: false
+      name: $(terraform output -raw k8s_service_account_name)
+    EOF
+    ```
 
 	 
 
 3. Install Flowise helm chart with the values from the file that was created previously
 
-```
-helm install flowise cowboysysop/flowise -f ../values.yml
-```
+    ```bash
+    helm install flowise cowboysysop/flowise -f ../values.yml
+    ```
 
 4. Wait the completion of the deployment:
 
-```
-kubectl rollout status deployment/flowise
-```
+    ```bash
+    kubectl rollout status deployment/flowise
+    ```
 
 5. Forward port of the Flowise service in order to access its web UI:
 
-```
-kubectl port-forward svc/flowise 3000:3000
-```
+    ```bash
+    kubectl port-forward svc/flowise 3000:3000
+    ```
 
-In case of errors, try looking at logs:
+    In case of errors, try looking at logs:
 
-```
-kubectl logs -l app.kubernetes.io/name=flowise
-```
+    ```bash
+    kubectl logs -l app.kubernetes.io/name=flowise
+    ```
 
 ## Trying multi-agent example
 
@@ -237,9 +243,9 @@ Note:
 
 1. Destroy the provisioned infrastructure.
 
-```
-terraform destroy -var-file=default_env.tfvars
-```
+    ```bash
+    terraform destroy -var-file=default_env.tfvars
+    ```
 
 ## Troubleshooting
 
