@@ -142,7 +142,7 @@ custom_schema = IndexSchema.from_dict(
 
 ### RAG server
 
-Simple web application that invokes llamaindex RAG system and returns response. The web application will be a simple FastAPI app, so we can invoke the RAG system via HTTP request. It is defined in the `app/rag_demo/main.py` file as a FastAPI application and a single `/invoke` API and connection to the Redis Vector Store.
+The RAG server is a simple web application built with FastAPI that allows users to invoke the LlamaIndex RAG system via an HTTP request to the `/invoke` endpoint, as defined in the `app/rag_demo/main.py` file. This endpoint connects to the Redis vector store to retrieve and generate responses based on the indexed data. Additionally, the server includes an intelligent agent that enhances the system by evaluating incoming queries. The agent assesses whether a query relates to the indexed documents (such as the Paul Graham essay) and employs the RAG tool to provide a tailored response when relevant. For queries outside the scope of the indexed data, the agent returns a default message, ensuring the system delivers clear and appropriate feedback to users.
 
 <details><summary>Expand to see key parts</summary>
 
@@ -480,7 +480,7 @@ kubectl  port-forward svc/llamaindex-rag-service 8000:8000
 
 
 
-3. Do some prompting. If you ask `What did Paul do?`, the output should look like this:
+3. Test the intelligent agent with some queries relevant to the indexed document. If you ask `What did Paul do?`, the output should look like this:
 
 ```
 {
@@ -488,7 +488,13 @@ kubectl  port-forward svc/llamaindex-rag-service 8000:8000
 }
 ```
 
+4. Test the agent with out-of-scope query, for example `What is the capital of France?`, and the expected response should be something like:  
 
+```
+{
+  "message": "This question is outside the scope of the provided documents. Please set up a different model for other questions."
+}
+```
 
 # Cleanup
 
