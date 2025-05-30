@@ -273,7 +273,7 @@ It creates the following resources. For more information such as resource names 
         ../app
     ```
 
-6. Run this command to create `app/deplyment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:  
+6. Run this command to create `app/deployment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:
 
     ```bash
     cat <<  EOF > ../app/deployment.yaml
