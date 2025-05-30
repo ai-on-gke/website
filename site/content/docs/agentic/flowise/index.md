@@ -254,6 +254,17 @@ Then the code is passed by the `Supervisor` to the `Code Reviever` worker:
 Then, after some iterations, the `Code Reviewer` should approve the code:
 ![alt text](8_approve.png)
 
+### Optional. Use as Embedding or API endpoint
+
+The agentflow can be accessed through API for further automation or embedded into webpage. 
+
+1. Click on API Endpoint:
+   
+![alt text](9_embed.png)
+
+2. Choose one of the options:
+
+![alt text](9_embed_window.png)
 
 
 ## Cleaning up
