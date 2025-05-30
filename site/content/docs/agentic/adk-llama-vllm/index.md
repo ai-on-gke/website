@@ -84,7 +84,7 @@ Run the following command to get an access to your cluster:
 
 ```bash
 export CLUSTER_NAME=<CLUSTER_NAME>
-gcloud container clusters get-credentials ${CLUSTER_NAME} --location=us-central1
+gcloud container clusters get-credentials ${CLUSTER_NAME} --location=us-east4
 ```
 
 # Deploy an LLM to a GKE Autopilot cluster
