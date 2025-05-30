@@ -100,7 +100,7 @@ It creates the following resources. For more information such as resource names 
      * [VertexAI](https://cloud.google.com/vertex-ai/docs) LLM model.  
      * [CloudSQL](https://cloud.google.com/sql/docs/introduction) database instance  
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the application.  
-* [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store Flowise data
+* [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store Flowise data. To verify that the data is persisted, you can verify it, for example, in the [CloudSQL Studio](https://cloud.google.com/sql/docs/mysql/manage-data-using-studio) after the tutorial is completed.
 
 1. Go the the terraform directory:
 
@@ -264,7 +264,7 @@ The agentflow can be accessed through API for further automation or embedded int
 
 2. Choose one of the options:
 
-![alt text](9_embed_window.png)
+![alt text](10_embed_window.png)
 
 
 ## Cleaning up
