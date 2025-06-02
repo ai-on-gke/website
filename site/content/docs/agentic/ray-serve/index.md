@@ -83,10 +83,11 @@ export CLUSTER_NAME=llama-ray-cluster
 
 Update the <PROJECT-ID> placeholder in `default_env.tfvars` with your own Google Cloud Project ID Name.
 
-Initialize Terraform and apply the configuration:
+Initialize Terraform, inspect plan and apply the configuration:
 
 ```bash
 terraform init
+terraform plan --var-file=./default_env.tfvars
 terraform apply --var-file=./default_env.tfvars
 ```
 
