@@ -7,7 +7,7 @@ type: docs
 owner:
   - name: "ryanaoleary"
     link: "https://github.com/ryanaoleary"
-tags: 
+tags:
     - Ray on TPUs with GKE
     - Blueprints
 draft: false
@@ -65,18 +65,17 @@ You can find sample TPU cluster manifests for [single-host](https://github.com/r
 
 For a quick-start guide to using TPUs with KubeRay, see [Use TPUs with KubeRay](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/tpu.html).
 
-
 ### Running Sample Workloads
 
 1. Save the following to a local file (e.g. `test_tpu.py`):
-```
+
+```python
 import ray
 
 ray.init(
-    address="ray://ray-cluster-kuberay-head-svc:10001",
     runtime_env={
         "pip": [
-            "jax[tpu]==0.4.12",
+            "jax[tpu]",
             "-f https://storage.googleapis.com/jax-releases/libtpu_releases.html",
         ]
     }
@@ -92,8 +91,9 @@ num_workers = 4
 result = [tpu_cores.remote() for _ in range(num_workers)]
 print(ray.get(result))
 ```
-2. `kubectl port-forward svc/ray-cluster-kuberay-head-svc 8265:8265 &`
-3. `export RAY_ADDRESS=http://localhost:8265`
-4. `ray job submit --runtime-env-json='{"working_dir": "."}' -- python test_tpu.py`
-   
+
+1. `kubectl port-forward svc/RAYCLUSTER-NAME-head-svc dashboard &` where `RAYCLUSTER-NAME` is the
+   `.metadata.name` of the RayCluster in the cluster manifest you used.
+1. `RAY_ADDRESS=http://localhost:8265 ray job submit --runtime-env-json='{"working_dir": "."}' -- python test_tpu.py`
+
 For a more advanced workload running Stable Diffusion on TPUs, see [here](https://cloud.google.com/kubernetes-engine/docs/add-on/ray-on-gke/tutorials/deploy-ray-serve-stable-diffusion-tpu). For an example of serving a LLM with TPUs, RayServe, and KubeRay, see [here](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-lllm-tpu-ray).
