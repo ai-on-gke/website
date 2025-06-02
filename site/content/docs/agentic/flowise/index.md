@@ -97,8 +97,9 @@ It creates the following resources. For more information such as resource names 
 * Service Accounts:  
   1. Cluster IAM Service Account (derives name from a cluster name, e.g. `tf-gke-<cluster name>`) – manages permissions for the GKE cluster.  
   2. Application’s IAM Service Account (default name `flowise-tf` and can be changed in the terraform config) – manages permissions for the deployed application to access:  
-     * [VertexAI](https://cloud.google.com/vertex-ai/docs) LLM model.  
-     * [CloudSQL](https://cloud.google.com/sql/docs/introduction) database instance  
+     * LLM models data that is stored in a Cloud Storage bucket.
+
+* Cloud Storage Bucket to store data such as LLM model.
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the application.  
 * [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store Flowise data. To verify that the data is persisted, you can verify it, for example, in the [CloudSQL Studio](https://cloud.google.com/sql/docs/mysql/manage-data-using-studio) after the tutorial is completed.
 
@@ -134,10 +135,11 @@ It creates the following resources. For more information such as resource names 
 
     ```bash
 
-    Apply complete! Resources: 106 added, 0 changed, 0 destroyed.
+    Apply complete! Resources: 25 added, 0 changed, 0 destroyed.
 
     Outputs:
 
+    bucket_name = "flowise-tf"
     cloudsql_database_name = "flowise"
     cloudsql_database_secret_name = "db-secret"
     cloudsql_database_user = "flowise"
@@ -153,6 +155,85 @@ It creates the following resources. For more information such as resource names 
     ```bash
     gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location) --project $(terraform output -raw project_id)
     ```
+
+
+## Deploy the Ollama to serve LLMs
+
+1. Run this command in order to create a deployment manifest. The command will subsitute required values from the terraform:
+
+```bash
+cat <<EOF > ../ollama-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+spec:
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+      annotations:
+        gke-gcsfuse/volumes: 'true'
+    spec:
+      serviceAccount: $(terraform output -raw k8s_service_account_name)
+      nodeSelector:
+        cloud.google.com/gke-accelerator: nvidia-l4
+      containers:
+        - name: ollama
+          image: ollama/ollama:latest
+          ports:
+            - containerPort: 11434
+          volumeMounts:
+            - name: ollama-data
+              mountPath: /root/.ollama/
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+      volumes:
+        - name: ollama-data
+          csi:
+            driver: gcsfuse.csi.storage.gke.io
+            volumeAttributes:
+              bucketName: $(terraform output -raw bucket_name)
+              mountOptions: implicit-dirs,only-dir=ollama
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+spec:
+  selector:
+    app: ollama
+  ports:
+    - protocol: TCP
+      port: 11434
+      targetPort: 11434
+EOF
+```
+
+2. Deploy the created manifest:
+
+```bash
+kubectl apply -f ../ollama-deployment.yml
+```
+
+
+3. Wait for Ollama is successfully deployed:
+
+
+```bash
+kubectl rollout status deployment/ollama
+```
+
+4. Pull the  `llama3.2` model within Ollama server pod:
+
+```bash
+kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull llama3.2
+```
+
 
 ## Flowise Deployment and Configuration
 
