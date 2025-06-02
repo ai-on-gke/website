@@ -42,6 +42,7 @@ This tutorial is designed for developers and platform engineers interested in le
 ├───── network.tf
 ├───── outputs.tf
 ├───── variables.tf
+├───── bucket.tf
 └───── workload_idenity.tf
 ```
 
@@ -80,12 +81,14 @@ cd tutorials-and-examples/flowise
 
 ### Enable Necessary APIs
 
-Enable the APIs required for GKE, Artifact Registry, Cloud Build, and Vertex AI
+Enable the APIs required for GKE, Artifact Registry, Cloud Build and Cloud Storage
 
 ```bash
 gcloud services enable \
     container.googleapis.com \
-    aiplatform.googleapis.com
+    artifactregistry.googleapis.com \
+    cloudbuild.googleapis.com \
+    storage.googleapis.com
 ```
 
 ### Create cluster and other resources
@@ -299,7 +302,7 @@ kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull l
 
 ![alt text](1_create_agentflow.png)
 
-3. Click on the `Load Agents` button and select our example Agentflow from the file `tutorials-and-examples/flowise/agentflow.json` in the repository. This is basically a builtin `Software Team` template from the Flowise marketplace but it uses VertexAI API to access LLMs.   
+3. Click on the `Load Agents` button and select our example Agentflow from the file `tutorials-and-examples/flowise/agentflow.json` in the repository. This is basically a builtin `Software Team` template from the Flowise marketplace but it uses the Ollama Chat Model to access locally hosted LLMs.   
    
 
 ![alt text](2_load.png)
@@ -308,8 +311,6 @@ kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull l
 ![alt text](3_save_agentflow.png)
 
 Note: 
-
-* Our Terraform config assigns the VertexAI user role to our service account, so the `ChatGoogleVertexAI` chat model block should work without any credentials.  
 * Use the `Max iterations` parameter in the `Additional Parameters` of the `Supervisor` node in order to prevent infinite loops.
 
 ### Use the Agentflow
@@ -358,6 +359,17 @@ The agentflow can be accessed through API for further automation or embedded int
 
 ## Troubleshooting
 
-### Model name can not be changed 
+### Some models are unabable to work with agents.
 
-At the time of writing this guide, the `ChatGoogleVertexAI` chat model does not allow specifying a model as a text in its `Model Name` field. The workaround is to go to the `Additional parameters` and specify the model there in the `Custom Model Name` field.
+If you change the model, be aware that it may not work properly with the agents and a prompt may just stop without any descriptive messages from the Flowise. In this case you can look at logs of the Flowise:
+
+```bash
+ kubectl logs -l app.kubernetes.io/name=flowise
+```
+
+or Ollama
+
+```bash
+ kubectl logs -l app=ollama
+```
+
