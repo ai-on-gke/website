@@ -26,8 +26,8 @@ In this tutorial we will fine-tune gemma-2-9b using LoRA as an experiment in MLF
 
 ## Before you begin
 Ensure you have a GCP project with a billing account. Enable the following APIs for your project:
-- [GKE](https://console.cloud.google.com/marketplace/product/google/container.googleapis.com?inv=1&invt=Abma5w&project=cvdjango&returnUrl=/kubernetes/overview/get-started?inv%3D1%26invt%3DAbma5w%26project%3Dcvdjango)
-- [Artifact Registry API](https://console.cloud.google.com/marketplace/product/google/artifactregistry.googleapis.com?returnUrl=/artifacts?invt%3DAbma5w%26inv%3D1%26project%3Dcvdjango&project=cvdjango&inv=1&invt=Abma5w&flow=gcp)
+- [GKE](https://console.cloud.google.com/marketplace/product/google/container.googleapis.com)
+- [Artifact Registry API](https://console.cloud.google.com/marketplace/product/google/artifactregistry.googleapis.com)
 
 Ensure you have the following tools installed on your workstation:
 ```bash
