@@ -54,6 +54,8 @@ Make sure you have installed:
 * git
 * kubectl
 
+Also you will need to get a Huggingface API token with a read access.
+
 Make sure you have enabled the following APIs:
 
 * [GKE](https://console.cloud.google.com/marketplace/product/google/container.googleapis.com?inv=1&invt=Abma5w&project=cvdjango&returnUrl=/kubernetes/overview/get-started?inv%3D1%26invt%3DAbma5w%26project%3Dcvdjango)
