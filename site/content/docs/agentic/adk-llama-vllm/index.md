@@ -91,7 +91,7 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=us-east4
 
 In this section we will use vLLM for the deployment and [meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) (you have to visit their site and request an access) as a core LLM. So far, you are currently in the `terraform` folder. Go to the `deploy-llm` folder. In this folder you can see the `deploy-llm.yaml` manifest, which creates a deployment with vLLM that serves Llama-3.1-8B-Instruct, template for the LLM, and a service that allows us to access this model via http protocol.
 
-To successfully deploy our model, we need to create a HuggingFace secret inside the GKE cluster and a configmap that contains all templates.
+To successfully deploy our model, we need to create a HuggingFace secret inside the GKE cluster and a configmap that contains our template.
 Run these commands to create the HuggingFace secret:
 
 ```bash
