@@ -15,7 +15,7 @@
     <div class="container-fluid td-outer">
       <div class="td-main">
         <div class="row flex-xl-nowrap">
-          <aside class="col-12 col-md-2 col-xl-2 td-sidebar d-print-none">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
             {{ partial "sidebar.html" . }}
           </aside>
           <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
@@ -25,7 +25,7 @@
             {{ partial "taxonomy_terms_clouds.html" . }}
             {{ partial "callout-banner.html" . }}
           </aside>
-          <main class="col-12 col-md-10 col-xl-8 ps-md-3" role="main">
+          <main class="col-12 col-md-9 col-xl-8 ps-md-3" role="main">
             {{ partial "version-banner.html" . }}
             <div class="top-nav-bar">{{ if not (.Param "ui.breadcrumb_disable") -}}
               {{ partial "breadcrumb.html" . -}}

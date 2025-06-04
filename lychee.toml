@@ -21,3 +21,4 @@ cache_exclude_status = ["429","500..599","400..499"]
 cache = true
 no_progress = true
 verbose = "error"
+exclude = ["console.cloud.google.com/marketplace"]
