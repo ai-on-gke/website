@@ -73,7 +73,6 @@ To create a GKE Autopilot cluster for this tutorial, you should go to the `terra
 
 * `<PROJECT_ID>`: with your Google project ID
 * `<CLUSTER_NAME>`: with any name you would like to
-* `<KUBERNETES_NAMESPACE>`: with any name you would like to
 
 Run the following commands to create your GKE cluster:
 
