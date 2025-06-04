@@ -54,6 +54,8 @@ Make sure you have installed:
 * git
 * kubectl
 
+Also you will need to get a Huggingface API token with a read access.
+
 Make sure you have enabled the following APIs:
 
 * [GKE](https://console.cloud.google.com/marketplace/product/google/container.googleapis.com)
@@ -71,7 +73,6 @@ To create a GKE Autopilot cluster for this tutorial, you should go to the `terra
 
 * `<PROJECT_ID>`: with your Google project ID
 * `<CLUSTER_NAME>`: with any name you would like to
-* `<KUBERNETES_NAMESPACE>`: with any name you would like to
 
 Run the following commands to create your GKE cluster:
 
@@ -89,12 +90,9 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=us-east4
 
 # Deploy an LLM to a GKE Autopilot cluster
 
-In this section we will use vLLM for the deployment and [meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) (you have to visit their site and request an access) as a core LLM. So far, you are currently in the `terraform` folder. Go to the `deploy-llm` folder. In this folder you can see the following:
+In this section we will use vLLM for the deployment and [meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) (you have to visit their site and request an access) as a core LLM. So far, you are currently in the `terraform` folder. Go to the `deploy-llm` folder. In this folder you can see the `deploy-llm.yaml` manifest, which creates a deployment with vLLM that serves Llama-3.1-8B-Instruct, template for the LLM, and a service that allows us to access this model via http protocol.
 
-* `templates` folder: it stores all templates for LLMs. Currently it has only one template for Llama-3.1-8B-Instruct. The templates are necessary to use tools, because it formats the LLM’s output.
-* `deploy-llm.yaml`: this manifest creates a deployment with vLLM that serves Llama-3.1-8B-Instruct and a service that allows us to access this model via http protocol.
-
-To successfully deploy our model, we need to create a HuggingFace secret inside the GKE cluster and a configmap that contains all templates.
+To successfully deploy our model, we need to create a HuggingFace secret inside the GKE cluster and a configmap that contains our template.
 Run these commands to create the HuggingFace secret:
 
 ```bash
