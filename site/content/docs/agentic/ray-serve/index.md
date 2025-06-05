@@ -24,9 +24,9 @@ By the end of this tutorial, you will:
 
 ## Prerequisites
 
-- A terminal with `kubectl`, `helm` and `gcloud` and `terraform` installed.
+- A terminal with `kubectl`, `helm` and `gcloud` and `terraform 1.12.1` installed.
 - A [Hugging Face](https://huggingface.co/) account with a token that has `Read` permission to access the Llama-3.1-8B-Instruct model.
-- Sufficient GPU quota in your Google Cloud project. See [About GPUs](https://cloud.google.com/kubernetes-engine/docs/concepts/gpus#gpu_quota) and [Allocation quotas](https://cloud.google.com/compute/resource-usage#gpu_quota).
+- Sufficient GPU quota in your Google Cloud project. You need at least 2 NVIDIA L4 GPUs in the region (us-central1) to deploy the tutorial's setup without quota-related errors. See [About GPUs](https://cloud.google.com/kubernetes-engine/docs/concepts/gpus#gpu_quota) and [Allocation quotas](https://cloud.google.com/compute/resource-usage#gpu_quota).
 - Access to the code repository: https://github.com/ai-on-gke/tutorials-and-examples
 
 ### Filesystem structure
@@ -83,10 +83,11 @@ export CLUSTER_NAME=llama-ray-cluster
 
 Update the <PROJECT-ID> placeholder in `default_env.tfvars` with your own Google Cloud Project ID Name.
 
-Initialize Terraform and apply the configuration:
+Initialize Terraform, inspect plan and apply the configuration:
 
 ```bash
 terraform init
+terraform plan --var-file=./default_env.tfvars
 terraform apply --var-file=./default_env.tfvars
 ```
 
