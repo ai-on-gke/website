@@ -14,7 +14,7 @@
     {{ $title }}
   </div>
   {{ if $description -}}
-  <div class="use-case-card-description single-page">{{ $description }}</div>
+  <p class="use-case-card-description single-page">{{ $description }}</p>
   {{ end -}}
   <div class="use-case-links-container">
     {{ partial "pages-with-same-tag.html" (dict "sectionTitle" $title "context" $context) }}
