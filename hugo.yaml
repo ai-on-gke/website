@@ -57,6 +57,7 @@ params:
       - Categories
     taxonomyPageHeader: [tags]
   maxRelativeArticlesToDisplay: 6
+  description: Unlock Scalable and Efficient AI Workloads using AI on GKE (Google Kubernetes Engine).
 
   
   offlineSearch: true

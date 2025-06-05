@@ -180,9 +180,9 @@ $enable-negative-margins: true;
 .home-card-description {
   color: var(--Grey-900, #202124);
   font-feature-settings: "liga" off, "clig" off;
-  font-size: 1.25rem;
-  font-style: normal;
-  font-weight: 500;
+  font-size: 1.25rem!important;
+  font-style: normal!important;
+  font-weight: 500!important;
   line-height: normal;
   margin-top: 16px;
   margin-bottom: 10px;
