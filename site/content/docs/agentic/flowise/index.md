@@ -317,7 +317,7 @@ All data such as agentflows and chat conversations are persisted in the CloudSQL
 ![alt text](3_save_agentflow.png)
 
 Note: 
-* Use the `Max iterations` parameter in the `Additional Parameters` of the `Supervisor` node in order to prevent infinite loops.
+* Use the `Max Loop Count` parameter of the Loop nodes in order to prevent infinite loops.
 
 ### Use the Agentflow
 
@@ -343,7 +343,7 @@ In the beginning the `Supervisor` requests to write the code from the `Software 
 Then the code is passed by the `Supervisor` to the `Code Reviewer` worker:
 ![alt text](8_supervisor_reviewer.png)
 
-Then, after some iterations, the `Code Reviewer` should approve the code:
+Then, after some iterations, the `Code Reviewer` should approve the code and the `Generate Final Answer` node has to print the result:
 ![alt text](9_final.png)
 
 ### Optional. Use as Embedding or API endpoint
@@ -354,7 +354,7 @@ The agentflow can be accessed through API for further automation or embedded int
    
 ![alt text](10_embed.png)
 
-2. Choose one of the options, Use the API endpoint for programmatic integration into existing applications. Use embedding to add the agentflow directly into websites as an interactive chat widget.
+2. Choose one of the options. Use the API endpoint for programmatic integration into existing applications. Use embedding to add the agentflow directly into websites as an interactive chat widget.
 
 ![alt text](11_embed_window.png)
 
