@@ -17,26 +17,26 @@ cloudShell:
     editorFile: index.md
 ---
 
-This tutorial will provide instructions on how to deploy and use [FlowiseAI](https://flowiseai.com/) on GKE (Google Kubernetes Engine) to build and operate AI applications using a low-code/no-code approach.
+This tutorial will provide instructions on how to deploy and use [Flowise](https://flowiseai.com/) on GKE (Google Kubernetes Engine) to build and operate AI applications using a low-code/no-code approach.
 
 ## Overview
 
-This tutorial is designed for developers and platform engineers interested in leveraging Flowise on GKE for building customized LLM flows and AI agents, offloading resource-intensive tasks to a managed cluster. Managed clusters automatically handle the complex infrastructure requirements of AI applications like - scaling GPU nodes for model inference, managing variable workloads, allowing developers to focus on building AI solutions rather than managing servers.
+This tutorial is designed for developers and platform engineers interested in leveraging Flowise on GKE for building customized LLM flows and AI agents, offloading resource-intensive tasks to a managed cluster. Managed clusters automatically handle the complex infrastructure requirements of AI applications like scaling GPU nodes for model inference, managing variable workloads, allowing developers to focus on building AI solutions rather than managing servers.
 Flowise is a low-code/no-code platform that enables developers to build and deploy AI applications and multi-agent systems through a visual drag-and-drop interface without extensive programming. As an example for this tutorial, we will create a multi-agent application that acts as a software development team with a software developer and a code reviewer which are coordinated by a supervisor. The example demonstrates Flowise's core multi-agent coordination capabilities. This showcases how AI agents can collaborate on complex tasks—with a supervisor orchestrating between a code writer and reviewer.
 For more info, you may want to read the [docs](https://docs.flowiseai.com/using-flowise/agentflowv2).
 
 ### What will you learn
 
 1. Provision required infrastructure automatically (using Terraform). The GKE Autopilot cluster is used by default.  
-2. Install FlowiseAI on the GKE cluster.  
-3. Configure FlowiseAI to build and manage LLM flows.  
-4. Build a sample AI application (e.g., a chatbot or agent) using FlowiseAI components.  
+2. Install Flowise on the GKE cluster.  
+3. Configure Flowise to build and manage LLM flows.  
+4. Build a sample AI application (e.g., a chatbot or agent) using Flowise components.  
 5. Serve the resulting AI application from the GKE cluster.
 
 ### Filesystem structure
 
 ```
-├── agentflow.json  # Example Flowise Agentflow.
+├── agentflow.json  # Example Flowise agentflow.
 ├── terraform/      # Terraform config that creates required infrastructure.
 ├───── cloudsql.tf
 ├───── default_env.tfvars
@@ -45,7 +45,7 @@ For more info, you may want to read the [docs](https://docs.flowiseai.com/using-
 ├───── outputs.tf
 ├───── variables.tf
 ├───── bucket.tf
-└───── workload_idenity.tf
+└───── workload_identity.tf
 ```
 
 ## Before you begin
@@ -95,18 +95,18 @@ gcloud services enable \
 
 ### Create cluster and other resources
 
-In this section we will use Terraform to automate the creation of infrastructure resources. For more details how it is done please refer to the terraform config in the `terraform/` folder. By default, the configuration provisions an Autopilot GKE cluster, but it can be changed to standard by setting `autopilot_cluster = false`.
+In this section we will use Terraform to automate the creation of infrastructure resources. For more details how it is done, please refer to the terraform config in the `terraform/` folder. By default, the configuration provisions an Autopilot GKE cluster, but it can be changed to standard by setting `autopilot_cluster = false`.
 
 It creates the following resources. For more information such as resource names and other details, please refer to the [Terraform config](https://github.com/ai-on-gke/tutorials-and-examples/tree/main/flowise/terraform):
 
 * Service Accounts:  
   1. Cluster IAM Service Account (derives name from a cluster name, e.g. `tf-gke-<cluster name>`) – manages permissions for the GKE cluster.  
   2. Application’s IAM Service Account (default name `flowise-tf` and can be changed in the terraform config) – manages permissions for the deployed application to access:  
-     * LLM models data that is stored in a Cloud Storage bucket.
+     * LLM models that is stored in a Cloud Storage bucket.
 
 * Cloud Storage Bucket to store data such as LLM model.
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the application.  
-* [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store Flowise data. To verify that the data is persisted, you can verify it, for example, in the [CloudSQL Studio](https://cloud.google.com/sql/docs/mysql/manage-data-using-studio) after the tutorial is completed.
+* [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store Flowise data such as flows and chat conversations. To verify that the data is persisted, you can verify it, for example, in the [CloudSQL Studio](https://cloud.google.com/sql/docs/mysql/manage-data-using-studio) after the tutorial is completed.
 
 1. Go the the terraform directory:
 
@@ -271,19 +271,20 @@ kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull l
 
 	 
 
-3. Install Flowise helm chart with the values from the file that was created previously
+3. Install Flowise helm chart with the values from the file that was created previously.
+To learn more about the chart, please refer to its [page](https://artifacthub.io/packages/helm/cowboysysop/flowise). Especially for the [templates](https://artifacthub.io/packages/helm/cowboysysop/flowise?modal=template&template=deployment.yaml) and [default values](https://artifacthub.io/packages/helm/cowboysysop/flowise?modal=values).
 
     ```bash
     helm install flowise cowboysysop/flowise -f ../values.yml
     ```
 
-4. Wait the completion of the deployment:
+5. Wait the completion of the deployment:
 
     ```bash
     kubectl rollout status deployment/flowise
     ```
 
-5. Forward port of the Flowise service in order to access its web UI:
+6. Forward port of the Flowise service in order to access its web UI:
 
     ```bash
     kubectl port-forward svc/flowise 3000:3000
@@ -304,16 +305,16 @@ All data such as agentflows and chat conversations are persisted in the CloudSQL
 ### Load the example agentflow
 
 1. Open web UI at [http://localhost:3000](http://localhost:3000)   
-2. Create new Agentflow by clicking on the “Add New” button in the “Agentflows” section:
+2. Create new agentflow by clicking on the “Add New” button in the “Agentflows” section:
 
 ![alt text](1_create_agentflow.png)
 
-3. Click on the `Load Agents` button and select our example Agentflow from the file `tutorials-and-examples/flowise/agentflow.json` in the repository. This is basically a builtin `Software Team` template from the Flowise marketplace but it uses the Ollama Chat Model to access locally hosted LLMs.   
+3. Click on the `Load Agents` button and select our example agentflow from the file `tutorials-and-examples/flowise/agentflow.json` in the repository. This is basically a built-in `Software Team` template from the Flowise marketplace but it uses the Ollama Chat Model to access locally hosted LLMs.   
    
 
 ![alt text](2_load.png)
 
-4. Our example Agentflow must be loaded now. Save and give it a name by clicking the save button in order to start using it:
+4. Our example agentflow must be loaded now. Save and give it a name by clicking the save button in order to start using it:
 ![alt text](3_save_agentflow.png)
 
 Note: 
@@ -331,9 +332,9 @@ The `Supervisor` node has to process the initial prompt and make a task for the 
  
 ![alt text](5_expand_chat.png)
 
-2. Enter the prompt. In our example we ask to write a Snake game.
+2. Enter the prompt. In our example, we prompt the supervisor to write a snake game.
 
-When the flow is completed, you can see its visualisation:
+When the flow is completed, you can see its visualization:
 
 ![alt text](6_flow.png)
 
@@ -346,7 +347,7 @@ Then the code is passed by the `Supervisor` to the `Code Reviewer` worker:
 Then, after some iterations, the `Code Reviewer` should approve the code and the `Generate Final Answer` node has to print the result:
 ![alt text](9_final.png)
 
-### Optional. Use as Embedding or API endpoint
+### [Optional] Use as Embedding or API endpoint
 
 The agentflow can be accessed through API for further automation or embedded into a webpage. For more info, check the [docs](https://docs.flowiseai.com/using-flowise/embed).
 
@@ -382,4 +383,38 @@ or Ollama
 ```bash
  kubectl logs -l app=ollama
 ```
+
+### Timeout
+
+By default, there is a 30 seconds timeout assigned to the proxy by GCP. This caused issue when the response is taking longer than 30 seconds threshold to return. In order to fix this issue, make the following changes:
+
+Note: To set the timeout to be 10 minutes (for example) -- we specify 600 seconds below.
+
+Create a `backendconfig.yaml` file with the following content:
+
+```yml
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: flowise-backendconfig
+  namespace: your-namespace
+spec:
+  timeoutSec: 600
+```
+
+Run the command: 
+
+```
+kubectl apply -f backendconfig.yaml
+```
+
+Add the following reference to the BackendConfig as a Flowise's service annotation by adding this line in the `values.yml` file:
+
+```
+service:
+    annotations:
+	cloud.google.com/backend-config: '{"default": "flowise-backendconfig"}'
+```
+
+You can also read about this issue on the [GCP deployment docs](https://docs.flowiseai.com/configuration/deployment/gcp#timeout).
 
