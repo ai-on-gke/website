@@ -21,7 +21,9 @@ This tutorial will provide instructions on how to deploy and use [FlowiseAI](htt
 
 ## Overview
 
-This tutorial is designed for developers and platform engineers interested in leveraging FlowiseAI on GKE for building customized LLM flows and AI agents, offloading resource-intensive tasks to a managed cluster. As an example for this tutorial, we will create a multi-agent application that acts as a software development team with a software developer and a code reviewer which are coordinated by a supervisor. For more info, you may want to read the [docs](https://docs.flowiseai.com/using-flowise/agentflowv1/multi-agents).
+This tutorial is designed for developers and platform engineers interested in leveraging Flowise on GKE for building customized LLM flows and AI agents, offloading resource-intensive tasks to a managed cluster. Managed clusters automatically handle the complex infrastructure requirements of AI applications like - scaling GPU nodes for model inference, managing variable workloads, allowing developers to focus on building AI solutions rather than managing servers.
+Flowise is a low-code/no-code platform that enables developers to build and deploy AI applications and multi-agent systems through a visual drag-and-drop interface without extensive programming. As an example for this tutorial, we will create a multi-agent application that acts as a software development team with a software developer and a code reviewer which are coordinated by a supervisor. The example demonstrates Flowise's core multi-agent coordination capabilities. This showcases how AI agents can collaborate on complex tasks—with a supervisor orchestrating between a code writer and reviewer.
+For more info, you may want to read the [docs](https://docs.flowiseai.com/using-flowise/agentflowv2).
 
 ### What will you learn
 
@@ -48,7 +50,7 @@ This tutorial is designed for developers and platform engineers interested in le
 
 ## Before you begin
 
-1. Ensure you have a GCP project with billing enabled and [enabled the GKE API](https://cloud.google.com/kubernetes-engine/docs/how-to/enable-gkee).  
+1. Ensure you have a GCP project with billing enabled and [enable the GKE API](https://cloud.google.com/kubernetes-engine/docs/how-to/enable-gkee).
 2. Ensure you have the following tools installed on your workstation  
    * [gcloud CLI](https://cloud.google.com/sdk/docs/install)  
    * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)  
@@ -162,7 +164,7 @@ It creates the following resources. For more information such as resource names 
 
 ## Deploy the Ollama to serve LLMs
 
-1. Run this command in order to create a deployment manifest. The command will subsitute required values from the terraform:
+1. Run this command in order to create a deployment manifest. The command will substitute required values from the terraform:
 
 ```bash
 cat <<EOF > ../ollama-deployment.yml
@@ -295,6 +297,10 @@ kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull l
 
 ## Trying multi-agent example
 
+In the example we create an agentflow that uses LLMs from the Ollama service that we deployed earlier on the GKE cluster alongside with the Flowise. All nodes of the example agentflow use only locally deployed LLMs that are served by Ollama.
+
+All data such as agentflows and chat conversations are persisted in the CloudSQL instance that is created by the Terraform.
+
 ### Load the example agentflow
 
 1. Open web UI at [http://localhost:3000](http://localhost:3000)   
@@ -315,7 +321,7 @@ Note:
 
 ### Use the Agentflow
 
-The `Supervisor` node has to process the initial prompt and make a task for the `Senior Software Engineer` node. When the task is ready, the supervisor has to pass its result to the `Code Reviewer` node and repeat it until the code is approved.
+The `Supervisor` node has to process the initial prompt and make a task for the `Software Engineer` node. When the task is ready, the supervisor has to pass its result to the `Code Reviewer` node and repeat it until the code is approved.
 
 1. Open the chat window ...
    
@@ -325,28 +331,32 @@ The `Supervisor` node has to process the initial prompt and make a task for the 
  
 ![alt text](5_expand_chat.png)
 
-2. Enter the propmt. In our example we ask to write a Snake game.
+2. Enter the prompt. In our example we ask to write a Snake game.
 
-In the beginning the `Supervisor` requests to write the code from the `Senior Software Engineer` worker:
-![alt text](6_supervisor_sde.png)
+When the flow is completed, you can see its visualisation:
 
-Then the code is passed by the `Supervisor` to the `Code Reviever` worker:
-![alt text](7_supervisor_reviewer.png)
+![alt text](6_flow.png)
+
+In the beginning the `Supervisor` requests to write the code from the `Software Engineer` worker:
+![alt text](7_supervisor_sde.png)
+
+Then the code is passed by the `Supervisor` to the `Code Reviewer` worker:
+![alt text](8_supervisor_reviewer.png)
 
 Then, after some iterations, the `Code Reviewer` should approve the code:
-![alt text](8_approve.png)
+![alt text](9_final.png)
 
 ### Optional. Use as Embedding or API endpoint
 
-The agentflow can be accessed through API for further automation or embedded into webpage. 
+The agentflow can be accessed through API for further automation or embedded into a webpage. For more info, check the [docs](https://docs.flowiseai.com/using-flowise/embed).
 
 1. Click on API Endpoint:
    
-![alt text](9_embed.png)
+![alt text](10_embed.png)
 
-2. Choose one of the options:
+2. Choose one of the options, Use the API endpoint for programmatic integration into existing applications. Use embedding to add the agentflow directly into websites as an interactive chat widget.
 
-![alt text](10_embed_window.png)
+![alt text](11_embed_window.png)
 
 
 ## Cleaning up
@@ -359,7 +369,7 @@ The agentflow can be accessed through API for further automation or embedded int
 
 ## Troubleshooting
 
-### Some models are unabable to work with agents.
+### Some models are unable to work with agents.
 
 If you change the model, be aware that it may not work properly with the agents and a prompt may just stop without any descriptive messages from the Flowise. In this case you can look at logs of the Flowise:
 
