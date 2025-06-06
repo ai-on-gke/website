@@ -29,6 +29,7 @@
 {{ else -}}
 <meta name="robots" content="noindex, nofollow">
 {{ end -}}
+<link rel="canonical" href={{ .Permalink }} />
 
 {{ partialCached "favicons.html" . }}
 <title>
