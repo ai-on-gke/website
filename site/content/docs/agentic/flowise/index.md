@@ -106,7 +106,7 @@ It creates the following resources. For more information such as resource names 
 
 * Cloud Storage Bucket to store data such as LLM model.
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the application.  
-* [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store Flowise data such as flows and chat conversations. To verify that the data is persisted, you can verify it, for example, in the [CloudSQL Studio](https://cloud.google.com/sql/docs/mysql/manage-data-using-studio) after the tutorial is completed.
+* [CloudSQL](https://cloud.google.com/sql/docs/introduction) instance to store Flowise data such as chat messages, conversational context, etc. To verify that the data is persisted, you can verify it, for example, in the [CloudSQL Studio](https://cloud.google.com/sql/docs/mysql/manage-data-using-studio) after the tutorial is completed.
 
 1. Go the the terraform directory:
 
@@ -327,8 +327,6 @@ ollama       ClusterIP   34.118.232.55    <none>        11434/TCP   43m
 ## Trying multi-agent example
 
 In the example we create an agentflow that uses LLMs from the Ollama service that we deployed earlier on the GKE cluster alongside with the Flowise. All nodes of the example agentflow use only locally deployed LLMs that are served by Ollama.
-
-All data such as agentflows and chat conversations are persisted in the CloudSQL instance that is created by the Terraform.
 
 ### Load the example agentflow
 
