@@ -278,13 +278,41 @@ To learn more about the chart, please refer to its [page](https://artifacthub.io
     helm install flowise cowboysysop/flowise -f ../values.yml
     ```
 
-5. Wait the completion of the deployment:
+4. Wait the completion of the deployment:
 
     ```bash
     kubectl rollout status deployment/flowise
     ```
 
-6. Forward port of the Flowise service in order to access its web UI:
+You can have a look at the running pods to verify that everything is deployed:
+
+```
+kubectl get pods
+```
+
+There have to be pods for Ollama and Flowise and the output should be similar to:
+
+```
+NAME                       READY   STATUS    RESTARTS      AGE
+flowise-5c89d977b7-9lnw8   1/1     Running   0             24m
+ollama-87557bbf4-5pk98     2/2     Running   0             30m
+```
+You can also verify that the respective services are created:
+
+```
+kubectl get svc
+```
+
+The output should be similar to:
+
+```
+NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
+flowise      ClusterIP   34.118.227.187   <none>        3000/TCP    36m
+kubernetes   ClusterIP   34.118.224.1     <none>        443/TCP     72m
+ollama       ClusterIP   34.118.232.55    <none>        11434/TCP   43m
+```
+
+5. Forward port of the Flowise service in order to access its web UI:
 
     ```bash
     kubectl port-forward svc/flowise 3000:3000
