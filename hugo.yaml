@@ -29,6 +29,8 @@ resourceDir: site/resources
 assetDir: site/assets
 i18nDir: site/i18n
 staticDir: site/static
+taxonomies:
+  tags: tags
 
 markup:
   goldmark:
@@ -52,7 +54,7 @@ params:
     authors: Website Authors | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) |
     from_year: 2018
   taxonomy:
-    taxonomyCloud: [tags, categories]
+    taxonomyCloud: [tags]
     taxonomyCloudTitle: 
       - Categories
     taxonomyPageHeader: [tags]
