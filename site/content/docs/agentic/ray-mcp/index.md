@@ -160,7 +160,7 @@ Build and push the container image:
 
 ```bash
 gcloud builds submit \
-    --tag us-docker.pkg.dev/$PROJECT_ID/llama-ray-mcp/mcp-server:latest \
+    --tag us-docker.pkg.dev/$PROJECT_ID/llama-ray-mcp/llama-ray-serve:latest \
     --project=$PROJECT_ID \
     .
 ```
@@ -238,7 +238,7 @@ NAME                   DATA   AGE
 kube-root-ca.crt       1      4h47m
 llama-chat-templates   1      3h18m
 ```
-## Step 3: Test the Ray Serve Deployment
+### Test the Ray Serve Deployment
 
 Test the model by setting up port forwarding and sending requests.
 
@@ -247,8 +247,6 @@ Set up port forwarding to the Ray Serve endpoint:
 ```bash
 kubectl port-forward service/llama-31-8b-serve-svc 8000:8000
 ```
-
-### Test: Tool Usage Capability
 
 Send a weather query that requires tool usage:
 
@@ -327,7 +325,7 @@ The response should include a tool call to `get_weather` with the parameter `cit
 }
 ```
 
-## Step 4: Deploy the MCP server
+## Step 3: Deploy the MCP server
 
 Navigate to the MCP Server directory:
 
@@ -396,7 +394,7 @@ In the UI press the `Connect` button, and navigate to the `tools` tab. Here you 
 
 Now you can cancel the port-forwarding and close the inspector.
 
-## Step 5: Deploy the ADK Agent
+## Step 4: Deploy the ADK Agent
 
 Navigate to the ADK agent directory:
 
@@ -470,7 +468,7 @@ Forwarding from [::1]:8000 -> 8080
 Follow the `127.0.0.1:8000` and test your agent.
 ![](./image2.png)
 
-## Step 6: Clean Up
+## Step 5: Clean Up
 Destroy the provisioned infrastructure.
 ```bash
 terraform destroy -var-file=default_env.tfvars
