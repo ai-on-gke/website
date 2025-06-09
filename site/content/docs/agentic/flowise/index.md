@@ -1,6 +1,6 @@
 ---
-linkTitle: "Flowise"
-title: "Deploy Flowise AI to GKE"
+linkTitle: "Multi-Agent Code Development with Flowise"
+title: "Building a Multi-Agent Code Development Flow with Flowise on GKE"
 description: "This tutorial will provide instructions on how to deploy and use [FlowiseAI](https://flowiseai.com/) on GKE (Google Kubernetes Engine) to build and operate AI applications using a low-code/no-code approach."
 weight: 40
 type: docs
@@ -166,79 +166,77 @@ It creates the following resources. For more information such as resource names 
 
 1. Run this command in order to create a deployment manifest. The command will substitute required values from the terraform:
 
-```bash
-cat <<EOF > ../ollama-deployment.yml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ollama
-spec:
-  selector:
-    matchLabels:
-      app: ollama
-  template:
-    metadata:
-      labels:
-        app: ollama
-      annotations:
-        gke-gcsfuse/volumes: 'true'
-    spec:
-      serviceAccount: $(terraform output -raw k8s_service_account_name)
-      nodeSelector:
-        cloud.google.com/gke-accelerator: nvidia-l4
-      containers:
-        - name: ollama
-          image: ollama/ollama:latest
-          ports:
-            - containerPort: 11434
-          volumeMounts:
-            - name: ollama-data
-              mountPath: /root/.ollama/
-          resources:
-            limits:
-              nvidia.com/gpu: 1
-      volumes:
-        - name: ollama-data
-          csi:
-            driver: gcsfuse.csi.storage.gke.io
-            volumeAttributes:
-              bucketName: $(terraform output -raw bucket_name)
-              mountOptions: implicit-dirs,only-dir=ollama
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ollama
-spec:
-  selector:
-    app: ollama
-  ports:
-    - protocol: TCP
-      port: 11434
-      targetPort: 11434
-EOF
-```
+	```bash
+	cat <<EOF > ../ollama-deployment.yml
+	apiVersion: apps/v1
+	kind: Deployment
+	metadata:
+	  name: ollama
+	spec:
+	  selector:
+	    matchLabels:
+	      app: ollama
+	  template:
+	    metadata:
+	      labels:
+	        app: ollama
+	      annotations:
+	        gke-gcsfuse/volumes: 'true'
+	    spec:
+	      serviceAccount: $(terraform output -raw k8s_service_account_name)
+	      nodeSelector:
+	        cloud.google.com/gke-accelerator: nvidia-l4
+	      containers:
+	        - name: ollama
+	          image: ollama/ollama:latest
+	          ports:
+	            - containerPort: 11434
+	          volumeMounts:
+	            - name: ollama-data
+	              mountPath: /root/.ollama/
+	          resources:
+	            limits:
+	              nvidia.com/gpu: 1
+	      volumes:
+	        - name: ollama-data
+	          csi:
+	            driver: gcsfuse.csi.storage.gke.io
+	            volumeAttributes:
+	              bucketName: $(terraform output -raw bucket_name)
+	              mountOptions: implicit-dirs,only-dir=ollama
+	---
+	apiVersion: v1
+	kind: Service
+	metadata:
+	  name: ollama
+	spec:
+	  selector:
+	    app: ollama
+	  ports:
+	    - protocol: TCP
+	      port: 11434
+	      targetPort: 11434
+	EOF
+	```
 
 2. Deploy the created manifest:
 
-```bash
-kubectl apply -f ../ollama-deployment.yml
-```
+   ```bash
+   kubectl apply -f ../ollama-deployment.yml
+   ```
 
 
 3. Wait for Ollama is successfully deployed:
 
-
-```bash
-kubectl rollout status deployment/ollama
-```
+   ```bash
+   kubectl rollout status deployment/ollama
+   ```
 
 4. Pull the  `llama3.2` model within Ollama server pod:
 
-```bash
-kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull llama3.2
-```
-
+   ```bash
+   kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull llama3.2
+   ```
 
 ## Flowise Deployment and Configuration
 
@@ -284,33 +282,34 @@ To learn more about the chart, please refer to its [page](https://artifacthub.io
     kubectl rollout status deployment/flowise
     ```
 
-You can have a look at the running pods to verify that everything is deployed:
+   You can have a look at the running pods to verify that everything is deployed:
 
-```
-kubectl get pods
-```
+   ```
+   kubectl get pods
+   ```
 
-There have to be pods for Ollama and Flowise and the output should be similar to:
+   There have to be pods for Ollama and Flowise and the output should be similar to:
 
-```
-NAME                       READY   STATUS    RESTARTS      AGE
-flowise-5c89d977b7-9lnw8   1/1     Running   0             24m
-ollama-87557bbf4-5pk98     2/2     Running   0             30m
-```
-You can also verify that the respective services are created:
+   ```
+   NAME                       READY   STATUS    RESTARTS      AGE
+   flowise-5c89d977b7-9lnw8   1/1     Running   0             24m
+   ollama-87557bbf4-5pk98     2/2     Running   0             30m
+   ```
 
-```
-kubectl get svc
-```
+   You can also verify that the respective services are created:
 
-The output should be similar to:
+   ```
+   kubectl get svc
+   ```
 
-```
-NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
-flowise      ClusterIP   34.118.227.187   <none>        3000/TCP    36m
-kubernetes   ClusterIP   34.118.224.1     <none>        443/TCP     72m
-ollama       ClusterIP   34.118.232.55    <none>        11434/TCP   43m
-```
+   The output should be similar to:
+
+   ```
+   NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
+   flowise      ClusterIP   34.118.227.187   <none>        3000/TCP    36m
+   kubernetes   ClusterIP   34.118.224.1     <none>        443/TCP     72m
+   ollama       ClusterIP   34.118.232.55    <none>        11434/TCP   43m
+   ```
 
 5. Forward port of the Flowise service in order to access its web UI:
 
@@ -333,18 +332,19 @@ In the example we create an agentflow that uses LLMs from the Ollama service tha
 1. Open web UI at [http://localhost:3000](http://localhost:3000)   
 2. Create new agentflow by clicking on the “Add New” button in the “Agentflows” section:
 
-![alt text](1_create_agentflow.png)
+   ![alt text](1_create_agentflow.png)
 
 3. Click on the `Load Agents` button and select our example agentflow from the file `tutorials-and-examples/flowise/agentflow.json` in the repository. This is basically a built-in `Software Team` template from the Flowise marketplace but it uses the Ollama Chat Model to access locally hosted LLMs.   
    
 
-![alt text](2_load.png)
+   ![alt text](2_load.png)
 
 4. Our example agentflow must be loaded now. Save and give it a name by clicking the save button in order to start using it:
-![alt text](3_save_agentflow.png)
 
-Note: 
-* Use the `Max Loop Count` parameter of the Loop nodes in order to prevent infinite loops.
+   ![alt text](3_save_agentflow.png)
+
+>[!NOTE]
+> Use the `Max Loop Count` parameter of the Loop nodes in order to prevent infinite loops.
 
 ### Use the Agentflow
 
@@ -352,26 +352,29 @@ The `Supervisor` node has to process the initial prompt and make a task for the 
 
 1. Open the chat window ...
    
-![alt text](4_open_chat.png)
+   ![alt text](4_open_chat.png)
 
- ... and expand it for convenience:
+   ... and expand it for convenience:
  
-![alt text](5_expand_chat.png)
+   ![alt text](5_expand_chat.png)
 
-2. Enter the prompt. In our example, we prompt the supervisor to write a snake game.
+3. Enter the prompt. In our example, we prompt the supervisor to write a snake game.
 
-When the flow is completed, you can see its visualization:
+   When the flow is completed, you can see its visualization:
 
-![alt text](6_flow.png)
+   ![alt text](6_flow.png)
 
-In the beginning the `Supervisor` requests to write the code from the `Software Engineer` worker:
-![alt text](7_supervisor_sde.png)
+   In the beginning the `Supervisor` requests to write the code from the `Software Engineer` worker:
 
-Then the code is passed by the `Supervisor` to the `Code Reviewer` worker:
-![alt text](8_supervisor_reviewer.png)
+   ![alt text](7_supervisor_sde.png)
 
-Then, after some iterations, the `Code Reviewer` should approve the code and the `Generate Final Answer` node has to print the result:
-![alt text](9_final.png)
+   Then the code is passed by the `Supervisor` to the `Code Reviewer` worker:
+
+   ![alt text](8_supervisor_reviewer.png)
+
+   Then, after some iterations, the `Code Reviewer` should approve the code and the `Generate Final Answer` node has to print the result:
+
+   ![alt text](9_final.png)
 
 ### [Optional] Use as Embedding or API endpoint
 
@@ -379,11 +382,11 @@ The agentflow can be accessed through API for further automation or embedded int
 
 1. Click on API Endpoint:
    
-![alt text](10_embed.png)
+   ![alt text](10_embed.png)
 
 2. Choose one of the options. Use the API endpoint for programmatic integration into existing applications. Use embedding to add the agentflow directly into websites as an interactive chat widget.
 
-![alt text](11_embed_window.png)
+   ![alt text](11_embed_window.png)
 
 
 ## Cleaning up
