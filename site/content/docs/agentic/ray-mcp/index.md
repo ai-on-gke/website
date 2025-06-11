@@ -13,8 +13,6 @@ tags:
  - ADK
  - Tutorials
 ---
-# Ray cluster with ADK and a custom MCP server
-
 ## Introduction
 This guide shows how to host a Model Context Protocol (MCP) server with Server Sent Events (SSE) transport on Google Kubernetes Engine (GKE), along with guidance for authenticating MCP clients. MCP is an open protocol that standardizes how AI agents interact with their environment and external data sources. MCP clients can communicate with the MCP servers using two distinct transport mechanisms:
 Standard Input/Output (stdio) - Direct process communication
@@ -56,7 +54,7 @@ Host both MCP clients and servers on a cloud platform.
 ### MCP server Development
 You have two main approaches for implementing an MCP server:
 - Develop a custom MCP server using official SDKs or third-party frameworks (like FastMCP).
-- Use exisiting MCP servers: browse the official MCP servers GitHub repository, curated MCP servers available on Docker Hub, etc.
+- Use existing MCP servers: browse the official MCP servers GitHub repository, curated MCP servers available on Docker Hub, etc.
 
 ## Overview:
 [In the tutorial with adk and vllm](https://ai-on-gke-website.uc.r.appspot.com/docs/agentic/adk-llama-vllm/), we successfully built a weather agent. However, the weather agent cannot answer questions such as "What's tomorrow's weather in Seattle" because it lacks access to a live weather data source. In this tutorial, we'll address this limitation by building and deploying a custom MCP server using FastMCP. This server will provide our agent with real-time weather capabilities and will be deployed on GKE. We will continue to use the same LLM backend powered by RayServe/vLLM ([per Ray Serve for Self-Hosted LLMs tutorial](https://ai-on-gke-website.uc.r.appspot.com/docs/agentic/ray-serve/)).
@@ -173,73 +171,72 @@ Deploy the Ray Serve application:
 2. Replace `<PROJECT_ID>` with your Google Cloud project name.
 3. Install kuberay-operator via Helm:
 
-```bash
-# Add the Helm repo
-helm repo add kuberay https://ray-project.github.io/kuberay-helm/
-helm repo update
+    ```bash
+    # Add the Helm repo
+    helm repo add kuberay https://ray-project.github.io/kuberay-helm/
+    helm repo update
 
-# Confirm the repo exists
-helm search repo kuberay --devel
+    # Confirm the repo exists
+    helm search repo kuberay --devel
 
-# Install both CRDs and KubeRay operator v1.3.2.
-helm install kuberay-operator kuberay/kuberay-operator --version 1.3.2
+    # Install both CRDs and KubeRay operator v1.3.2.
+    helm install kuberay-operator kuberay/kuberay-operator --version 1.3.2
 
-# Check the KubeRay operator Pod in `default` namespace
-kubectl get pods
-# NAME                                READY   STATUS    RESTARTS   AGE
-# kuberay-operator-6fcbb94f64-mbfnr   1/1     Running   0          17s
-```
+    # Check the KubeRay operator Pod in `default` namespace
+    kubectl get pods
+    # NAME                                READY   STATUS    RESTARTS   AGE
+    # kuberay-operator-6fcbb94f64-mbfnr   1/1     Running   0          17s
+    ```
 
 4. Apply the manifest:
-```bash
-kubectl apply -f ray-service.yaml
-```
+    ```bash
+    kubectl apply -f ray-service.yaml
+    ```
 
 Verify the deployment:
 
 - Check the Ray service status:
-```bash
-kubectl get rayservice llama-31-8b -o yaml
-```
+    ```bash
+    kubectl get rayservice llama-31-8b -o yaml
+    ```
 
-The `serviceStatus` should be `running`.
+    The `serviceStatus` should be `running`.
 
 - Check the raycluster:
-```bash
-kubectl get raycluster
-```
-
-And you should see output similar to this:
-```log
-NAME                           DESIRED WORKERS   AVAILABLE WORKERS   CPUS   MEMORY   GPUS   STATUS   AGE
-llama-31-8b-raycluster-qgzmk   1                 1                   10     33Gi     2      ready    58m
-```
+    ```bash
+    kubectl get raycluster
+    ```
+    And you should see output similar to this:
+    ```log
+    NAME                           DESIRED WORKERS   AVAILABLE WORKERS   CPUS   MEMORY   GPUS   STATUS   AGE
+    llama-31-8b-raycluster-qgzmk   1                 1                   10     33Gi     2      ready    58m
+    ```
 
 - Check the pods:
-```bash
-kubectl get pods
-```
+    ```bash
+    kubectl get pods
+    ```
 
-You should see two pods: one Ray Head Pod and one Ray Worker Pod where Worker pods run the LLM and allow for scaling as the requests grow in volume and Head pod is used for management and should stay at a single replica.
-```log
-NAME                                                  READY   STATUS    RESTARTS   AGE
-kuberay-operator-bb8d4d9c4-7h2vg                      1/1     Running   0          9m33s
-llama-31-8b-raycluster-w9jzw-gpu-group-worker-9l5zx   1/1     Running   0          9m7s
-llama-31-8b-raycluster-w9jzw-head-45rx4               1/1     Running   0          9m8s
-```
+    You should see two pods: one Ray Head Pod and one Ray Worker Pod where Worker pods run the LLM and allow for scaling as the requests grow in volume and Head pod is used for management and should stay at a single replica.
+    ```log
+    NAME                                                  READY   STATUS    RESTARTS   AGE
+    kuberay-operator-bb8d4d9c4-7h2vg                      1/1     Running   0          9m33s
+    llama-31-8b-raycluster-w9jzw-gpu-group-worker-9l5zx   1/1     Running   0          9m7s
+    llama-31-8b-raycluster-w9jzw-head-45rx4               1/1     Running   0          9m8s
+    ```
 
 - Check the config map for the chat template:
 
-```bash
-kubectl get configmaps
-```
+    ```bash
+    kubectl get configmaps
+    ```
 
-Which should display output similar to:
-```bash
-NAME                   DATA   AGE
-kube-root-ca.crt       1      4h47m
-llama-chat-templates   1      3h18m
-```
+    Which should display output similar to:
+    ```bash
+    NAME                   DATA   AGE
+    kube-root-ca.crt       1      4h47m
+    llama-chat-templates   1      3h18m
+    ```
 ### Test the Ray Serve Deployment
 
 Test the model by setting up port forwarding and sending requests.
@@ -413,52 +410,52 @@ Verify the deployment:
 
 - Check the pods:
 
-```bash
-kubectl get pods
-```
+    ```bash
+    kubectl get pods
+    ```
 
-You should see three pods: the two Ray pods and the ADK agent pod.
-```bash
-NAME                                                  READY   STATUS    RESTARTS       AGE
-adk-agent-6c8488db64-hjt86                            1/1     Running   0              61m
-kuberay-operator-bb8d4d9c4-kwjml                      1/1     Running   2 (177m ago)   3h1m
-llama-31-8b-raycluster-v8vj4-gpu-group-worker-ttfp7   1/1     Running   0              162m
-llama-31-8b-raycluster-v8vj4-head-ppt6t               1/1     Running   0              162m
-weather-mcp-server-79748fd6b5-8h4m7                   1/1     Running   0              43m
-```
+    You should see three pods: the two Ray pods and the ADK agent pod.
+    ```bash
+    NAME                                                  READY   STATUS    RESTARTS       AGE
+    adk-agent-6c8488db64-hjt86                            1/1     Running   0              61m
+    kuberay-operator-bb8d4d9c4-kwjml                      1/1     Running   2 (177m ago)   3h1m
+    llama-31-8b-raycluster-v8vj4-gpu-group-worker-ttfp7   1/1     Running   0              162m
+    llama-31-8b-raycluster-v8vj4-head-ppt6t               1/1     Running   0              162m
+    weather-mcp-server-79748fd6b5-8h4m7                   1/1     Running   0              43m
+    ```
 - Check the services:
 
-```bash
-kubectl get services
-```
+    ```bash
+    kubectl get services
+    ```
 
-You should see seven services, including the ADK service.
+    You should see seven services, including the ADK service.
 
-```bash
-NAME                                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                         AGE
-adk-agent                               ClusterIP   34.118.235.225   <none>        80/TCP                                          64m
-kuberay-operator                        ClusterIP   34.118.236.198   <none>        8080/TCP                                        3h5m
-kubernetes                              ClusterIP   34.118.224.1     <none>        443/TCP                                         3h40m
-llama-31-8b-head-svc                    ClusterIP   None             <none>        10001/TCP,8265/TCP,6379/TCP,8080/TCP,8000/TCP   153m
-llama-31-8b-raycluster-v8vj4-head-svc   ClusterIP   None             <none>        10001/TCP,8265/TCP,6379/TCP,8080/TCP,8000/TCP   165m
-llama-31-8b-serve-svc                   ClusterIP   34.118.233.111   <none>        8000/TCP                                        153m
-weather-mcp-server                      ClusterIP   34.118.239.33    <none>        8080/TCP                                        46m
-```
+    ```bash
+    NAME                                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                         AGE
+    adk-agent                               ClusterIP   34.118.235.225   <none>        80/TCP                                          64m
+    kuberay-operator                        ClusterIP   34.118.236.198   <none>        8080/TCP                                        3h5m
+    kubernetes                              ClusterIP   34.118.224.1     <none>        443/TCP                                         3h40m
+    llama-31-8b-head-svc                    ClusterIP   None             <none>        10001/TCP,8265/TCP,6379/TCP,8080/TCP,8000/TCP   153m
+    llama-31-8b-raycluster-v8vj4-head-svc   ClusterIP   None             <none>        10001/TCP,8265/TCP,6379/TCP,8080/TCP,8000/TCP   165m
+    llama-31-8b-serve-svc                   ClusterIP   34.118.233.111   <none>        8000/TCP                                        153m
+    weather-mcp-server                      ClusterIP   34.118.239.33    <none>        8080/TCP                                        46m
+    ```
 
-Access your ADK Agent using port-forwarding:
+- Access your ADK Agent using port-forwarding:
 
-```bash
-kubectl port-forward svc/adk-agent 8000:80
-```
+    ```bash
+    kubectl port-forward svc/adk-agent 8000:80
+    ```
 
-You should see the following output:
-```log
-Forwarding from 127.0.0.1:8000 -> 8080
-Forwarding from [::1]:8000 -> 8080
-```
+    You should see the following output:
+    ```log
+    Forwarding from 127.0.0.1:8000 -> 8080
+    Forwarding from [::1]:8000 -> 8080
+    ```
 
-Follow the http://127.0.0.1:8000 and test your agent.
-![](./image2.png)
+    Follow the http://127.0.0.1:8000 and test your agent.
+    ![](./image2.png)
 
 ## Step 5: Clean Up
 Destroy the provisioned infrastructure.
