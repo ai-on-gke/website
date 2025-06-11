@@ -571,8 +571,8 @@ terraform destroy -var-file=default_env.tfvars
 
 # Troubleshooting
 
-* There may be a temporary error in the pods, where we mount buckets by using FUSE. Normally, they should be resolved without any additional actions.
+There may be a temporary error in the pods, where we mount buckets by using FUSE. Normally, they should be resolved without any additional actions.
 
-    ```logs
-    MountVolume.SetUp failed for volume "datalake" : kubernetes.io/csi: mounter.SetUpAt failed to get CSI client: driver name gcsfuse.csi.storage.gke.io not found in the list of registered CSI drivers
-    ```
+```logs
+MountVolume.SetUp failed for volume "datalake" : kubernetes.io/csi: mounter.SetUpAt failed to get CSI client: driver name gcsfuse.csi.storage.gke.io not found in the list of registered CSI drivers
+```
