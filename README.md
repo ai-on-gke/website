@@ -8,6 +8,10 @@ This repository contains the source code for the [GKE AI Labs website](https://g
 The AI on GKE website website can be run locally and on AppEngine.
 Please read the [contributing](CONTRIBUTING.md) guide for directions on submitting pull requests.
 
+### Structure changes
+
+If you are moving the guide between folders, please make sure you have added redirect entry to this [file](site/main.py).
+
 ### Embed .md file from external public github repository
 
 In case you want to add .md file from external github repository:
