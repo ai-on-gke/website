@@ -27,6 +27,7 @@ Ensure you have the following tools installed on your workstation
    * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
    * [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
    * [Helm](https://helm.sh/docs/intro/install/)
+   * [NodeJS](https://nodejs.org/en/download)
 
 If you previously installed the gcloud CLI, get the latest version by running:
 
