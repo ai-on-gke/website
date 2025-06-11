@@ -26,6 +26,7 @@ Ensure you have the following tools installed on your workstation
    * [gcloud CLI](https://cloud.google.com/sdk/docs/install)
    * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
    * [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+   * [Helm](https://helm.sh/docs/intro/install/)
 
 If you previously installed the gcloud CLI, get the latest version by running:
 
@@ -49,7 +50,7 @@ Run an MCP client locally and have it communicate with remote MCP servers hosted
 #### Full Cloud Deployment
 Host both MCP clients and servers on a cloud platform.
 
-> Important Note: while GKE supports hosting MCP servers with stdio transport (through multi-container pods or sidecar patterns), streamable HTTP transport is the recommendedapproach for Kubernetes deployments. HTTP-based transport aligns better with Kubernetes networking principles, enables independent scaling of components, and provides better observability and debugging capabilities.
+> Important Note: while GKE supports hosting MCP servers with stdio transport (through multi-container pods or sidecar patterns), streamable HTTP transport is the recommended approach for Kubernetes deployments. HTTP-based transport aligns better with Kubernetes networking principles, enables independent scaling of components, and provides better observability and debugging capabilities.
 
 ### MCP server Development
 You have two main approaches for implementing an MCP server:
@@ -57,7 +58,7 @@ You have two main approaches for implementing an MCP server:
 - Use exisiting MCP servers: browse the official MCP servers GitHub repository, curated MCP servers available on Docker Hub, etc.
 
 ## Overview:
-[In tutorial 2](https://ai-on-gke-website.uc.r.appspot.com/docs/agentic/adk-llama-vllm/), we successfully built a weather agent. However, the weather agent cannot answer questions such as "What's tomorrow's weather in Seattle" because it lacks access to a live weather data source. In this tutorial, we'll address this limitation by building and deploying a custom MCP server using FastMCP. This server will provide our agent with real-time weather capabilities and will be deployed on GKE. We will continue to use the same LLM backend powered by RayServe/vLLM ([per Tutorial 3](https://ai-on-gke-website.uc.r.appspot.com/docs/agentic/ray-serve/)).
+[In the tutorial with adk and vllm](https://ai-on-gke-website.uc.r.appspot.com/docs/agentic/adk-llama-vllm/), we successfully built a weather agent. However, the weather agent cannot answer questions such as "What's tomorrow's weather in Seattle" because it lacks access to a live weather data source. In this tutorial, we'll address this limitation by building and deploying a custom MCP server using FastMCP. This server will provide our agent with real-time weather capabilities and will be deployed on GKE. We will continue to use the same LLM backend powered by RayServe/vLLM ([per Ray Serve for Self-Hosted LLMs tutorial](https://ai-on-gke-website.uc.r.appspot.com/docs/agentic/ray-serve/)).
 
 Folder structure:
 ```
@@ -129,7 +130,7 @@ Review the plan and type yes to confirm. This will create:
 
 - A GKE Autopilot cluster named `llama-ray-cluster`.
 - A service account `adk-ray-agent-sa`.
-- An IAM role binding granting the service account roles/artifactregistry.reader.
+- An IAM role binding granting the service account `roles/artifactregistry.reader`.
 - An Artifact Registry repository `llama-ray-mcp`.
 
 Configure `kubectl` to communicate with the cluster:
@@ -465,7 +466,7 @@ Forwarding from 127.0.0.1:8000 -> 8080
 Forwarding from [::1]:8000 -> 8080
 ```
 
-Follow the `127.0.0.1:8000` and test your agent.
+Follow the http://127.0.0.1:8000 and test your agent.
 ![](./image2.png)
 
 ## Step 5: Clean Up
