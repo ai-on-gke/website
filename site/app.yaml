@@ -6,20 +6,24 @@ handlers:
     upload: public/*
     require_matching_file: true
     secure: always
+    redirect_http_response_code: 301
 
   - url: /(.*)
     static_files: public/\1/index.html
     upload: public/*
     require_matching_file: true
     secure: always
+    redirect_http_response_code: 301
   
   - url: /(.*)/
     static_files: public/\1/index.html
     upload: public/*
     require_matching_file: true
     secure: always
+    redirect_http_response_code: 301
 
   - url: /
     static_dir: public/
     require_matching_file: true
     secure: always
+    redirect_http_response_code: 301
