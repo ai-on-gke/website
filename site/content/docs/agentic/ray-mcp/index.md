@@ -326,6 +326,8 @@ The response should include a tool call to `get_weather` with the parameter `cit
 }
 ```
 
+Once you ensure that everything is okay, terminate the port-forward.
+
 ## Step 3: Deploy the MCP server
 
 Navigate to the MCP Server directory:
