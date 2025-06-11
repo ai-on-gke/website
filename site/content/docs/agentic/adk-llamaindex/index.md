@@ -1,7 +1,7 @@
 ---
-linkTitle: "Llamaindex"
-title: "Llamaindex in GKE cluster"
-description: "This tutorial will guide you through creating a robust Retrieval-Augmented Generation (RAG) system using LlamaIndex and deploying it on Google Kubernetes Engine (GKE). "
+linkTitle: "ADK Llamaindex"
+title: "Building a Movie Recommendation RAG with ADK LlamaIndex on GKE"
+description: "This tutorial guides you through creating a movie recommendation Retrieval-Augmented Generation (RAG) system using LlamaIndex with the ADK and deploying it on Google Kubernetes Engine (GKE)."
 weight: 30
 type: docs
 owner: 
