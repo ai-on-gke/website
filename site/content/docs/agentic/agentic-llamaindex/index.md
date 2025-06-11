@@ -216,67 +216,67 @@ It creates:
 
 1. Go the terraform directory:
 
-```bash
-cd terraform
-```
+    ```bash
+    cd terraform
+    ```
 
 2. Specify the following values inside the `default_env.tfvars` file (or make a separate copy):
 	- `<PROJECT_ID>` – replace with your project id (you can find it in the project settings).
 
 
-Other values can be changed, if needed, but can be left with default values.
+    Other values can be changed, if needed, but can be left with default values.
 
 3. Optional. You can use a GCS bucket as a storage for a Terraform state.  [Create a bucket](https://cloud.google.com/storage/docs/creating-buckets#command-line) manually and then uncomment the content of the file `terraform/backend.tf` and specify your bucket:
 
-```
-terraform {
-   backend "gcs" {
-     bucket = "<BUCKET_NAME>"
-     prefix = "terraform/state/agentic-llamaindex"
-   }
- }
-```
+    ```hcl
+    terraform {
+      backend "gcs" {
+        bucket = "<BUCKET_NAME>"
+        prefix = "terraform/state/agentic-llamaindex"
+      }
+    }
+    ```
 
 4. Init terraform modules:
 
-```bash
-terraform init
-```
+    ```bash
+    terraform init
+    ```
 
 
 
 5. Optionally run the `plan` command to view an execution plan:
 
-```bash
-terraform plan -var-file=default_env.tfvars
-```
+    ```bash
+    terraform plan -var-file=default_env.tfvars
+    ```
 
 6. Execute the plan:
 
-```bash
-terraform apply -var-file=default_env.tfvars
-```
+    ```bash
+    terraform apply -var-file=default_env.tfvars
+    ```
 
-And you should see your resources created:
+    And you should see your resources created:
 
-```
-Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
+    ```
+    Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
 
-Outputs:
+    Outputs:
 
-bucket_name = "llamaindex-rag-demo-tf"
-demo_app_image_repo_name = "llamaindex-rag-demo-tf"
-gke_cluster_location = "us-central1"
-gke_cluster_name = "llamaindex-rag-demo-tf"
-project_id = "akvelon-gke-aieco"
+    bucket_name = "llamaindex-rag-demo-tf"
+    demo_app_image_repo_name = "llamaindex-rag-demo-tf"
+    gke_cluster_location = "us-central1"
+    gke_cluster_name = "llamaindex-rag-demo-tf"
+    project_id = "akvelon-gke-aieco"
 
-```
+    ```
 
 7. Connect the cluster:
 
-```bash
-gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location) --project $(terraform output -raw project_id)
-```
+    ```bash
+    gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location) --project $(terraform output -raw project_id)
+    ```
 
 # Deploy the application to the cluster
 
@@ -288,211 +288,204 @@ gcloud container clusters get-credentials $(terraform output -raw gke_cluster_na
 
    1. Apply Redis-stack manifest:
 
-```bash
-kubectl apply -f ../redis-stack.yaml
-```
+    ```bash
+    kubectl apply -f ../redis-stack.yaml
+    ```
 
    2. Wait for Redis-stack is successfully deployed
 
-```bash
-kubectl rollout status deployment/redis-stack
-```
+    ```bash
+    kubectl rollout status deployment/redis-stack
+    ```
 
-## 2.  Deploy Ollama server
+## 2. Deploy Ollama server
 
    [Ollama](https://ollama.com/) is a tool that will run LLMs. It interacts with Llama-index through its [ollama integration](https://docs.llamaindex.ai/en/stable/api_reference/llms/ollama/) and will serve the desired model, the `gemma2-9b` in our case.
 
    1. Deploy resulting Ollama manifest:
 
-```bash
-kubectl apply -f ../gen/ollama-deployment.yaml
-```
-<details>
-<summary>Key notes on the Ollama deployment 'ollama-deployment.yaml' file: </summary>
+        ```bash
+        kubectl apply -f ../gen/ollama-deployment.yaml
+        ```
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ollama
-spec:
-  ...
-  template:
-    metadata:
-      ...
-      annotations:
-        gke-gcsfuse/volumes: 'true' # <- use FUSE to mount our bucket
-    spec:
-      serviceAccount: ... # <- our service account
-      nodeSelector:
-        cloud.google.com/gke-accelerator: nvidia-l4 # <- specify GPU type for LLM
-      containers:
-         ...
-          volumeMounts: # <- mount bucket volume to be used by Ollama
-            - name: ollama-data
-              mountPath: /root/.ollama/ # <- Ollama's path where it stores models
-          resources:
-            limits:
-              nvidia.com/gpu: 1 # <- Enable GPU
-      volumes:
-        - name: ollama-data # <- Volume with a bucket mounted with FUSE
-          csi:
-```
-</details>
+        <details>
+        <summary>Key notes on the Ollama deployment 'ollama-deployment.yaml' file: </summary>
+
+        ```yaml
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: ollama
+        spec:
+          ...
+          template:
+            metadata:
+              ...
+              annotations:
+                gke-gcsfuse/volumes: 'true' # <- use FUSE to mount our bucket
+            spec:
+              serviceAccount: ... # <- our service account
+              nodeSelector:
+                cloud.google.com/gke-accelerator: nvidia-l4 # <- specify GPU type for LLM
+              containers:
+                ...
+                  volumeMounts: # <- mount bucket volume to be used by Ollama
+                    - name: ollama-data
+                      mountPath: /root/.ollama/ # <- Ollama's path where it stores models
+                  resources:
+                    limits:
+                      nvidia.com/gpu: 1 # <- Enable GPU
+              volumes:
+                - name: ollama-data # <- Volume with a bucket mounted with FUSE
+                  csi:
+        ```
+        </details>
 
 2. Wait for Ollama is successfully deployed:
 
-```bash
-kubectl rollout status deployment/ollama
-```
+    ```bash
+    kubectl rollout status deployment/ollama
+    ```
 
-   3. Pull the  `gemma2:9b` model within Ollama server pod:
+3. Pull the  `gemma2:9b` model within Ollama server pod:
 
-```bash
-kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull gemma2:9b
-```
+    ```bash
+    kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull gemma2:9b
+    ```
 
 ## 3. Build the demo app image
 
-
-
    1. Build the  `llamaindex-rag-demo` container image using [Cloud Build](https://cloud.google.com/build/docs/overview) and push it to the repository that is created by terraform. It uses `cloudbuild.yaml` file which uses the `app/Dockerfile` for a build. That may take some time:
 
-```bash
-gcloud builds submit ../app \
---substitutions _IMAGE_REPO_NAME="$(terraform output -raw demo_app_image_repo_name)" \
---config ../cloudbuild.yaml
-```
+        ```bash
+        gcloud builds submit ../app \
+        --substitutions _IMAGE_REPO_NAME="$(terraform output -raw demo_app_image_repo_name)" \
+        --config ../cloudbuild.yaml
+        ```
 
-   More information about the container image and demo application can be found in the `app` folder.
+      More information about the container image and demo application can be found in the `app` folder.
 
 ## 4. Ingest data to the vector database by running a Kubernetes job.
+  
+  1. Upload sample data into our bucket, which is created by the Terraform. This data then will  be ingested to our RAG’s vector store.
+
+        ```bash
+        curl -o imdb_top_1000.zip -L https://www.kaggle.com/api/v1/datasets/download/harshitshankhdhar/imdb-dataset-of-top-1000-movies-and-tv-shows | \
+        unzip -p - imdb_top_1000 | \         
+        gcloud storage cp - gs://$(terraform output -raw bucket_name)/datalake/imdb_top_1000.csv
+        ```
+
+  2. Create ingestion job:
+
+      The manifests are generated from templates in the `templates` directory and put in the `gen` directory.
 
 
 
-   1. Upload sample data into our bucket, which is created by the Terraform. This data then will  be ingested to our RAG’s vector store.
+        ```bash
+        kubectl apply -f ../gen/ingest-data-job.yaml
+        ```
 
-```bash
-curl -o imdb_top_1000.zip -L https://www.kaggle.com/api/v1/datasets/download/harshitshankhdhar/imdb-dataset-of-top-1000-movies-and-tv-shows | \
-unzip -p - imdb_top_1000 | \         
-gcloud storage cp - gs://$(terraform output -raw bucket_name)/datalake/imdb_top_1000.csv
-```
+        <details><summary>Key notes on `ingest-data-job.yaml`</summary>
 
-   2. Create ingestion job:
+        ```yaml
+        apiVersion: batch/v1
+        kind: Job
+        spec:
+          template:
+            metadata:
+              annotations:
+                gke-gcsfuse/volumes: 'true' # Enable GCS Fuse
+            spec:
+              serviceAccount: ... # Service account for GCP access
+              containers:
+                - name: ingest-data
+                  image: ${IMAGE_NAME} # Built application image
+                  command: ["python3", "cmd/ingest_data.py"] # Run ingestion script
+                  env:
+                    - name: INPUT_DIR
+                      value: /datalake # Path to mounted dataset
+                  volumeMounts:
+                    - name: datalake
+                      mountPath: /datalake
+              volumes:
+                - name: datalake
+                  csi:
+                    driver: gcsfuse.csi.storage.gke.io
+                    volumeAttributes:
+                      bucketName: ... # GCS bucket
+                      mountOptions: implicit-dirs,only-dir=datalake
+        ```
+        - Mounts the GCS bucket containing `imdb_top_1000.csv` via GCS Fuse.
+        - Runs `ingest_data.py` to index the dataset into Redis.
+        </details>
 
-
-
-   The manifests are generated from templates in the `templates` directory and put in the `gen` directory.
-
-
-
-```bash
-kubectl apply -f ../gen/ingest-data-job.yaml
-```
-
-<details><summary>Key notes on `ingest-data-job.yaml`</summary>
-
-```yaml
-apiVersion: batch/v1
-kind: Job
-spec:
-  template:
-    metadata:
-      annotations:
-        gke-gcsfuse/volumes: 'true' # Enable GCS Fuse
-    spec:
-      serviceAccount: ... # Service account for GCP access
-      containers:
-        - name: ingest-data
-          image: ${IMAGE_NAME} # Built application image
-          command: ["python3", "cmd/ingest_data.py"] # Run ingestion script
-          env:
-            - name: INPUT_DIR
-              value: /datalake # Path to mounted dataset
-          volumeMounts:
-            - name: datalake
-              mountPath: /datalake
-      volumes:
-        - name: datalake
-          csi:
-            driver: gcsfuse.csi.storage.gke.io
-            volumeAttributes:
-              bucketName: ... # GCS bucket
-              mountOptions: implicit-dirs,only-dir=datalake
-```
-
-- Mounts the GCS bucket containing `imdb_top_1000.csv` via GCS Fuse.
-- Runs `ingest_data.py` to index the dataset into Redis.
-</details>
 
 3. Wait for data to be ingested. It may take few minutes:
 
-```bash
-kubectl wait --for=condition=complete --timeout=600s job/llamaindex-ingest-data
-```
+    ```bash
+    kubectl wait --for=condition=complete --timeout=600s job/llamaindex-ingest-data
+    ```
 
 4. Verify that data has been ingested:
 
-```bash
-kubectl logs -f -l name=ingest-data
-```
+    ```bash
+    kubectl logs -f -l name=ingest-data
+    ```
 
-Expected output:
-```
-INFO:__main__:Loaded 1000 documents
-...
-INFO:__main__:Embedding generated for movie_The_Shawshank_Redemption: 384 dimensions
-INFO:__main__:Nodes created for movie_The_Shawshank_Redemption: 1
-...
-INFO:__main__:Ingested 1000 nodes
-```
+    Expected output:
+    ```logs
+    INFO:__main__:Loaded 1000 documents
+    ...
+    INFO:__main__:Embedding generated for movie_The_Shawshank_Redemption: 384 dimensions
+    INFO:__main__:Nodes created for movie_The_Shawshank_Redemption: 1
+    ...
+    INFO:__main__:Ingested 1000 nodes
+    ```
 
-**Note**: Completed job pods may be deleted by Kubernetes after some time, so check logs promptly.
+    **Note**: Completed job pods may be deleted by Kubernetes after some time, so check logs promptly.
 
 ## 5.  Deploy RAG server
 
 1. Apply created manifest:
 
-```bash
-kubectl apply -f ../gen/rag-deployment.yaml
-```
+    ```bash
+    kubectl apply -f ../gen/rag-deployment.yaml
+    ```
 
-<details><summary>Key notes on `rag-deployment.yaml`</summary>
+      <details><summary>Key notes on `rag-deployment.yaml`</summary>
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-spec:
-  template:
-    spec:
-      containers:
-        - name: llamaindex-rag
-          image: ${IMAGE_NAME} # Built application image
-          env:
-            - name: MODEL_NAME
-              value: gemma2:9b # LLM model
-            - name: OLLAMA_SERVER_URL
-              value: http://ollama-service:11434 # Ollama service URL
-```
+      ```yaml
+      apiVersion: apps/v1
+      kind: Deployment
+      spec:
+        template:
+          spec:
+            containers:
+              - name: llamaindex-rag
+                image: ${IMAGE_NAME} # Built application image
+                env:
+                  - name: MODEL_NAME
+                    value: gemma2:9b # LLM model
+                  - name: OLLAMA_SERVER_URL
+                    value: http://ollama-service:11434 # Ollama service URL
+      ```
 
-- Deploys the FastAPI application with access to the indexed Redis vector store and Ollama LLM.
-</details>
+      - Deploys the FastAPI application with access to the indexed Redis vector store and Ollama LLM.
+      </details>
 
 2. Wait for deployment is completed:
 
-```bash
-kubectl rollout status deployment/llamaindex-rag
-```
+    ```bash
+    kubectl rollout status deployment/llamaindex-rag
+    ```
 
 # Test the RAG
 
 1. Forward port to get access from a local machine:
 
-```bash
-kubectl  port-forward svc/llamaindex-rag-service 8000:8000
-```
-
-
+    ```bash
+    kubectl  port-forward svc/llamaindex-rag-service 8000:8000
+    ```
 
 2. Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) in your browser to access the FastAPI Swagger UI, which provides an interactive interface for the `/recommend` endpoint.
 
@@ -580,6 +573,6 @@ terraform destroy -var-file=default_env.tfvars
 
 * There may be a temporary error in the pods, where we mount buckets by using FUSE. Normally, they should be resolved without any additional actions.
 
-```
-MountVolume.SetUp failed for volume "datalake" : kubernetes.io/csi: mounter.SetUpAt failed to get CSI client: driver name gcsfuse.csi.storage.gke.io not found in the list of registered CSI drivers
-```
+    ```logs
+    MountVolume.SetUp failed for volume "datalake" : kubernetes.io/csi: mounter.SetUpAt failed to get CSI client: driver name gcsfuse.csi.storage.gke.io not found in the list of registered CSI drivers
+    ```
