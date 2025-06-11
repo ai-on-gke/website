@@ -350,18 +350,6 @@ Update the `./deployment_weather_mcp.yaml` file `<PROJECT_ID>` placeholders wher
 kubectl apply -f deployment_weather_mcp.yaml
 ```
 
-Validate your MCP Server by running this command:
-```bash
-npx @modelcontextprotocol/inspector
-```
-
-You should see this output in the terminal:
-```log
-Starting MCP inspector...
-⚙️ Proxy server listening on port 6277r
-🔍 MCP Inspector is up and running at http://127.0.0.1:6274 🚀
-```
-
 To validate our MCP Server, we can use MCP Inspector. Let's port-forward our MCP Server and launch the inspector. Run this command to port-forward the MCP Server:
 ```bash
 kubectl port-forward svc/weather-mcp-server 8000:8080
@@ -373,7 +361,7 @@ npx @modelcontextprotocol/inspector
 ```
 
 You should see this output:
-```
+```log
 Starting MCP inspector...
 ⚙️ Proxy server listening on port 6277
 New SSE connection. NOTE: The sse transport is deprecated and has been replaced by streamable-http
