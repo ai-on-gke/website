@@ -1,7 +1,7 @@
 ---
-linkTitle: "ADK Llamaindex"
-title: "Building a Movie Recommendation RAG with ADK LlamaIndex on GKE"
-description: "This tutorial guides you through creating a movie recommendation Retrieval-Augmented Generation (RAG) system using LlamaIndex with the ADK and deploying it on Google Kubernetes Engine (GKE)."
+linkTitle: "Agentic Llamaindex with RAG"
+title: "Building a Movie Recommendation RAG with Agentic LlamaIndex on GKE"
+description: "This tutorial guides you through creating a movie recommendation Retrieval-Augmented Generation (RAG) system using Agentic LlamaIndex and deploying it on Google Kubernetes Engine (GKE)."
 weight: 30
 type: docs
 owner: 
@@ -10,11 +10,11 @@ owner:
 tags:
  - Serving
  - Llama
- - ADK
+ - Agentic
  - RAG
 cloudShell:
     enabled: true
-    folder: site/content/docs/agentic/adk-llamaindex
+    folder: site/content/docs/agentic/agentic-llamaindex
     editorFile: index.md
 ---
 [LlamaIndex](https://docs.llamaindex.ai/en/stable/) bridges the gap between LLMs and domain-specific datasets, enabling efficient indexing and querying of unstructured data for intelligent, data-driven responses. When deployed on a [GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview) cluster, it ensures scalability and security by leveraging containerized workloads, GPU-based nodes, and seamless cloud-native integrations, making it ideal for ML-powered applications like RAG systems.
@@ -58,7 +58,7 @@ gcloud auth application-default login
 Clone the repository with our guides and cd to the llamaindex/rag directory by running these commands:
 ```bash
 git clone https://github.com/ai-on-gke/tutorials-and-examples.git
-cd tutorials-and-examples/adk-llamaindex/rag
+cd tutorials-and-examples/agentic-llamaindex/rag
 ```
 
 ## Filesystem structure
@@ -232,7 +232,7 @@ Other values can be changed, if needed, but can be left with default values.
 terraform {
    backend "gcs" {
      bucket = "<BUCKET_NAME>"
-     prefix = "terraform/state/adk-llamaindex"
+     prefix = "terraform/state/agentic-llamaindex"
    }
  }
 ```
