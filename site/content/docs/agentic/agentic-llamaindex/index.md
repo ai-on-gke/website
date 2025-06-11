@@ -21,7 +21,7 @@ cloudShell:
 
 # Overview
 
-This tutorial will guide you through creating a Intelligent Agent & robust Retrieval-Augmented Generation (RAG) system using LlamaIndex and deploying it on Google Kubernetes Engine (GKE). The system indexes a dataset of 1000 top-rated movies and uses an LLM to generate recommendations based on user queries (e.g., "best drama movies" or "movies like Inception").
+This tutorial will guide you through creating an Intelligent Agent & robust Retrieval-Augmented Generation (RAG) system using LlamaIndex and deploying it on Google Kubernetes Engine (GKE). The system indexes a dataset of 1000 top-rated movies and uses an LLM to generate recommendations based on user queries (e.g., "best drama movies" or "movies like Inception").
 
 ## What will you learn
 
