@@ -69,7 +69,13 @@ git clone https://github.com/ai-on-gke/tutorials-and-examples.git
 cd ./tutorials-and-examples/adk/llama/vllm
 ```
 
-To create a GKE Autopilot cluster for this tutorial, you should go to the `terraform` folder, copy `example_vars.tfvars` file as `vars.tfvars`. Replace the following variables with your actual values:
+To create a GKE Autopilot cluster for this tutorial, you should go to the `terraform` folder:
+
+```bash
+cd ./terraform
+```
+
+Copy `example_vars.tfvars` file as `vars.tfvars`. Replace the following variables with your actual values:
 
 * `<PROJECT_ID>`: with your Google project ID
 * `<CLUSTER_NAME>`: with any name you would like to
@@ -84,15 +90,25 @@ terraform apply -var-file=vars.tfvars
 Run the following command to get an access to your cluster:
 
 ```bash
-export CLUSTER_NAME=<CLUSTER_NAME>
+export PROJECT_ID=$(terraform output -raw project_id)
+export CLUSTER_NAME=$(terraform output -raw gke_cluster_name)
 gcloud container clusters get-credentials ${CLUSTER_NAME} --location=us-east4
 ```
 
 # Deploy an LLM to a GKE Autopilot cluster
 
-In this section we will use vLLM for the deployment and [meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) (you have to visit their site and request an access) as a core LLM. So far, you are currently in the `terraform` folder. Go to the `deploy-llm` folder. In this folder you can see the `deploy-llm.yaml` manifest, which creates a deployment with vLLM that serves Llama-3.1-8B-Instruct, template for the LLM, and a service that allows us to access this model via http protocol.
+In this section we will use vLLM for the deployment and [meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) (you have to visit their site and request an access) as a core LLM. So far, you are currently in the `terraform` folder.
 
-To successfully deploy our model, we need to create a HuggingFace secret inside the GKE cluster and a configmap that contains our template.
+Go to the `deploy-llm` folder:
+
+```bash
+cd ../deploy-llm
+```
+
+In this folder you can see the `deploy-llm.yaml` manifest, which creates a deployment with vLLM that serves Llama-3.1-8B-Instruct, template for the LLM, and a service that allows us to access this model via http protocol.
+
+To successfully deploy our model, we need to create a HuggingFace secret (with at least read permissions) inside the GKE cluster and a configmap that contains our template.
+
 Run these commands to create the HuggingFace secret:
 
 ```bash
@@ -211,9 +227,17 @@ The output should look like this:
 }
 ```
 
+If everything is okay, you can terminate the port-forwarding.
+
 # Create an ADK application
 
-You are currently in the `deploy-llm` folder. Go to the `deploy-agent` folder. Here you can see the following content:
+You are currently in the `deploy-llm` folder. Go to the `deploy-agent` folder:
+
+```bash
+cd ../deploy-agent
+```
+
+Here you can see the following content:
 
 * `weather_agent` folder: contains `__init__.py` and `agent.py` files. They define our agent functionality.
 * `deploy_agent.yaml`: creates a deployment and a service for our agent application.
@@ -225,43 +249,13 @@ In the `weather_agent/agent.py` script you can see our `get_weather` function th
 
 To be able to deploy our agent application, we need to create a repository in Artifact Registry, grant read access to the default GKE cluster account, and submit our application to the repository.
 
-Run this command create a repository:
-
-```bash
-export PROJECT_ID=<your_project_id>
-export GOOGLE_CLOUD_LOCATION=us-central1
-gcloud artifacts repositories create adk-repo \
-    --repository-format=docker \
-    --location=$GOOGLE_CLOUD_LOCATION \
-    --description="ADK repository"
-```
-
 Run this command to submit our application to the repository:
 
 ```bash
 gcloud builds submit \
-    --tag $GOOGLE_CLOUD_LOCATION-docker.pkg.dev/$PROJECT_ID/adk-repo-dima/adk-agent:latest \
+    --tag us-central1-docker.pkg.dev/$PROJECT_ID/adk-repo/adk-agent:latest \
     --project=$PROJECT_ID \
     .
-```
-
-Then grant read only permission to the default GKE cluster account by running these command:
-To get the email run this command:
-
-```bash
-gcloud container clusters describe $CLUSTER_NAME \
-  --region $REGION \
-  --format="value(nodeConfig.serviceAccount)"
-```
-
-Then replace \<DEFAULT\_EMAIL\> with actual email.
-
-```bash
-gcloud artifacts repositories add-iam-policy-binding adk-repo \
-    --project="${PROJECT_ID}" \
-    --location="${GOOGLE_CLOUD_LOCATION}" \
-    --member="serviceAccount:<DEFAULT_EMAIL>" \
-    --role="roles/artifactregistry.reader"
 ```
 
 Now you can replace `<PROJECT_ID>` in the `deploy-agent.yaml` and run this command:
@@ -323,23 +317,13 @@ INFO:     10.23.0.144:43860 - "POST /v1/chat/completions HTTP/1.1" 200 OK
 
 ## Clean up
 
-Remove the read-only access to the Artifact Registry repository by running this command:
+Go back to the `terraform` folder
 
 ```bash
-gcloud artifacts repositories remove-iam-policy-binding adk-repo \
-    --project="${PROJECT_ID}" \
-    --location="${GOOGLE_CLOUD_LOCATION}" \
-    --member="serviceAccount:<DEFAULT_EMAIL>" \
-    --role="roles/artifactregistry.reader"
+cd ../terraform
 ```
 
-Delete the Artifact Registry repository by running this command:
-
-```bash
-gcloud artifacts repositories delete adk-repo --location=${GOOGLE_CLOUD_LOCATION}
-```
-
-Go back to the `terraform` folder and run this command to delete the infrastructure:
+Run this command to delete the infrastructure:
 
 ```bash
 terraform destroy -var-file=vars.tfvars
