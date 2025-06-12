@@ -13,7 +13,7 @@ tags:
 draft: false
 cloudShell: 
     enabled: true
-    folder: site/content/docs/blueprints/ray-on-gke
+    folder: site/content/docs/tutorials/workflow-orchestration/ray-on-gke
     editorFile: index.md
 ---
 This directory contains examples, guides and best practices for running [Ray](https://www.ray.io/) on Google Kubernetes Engine.
