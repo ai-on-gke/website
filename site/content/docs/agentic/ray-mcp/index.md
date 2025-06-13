@@ -1,6 +1,6 @@
 ---
-linkTitle: "Ray cluster with ADK and a custom MCP server"
-title: "Ray cluster with ADK and a custom MCP server"
+linkTitle: "Deploying MCP Servers on GKE: Building AI Agents with ADK and Ray-Served Models"
+title: "Deploying MCP Servers on GKE: Building AI Agents with ADK and Ray-Served Models"
 description: "This guide provides instructions for deploying a **Ray cluster with the AI Device Kit (ADK)** and a **custom Model Context Protocol (MCP) server** on **Google Kubernetes Engine (GKE)**. It covers setting up the infrastructure with Terraform, containerizing and deploying the Ray Serve application, deploying a custom MCP server for real-time weather data, and finally deploying an ADK agent that utilizes these components. The guide also includes steps for verifying deployments and cleaning up resources."
 weight: 20
 type: docs
@@ -14,9 +14,9 @@ tags:
  - Tutorials
 ---
 ## Introduction
-This guide shows how to host a Model Context Protocol (MCP) server with Server Sent Events (SSE) transport on Google Kubernetes Engine (GKE), along with guidance for authenticating MCP clients. MCP is an open protocol that standardizes how AI agents interact with their environment and external data sources. MCP clients can communicate with the MCP servers using two distinct transport mechanisms:
-Standard Input/Output (stdio) - Direct process communication
-Server Sent Events (SSE) or Streamable HTTP - web-based streaming communication
+This guide shows how to host a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server with Server Sent Events (SSE) transport on Google Kubernetes Engine (GKE), along with guidance for authenticating MCP clients. MCP is an open protocol that standardizes how AI agents interact with their environment and external data sources. MCP clients can communicate with the MCP servers using two distinct transport mechanisms:
+   * [Standard Input/Output (stdio)](https://modelcontextprotocol.io/docs/concepts/transports#standard-input%2Foutput-stdio) - Direct process communication
+   * [Server Sent Events (SSE)](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) or Streamable HTTP - web-based streaming communication
 
 ## Before you begin
 
