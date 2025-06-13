@@ -21,6 +21,7 @@ steps:
     env:
       - GOPATH=/workspace/go
       - GO111MODULE=on
+      - BRACH_NAME=$BRANCH_NAME
     script: |
       npm i autoprefixer
       echo "BRACH_NAME:"
