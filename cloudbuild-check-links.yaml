@@ -23,6 +23,7 @@ steps:
       - GO111MODULE=on
     script: |
       npm i autoprefixer
+      echo "${BRANCH_NAME}"
       sed "s%github_branch: main%github_branch: ${BRANCH_NAME}%" -i  hugo.yaml
       cat hugo.yaml
       hugo build -e production
