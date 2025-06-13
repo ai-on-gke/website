@@ -24,6 +24,7 @@ steps:
     script: |
       npm i autoprefixer
       sed "s%github_branch: main%github_branch: ${BRANCH_NAME}%" -i  hugo.yaml
+      cat hugo.yaml
       hugo build -e production
   - name: lycheeverse/lychee
     allowFailure: true
