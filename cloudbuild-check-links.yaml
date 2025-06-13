@@ -21,6 +21,7 @@ steps:
     env:
       - GOPATH=/workspace/go
       - GO111MODULE=on
+      - HUGOxPARAMSxgithub_branch=$BRANCH_NAME
     script: |
       npm i autoprefixer
       hugo build -e production
