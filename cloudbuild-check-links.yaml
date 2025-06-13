@@ -24,8 +24,8 @@ steps:
     script: |
       npm i autoprefixer
       echo "BRACH_NAME:"
-      echo "${BRANCH_NAME}"
-      sed "s%github_branch: main%github_branch: ${BRANCH_NAME}%" -i  hugo.yaml
+      echo "$BRANCH_NAME"
+      sed "s%github_branch: main%github_branch: $BRANCH_NAME%" -i  hugo.yaml
       cat hugo.yaml
       hugo build -e production
   - name: lycheeverse/lychee
