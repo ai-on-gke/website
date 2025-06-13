@@ -21,7 +21,7 @@ Most examples use the [`ray-on-gke`](https://github.com/ai-on-gke/quick-start-gu
 
 ## Getting Started
 
-It is highly recommended to use the [infrastructure](https://github.com/ai-on-gke/quick-start-guides/tree/main/common/infrastructure) terraform module to create your GKE cluster.
+It is highly recommended to use the [infrastructure](https://github.com/ai-on-gke/common-infra/tree/main/common/infrastructure) terraform module to create your GKE cluster.
 
 ### Create a RayCluster on a GKE cluster
 
@@ -53,7 +53,7 @@ It is highly recommended to use the [infrastructure](https://github.com/ai-on-gk
     ```
 
 >[!NOTE]
-> See [tfvars examples](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/ray-on-gke/examples/tfvars) to explore different configuration options for the Ray cluster using the [terraform templates](https://github.com/ai-on-gke/quick-start-guides/tree/main/ray-on-gke).
+> See [tfvars examples](https://github.com/ai-on-gke/quick-start-guides/tree/main/ray-on-gke/tfvars_examples) to explore different configuration options for the Ray cluster using the [terraform templates](https://github.com/ai-on-gke/quick-start-guides/tree/main/ray-on-gke).
 
 ### Install Ray
 
@@ -134,14 +134,11 @@ this remote function will print the resources available in the cluster:
 See the following guides and tutorials for running Ray applications on GKE:
 * [Getting Started with KubeRay](https://docs.ray.io/en/latest/cluster/kubernetes/getting-started.html)
 * [Serve an LLM on L4 GPUs with Ray](https://cloud.google.com/kubernetes-engine/docs/how-to/serve-llm-l4-ray)
-* [Logging & Monitoring for Ray clusters](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/guides/observability)
 * [TPU Guide](https://github.com/ai-on-gke/kuberay-tpu-webhook)
 * [Priority Scheduling with RayJob and Kueue](https://docs.ray.io/en/master/cluster/kubernetes/examples/rayjob-kueue-priority-scheduling.html)
 * [Gang Scheduling with RayJob and Kueue](https://docs.ray.io/en/master/cluster/kubernetes/examples/rayjob-kueue-gang-scheduling.html)
-* [RayTrain with GCSFuse CSI driver](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/guides/raytrain-with-gcsfusecsi)
 * [Configuring KubeRay to use Google Cloud Storage Buckets in GKE](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/gke-gcs-bucket.html)
-* [Example Notebooks with Ray](https://github.com/GoogleCloudPlatform/ai-on-gke/tree/main/ray-on-gke/examples/notebooks)
-* [Example templates for Ray clusterse](https://github.com/GoogleCloudPlatform/ai-on-gke/blob/main/ray-on-gke/examples/tfvars)
+* [Example templates for Ray clusterse](https://github.com/ai-on-gke/quick-start-guides/tree/main/ray-on-gke/tfvars_examples)
 
 ## Blogs & Best Practices
 
