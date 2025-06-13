@@ -21,13 +21,9 @@ steps:
     env:
       - GOPATH=/workspace/go
       - GO111MODULE=on
-      - BRANCH_NAME=$BRANCH_NAME
+      - HUGOxPARAMSxgithub_branch=$BRANCH_NAME
     script: |
       npm i autoprefixer
-      echo "BRACH_NAME:"
-      echo "$BRANCH_NAME"
-      sed "s%github_branch: main%github_branch: $BRANCH_NAME%" -i  hugo.yaml
-      cat hugo.yaml
       hugo build -e production
   - name: lycheeverse/lychee
     allowFailure: true
