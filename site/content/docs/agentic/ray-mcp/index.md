@@ -18,6 +18,15 @@ This guide shows how to host a [Model Context Protocol (MCP)](https://modelconte
    * [Standard Input/Output (stdio)](https://modelcontextprotocol.io/docs/concepts/transports#standard-input%2Foutput-stdio) - Direct process communication
    * [Server Sent Events (SSE)](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) or Streamable HTTP - web-based streaming communication
 
+### You have several options for deploying MCP:
+1. Local Development: Host both MCP clients and servers on the same local machine
+
+2. Hybrid Setup: Run an MCP client locally and have it communicate with remote MCP servers hosted on a cloud platform like GKE
+
+3. Full Cloud Deployment: Host both MCP clients and servers on a cloud platform.
+
+> Important Note: while GKE supports hosting MCP servers with stdio transport (through multi-container pods or sidecar patterns), streamable HTTP transport is the recommended approach for Kubernetes deployments. HTTP-based transport aligns better with Kubernetes networking principles, enables independent scaling of components, and provides better observability and debugging capabilities.
+
 ## Before you begin
 
 Ensure you have the following tools installed on your workstation
@@ -38,18 +47,6 @@ Ensure that you are signed in using the gcloud CLI tool. Run the following comma
 ```
 gcloud auth application-default login
 ```
-
-### You have several options for deploying MCP:
-#### Local Development
-Host both MCP clients and servers on the same local machine
-
-#### Hybrid Setup
-Run an MCP client locally and have it communicate with remote MCP servers hosted on a cloud platform like GKE
-
-#### Full Cloud Deployment
-Host both MCP clients and servers on a cloud platform.
-
-> Important Note: while GKE supports hosting MCP servers with stdio transport (through multi-container pods or sidecar patterns), streamable HTTP transport is the recommended approach for Kubernetes deployments. HTTP-based transport aligns better with Kubernetes networking principles, enables independent scaling of components, and provides better observability and debugging capabilities.
 
 ### MCP server Development
 You have two main approaches for implementing an MCP server:
@@ -83,7 +80,7 @@ tutorials-and-examples/adk/ray-mcp/
 │  └── Dockerfile
 │  └── requirements.txt
 │
-└── mcp_server
+└── terraform
     ├── artifact_registry.tf
     └── main.tf
     └── outputs.tf
