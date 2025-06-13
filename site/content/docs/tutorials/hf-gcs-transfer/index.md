@@ -29,7 +29,7 @@ This guide uses a Kubernetes Job to load [meta-llama/Meta-Llama-3-8B](https://hu
 
    * The GKE and Cloud Storage APIs can be enabled by running:
 
-     ```
+     ```bash
      gcloud services enable container.googleapis.com
      gcloud services enable storage.googleapis.com
      ```
@@ -61,7 +61,8 @@ export HF_USER=<your-hf-username>
 export CLUSTER_NAME=meta-llama-3-8b-cluster
 ```
 
-> Note: You might have to rerun the export commands if for some reason you reset your shell and the variables are no longer set. This can happen for example when your Cloud Shell disconnects.
+>[!NOTE]
+>You might have to rerun the export commands if for some reason you reset your shell and the variables are no longer set. This can happen for example when your Cloud Shell disconnects.
 
 Create a GKE Autopilot cluster by running the following command. If you choose to create a GKE standard cluster, you will need enable [Workload Identity Federation for GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/workload-identity), and the [Cloud Storage FUSE CSI Driver](https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-storage-fuse-csi-driver-setup#enable) on your cluster.
  
@@ -71,7 +72,6 @@ gcloud container clusters create-auto ${CLUSTER_NAME} \
   --region=${REGION} \
   --labels=created-by=ai-on-gke,guide=hf-gcs-transfer 
 ```
-
 
 ### Create a Kubernetes secret for Hugging Face credentials
 
@@ -95,7 +95,9 @@ In your shell session, do the following:
 ## Create your Cloud Storage bucket
 
 Now, create the Cloud Storage bucket for the model weights, by running the following command.
-> Note: Cloud Storage bucket's names must be globally unique, and you must have the Storage Admin (`roles/storage.admin`) IAM role for the project where the bucket is created. See [Create a Bucket](https://cloud.google.com/storage/docs/creating-buckets) for details.
+
+>[!NOTE]
+>Cloud Storage bucket's names must be globally unique, and you must have the Storage Admin (`roles/storage.admin`) IAM role for the project where the bucket is created. See [Create a Bucket](https://cloud.google.com/storage/docs/creating-buckets) for details.
 
 ```bash
 export BUCKET_NAME=${PROJECT_ID}-meta-llama-3-8b
@@ -108,7 +110,8 @@ gcloud storage buckets create ${BUCKET_URI} --project=${PROJECT_ID}
 1. Configure access for the `producer-job` Job, to the Cloud Storage bucket. 
 
     To make your Cloud Storage bucket accessible by your GKE cluster, authenticate using Workload Identity Federation for GKE with the Cloud Storage bucket. 
-    > Note: if you don't have Workload Identity Federation for GKE enabled, follow [these steps](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_on_clusters_and_node_pools) to enable it.
+    >[!NOTE] 
+    > If you don't have Workload Identity Federation for GKE enabled, follow [these steps](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_on_clusters_and_node_pools) to enable it.
 
     Grant the Storage Admin (`roles/storage.admin`) IAM role for Cloud Storage to the Kubernetes ServiceAccount by running the following commands. If you are using a custom workload identity pool, you will need to update the workload identity pool name in the command below. Custom Workload Identitiy pools are not supported in Autopilot clusters.
 
@@ -267,7 +270,8 @@ gcloud storage buckets create ${BUCKET_URI} --project=${PROJECT_ID}
       namespace: "${NAMESPACE}"
     ```
 
-    > Note: if you are using a GKE Standard cluster with Node Autoprovisioning disabled, you will need to manually provision a C3 nodepool with 1 node, that has sufficient RAM memory to fit the model weights in RAM memory.
+    >[!NOTE]
+    >If you are using a GKE Standard cluster with Node Autoprovisioning disabled, you will need to manually provision a C3 nodepool with 1 node, that has sufficient RAM memory to fit the model weights in RAM memory.
 
     It might take a few minutes for the Job to schedule, and finish copying data to the GCS bucket. When the Job completes, its status is marked "Complete". After the Job completes, your Cloud Storage bucket should contain the [meta-llama/Meta-Llama-3-8B files](https://huggingface.co/meta-llama/Meta-Llama-3-8B/tree/main) ( except for the `.gitattributes` and the `original/` folder) within a `model` folder.
 
@@ -286,7 +290,8 @@ gcloud storage buckets create ${BUCKET_URI} --project=${PROJECT_ID}
     kubectl get job producer-job --namespace ${NAMESPACE}
     ```
     
-    > Note: Once you see that the Job has the "Complete" Status, the transfer is complete.
+    >[!NOTE]
+    >Once you see that the Job has the "Complete" Status, the transfer is complete.
 
     To see logs for the download container while it is running, run the following command: 
     ```bash
