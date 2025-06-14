@@ -97,10 +97,10 @@ It creates the following resources. For more information such as resource names 
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the application.  
     
 
-1. Go the the terraform directory:
+1. Go to the terraform directory:
 
     ```bash
-    cd terraform
+    cd terraform/infra
     ``` 
 
 2. Specify the following values inside the `default_env.tfvars` file (or make a separate copy):  
@@ -133,13 +133,17 @@ It creates the following resources. For more information such as resource names 
     
     Outputs:
     
+    cluster_ca_certificate = <sensitive>
+    cluster_host = "<url>"
+    cluster_membership_id = "adk-tf"
     gke_cluster_location = "us-central1"
     gke_cluster_name = "adk-tf"
-    image_repository_full_name = "us-docker.pkg.dev/<PROJECT ID>/adk-tf"
+    image_repository_full_name = "us-docker.pkg.dev/<PROJECT_ID>/adk-tf"
     image_repository_location = "us"
     image_repository_name = "adk-tf"
     k8s_service_account_name = "adk-tf"
-    project_id = <PROJECT ID>
+    private_cluster = false
+    project_id = "<PROJECT_ID>"
     ```
 
 6. Configure your kubectl context:
@@ -162,7 +166,7 @@ It creates the following resources. For more information such as resource names 
     # Get the directory where main.py is located
     AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
     # Example session DB URL (e.g., SQLite)
-    SESSION_DB_URL = "sqlite:///./sessions.db"
+    SESSION_DB_URL = "sqlite://"
     # Example allowed origins for CORS
     ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
     # Set web=True if you intend to serve a web interface, False otherwise
@@ -270,7 +274,7 @@ It creates the following resources. For more information such as resource names 
     gcloud builds submit \
         --tag $(terraform output -raw image_repository_full_name)/adk-agent:latest \
         --project=$(terraform output -raw project_id) \
-        ../app
+        ../../app
     ```
 
 6. Run this command to create `app/deployment.yaml` file with Kubernetes Manifest. This command has to create manifest with values taken from the terraform:
@@ -352,7 +356,7 @@ It creates the following resources. For more information such as resource names 
 7. Apply the manifest:
 
     ```bash
-    kubectl apply -f ../app/deployment.yaml
+    kubectl apply -f ../../app/deployment.yaml
     ```
 
 8. Wait for deployment to be completed. It may take some time:
@@ -361,15 +365,48 @@ It creates the following resources. For more information such as resource names 
     kubectl rollout status deployment/adk-agent
     ```
 
-## Testing your Deployed Agent
 
-1. Forward port of the deployed application service:
+### Enable IAP and create OAuth client
+
+Before securing the application with Identity-Aware Proxy (IAP), ensure that the OAuth consent screen is configured. Go to the [IAP page](https://console.cloud.google.com/security/iap) and click "Configure consent screen" if prompted.
+
+Next, create an OAuth 2.0 client ID by visiting the [Credentials page](https://console.cloud.google.com/apis/credentials) and selecting "Create OAuth client ID". Use the "Web application" type and proceed with the creation. Save the Client ID and secret for later use. Then go back to the [Credentials page](https://console.cloud.google.com/apis/credentials), click on the OAuth 2.0 client ID you created, and add the redirect URI as follows: `https://iap.googleapis.com/v1/oauth/clientIds/<CLIENT_ID>:handleRedirect` (replace `<CLIENT_ID>` with the actual client ID). This is crucial because the redirect URI is used by the OAuth 2.0 authorization server to return the authorization code to your application. If it is not configured correctly, the authorization process will fail, and users will not be able to log in to the application.
+
+
+1. Go to the directory with the Terraform config for IAP:
 
     ```bash
-    kubectl port-forward svc/adk-agent 8080:80
+    cd ../iap
     ```
 
-2. Go to the [http://localhost:8080/](http://localhost:8080/) and test the web UI. You can test your agent by simply navigating to the kubernetes service URL in your web browser.
+2. Create a tfvars file or edit the existing `default_env.tfvars` and specify the next variables:
+
+    * `support_email` - email that will be shown in the consent screen.
+    * `oauth_client_id` - OAuth client ID.
+    * `oauth_client_secret` - OAuth client secret.
+
+3. Apply the IAP Terraform config:
+
+    ```bash
+    terraform apply -var-file default_env.tfvars
+    ```
+
+4. Wait for a managed certificate is provisioned. Since the provisioning time for the certificate is longer than for other resources, it should be safe to assume that other resources are also ready:
+
+    ```bash
+    kubectl wait --for='jsonpath={.status.domainStatus[0].status}=Active' managedcertificate/$(terraform output -raw k8s_managed_cert_name) --timeout=20m
+    ```
+
+
+## Testing your Deployed Agent
+
+1. Print the url of the Web UI:
+
+    ```bash
+    terraform output app_url
+    ```
+
+2. Open this url in browser and test the web UI. You can test your agent by simply navigating to the kubernetes service URL in your web browser.
 
     The ADK dev UI allows you to interact with your agent, manage sessions, and view execution details directly in the browser.
     
