@@ -223,7 +223,7 @@ gcloud builds submit \
 Update the `./deployment_agent.yaml` file `<PROJECT-ID>` placeholders where applicable. Apply the manifest:
 
 ```bash
-kubectl apply -f ./deployment_agent.yaml
+kubectl apply -f deployment_agent.yaml
 ```
 
 Verify the deployment:
