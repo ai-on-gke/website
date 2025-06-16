@@ -176,7 +176,7 @@ kubectl port-forward svc/weather-mcp-server 8000:8080
 
 And in another terminal session run this command:
 ```bash
-npx @modelcontextprotocol/inspector
+npx @modelcontextprotocol/inspector@0.14.2
 ```
 
 You should see this output:
