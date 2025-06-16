@@ -182,24 +182,23 @@ npx @modelcontextprotocol/inspector
 You should see this output:
 ```log
 Starting MCP inspector...
-⚙️ Proxy server listening on port 6277
-New SSE connection. NOTE: The sse transport is deprecated and has been replaced by streamable-http
-Query parameters: [Object: null prototype] {
-  url: 'http://127.0.0.1:8000/sse',
-  transportType: 'sse'
-}
-SSE transport: url=http://127.0.0.1:8000/sse, headers=Accept
-Connected to SSE transport
-Connected MCP client to backing server transport
-Created client transport
-Created server transport
-Set up MCP proxy
-🔍 MCP Inspector is up and running at http://127.0.0.1:6274 🚀
+⚙️ Proxy server listening on 127.0.0.1:6277
+🔑 Session token: <SESSION_TOKEN>
+Use this token to authenticate requests or set DANGEROUSLY_OMIT_AUTH=true to disable auth
+
+🔗 Open inspector with token pre-filled:
+   http://localhost:6274/?MCP_PROXY_AUTH_TOKEN=<SESSION_TOKEN>
+   (Auto-open is disabled when authentication is enabled)
+
+🔍 MCP Inspector is up and running at http://127.0.0.1:6274
 ```
 
-> Note: if the inspector didn't see your MCP Server, you can specify it manually in the UI.
+To connect to your MCP Server, you need to do the following:
+   * `Transport Type` - choose `SSE`.
+   * `URL` - paste `http://127.0.0.1:8000/sse`.
+   * `Configutation` -> `Proxy Session Token` - paste `<SESSION_TOKEN>` from the terminal (see example logs above).
 
-In the UI press the `Connect` button, and navigate to the `tools` tab. Here you can push the `List Tools` button and check how these tools work.
+Press the `Connect` button, and navigate to the `tools` tab. Here you can push the `List Tools` button and check how these tools work.
 ![](./image1.png)
 
 Now you can cancel the port-forwarding and close the inspector.
