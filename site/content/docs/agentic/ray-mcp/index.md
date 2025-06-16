@@ -59,13 +59,7 @@ You have two main approaches for implementing an MCP server:
 Folder structure:
 ```
 tutorials-and-examples/adk/ray-mcp/
-├── ray-serve-vllm
-│   ├── ray-service.yaml
-│   └── serve-chat-completion.py
-│   └── Dockerfile
-│   └── requirements.txt
-│
-└── adk_agent
+├── adk_agent
 │  └── weather_agent
 │  │   ├── __init__.py
 │  │   ├── weather_agent.py
@@ -91,7 +85,7 @@ tutorials-and-examples/adk/ray-mcp/
     └── workload_identity.tf
 ```
 
-## Step 1: Set Up the Infrastructure with Terraform
+## Step 1: Set Up the Infrastructure with Terraform and install Ray Cluster
 
 Start by setting up the GKE cluster, service account, IAM roles, and Artifact Registry using Terraform.
 
@@ -112,7 +106,7 @@ export HF_TOKEN=<MY_HF_TOKEN>
 export CLUSTER_NAME=llama-ray-cluster
 ```
 
-Update the <PROJECT_ID> placeholder in `default_env.tfvars` with your own Google Cloud Project ID Name.
+Update the `<PROJECT_ID>` placeholder in `default_env.tfvars` with your own Google Cloud Project ID Name.
 
 Initialize Terraform, inspect plan and apply the configuration:
 
@@ -127,13 +121,15 @@ Review the plan and type yes to confirm. This will create:
 - A GKE Autopilot cluster named `llama-ray-cluster`.
 - A service account `adk-ray-agent-sa`.
 - An IAM role binding granting the service account `roles/artifactregistry.reader`.
-- An Artifact Registry repository `llama-ray-mcp`.
+- An Artifact Registry repository `llama-ray`.
 
 Configure `kubectl` to communicate with the cluster:
 
 ```bash
 gcloud container clusters get-credentials $CLUSTER_NAME --region=$REGION --project $PROJECT_ID
 ```
+
+## Step 2: Containerize and Deploy the Ray Serve Application
 
 Create a Kubernetes secret for the Hugging Face token:
 
@@ -143,23 +139,27 @@ kubectl create secret generic hf-secret \
   --dry-run=client -o yaml | kubectl apply -f -
 ```
 
-## Step 2: Containerize and Deploy the Ray Serve Application
+Follow [this tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/) deploy your Ray Serve application. You can navigate this folder by running this command:
 
-Follow [this tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/) deploy your Ray Serve application. After you finish this step, our agent will connect to this Ray Serve application to invoke the LLM.
+```bash
+cd ../../../ray-serve/ray-serve-vllm
+```
+
+After you finish this step, proceed to the `Step 3: Deploy the MCP server` in this tutorial. our agent will connect to this Ray Serve application to invoke the LLM.
 
 ## Step 3: Deploy the MCP server
 
-Navigate to the MCP Server directory:
+Based on the previous step, you should be in `tutorials-and-examples/ray-serve/ray-serve-vllm` directory. Let's navigate to the MCP Server directory:
 
 ```bash
-cd ../mcp_server
+cd ../../adk/ray-mcp/mcp_server
 ```
 
-Build and push the MCP Server container image:
+Now we can build and push the MCP Server container image:
 
 ```bash
 gcloud builds submit \
-    --tag us-docker.pkg.dev/$PROJECT_ID/llama-ray-mcp/mcp-server:latest \
+    --tag us-docker.pkg.dev/$PROJECT_ID/llama-ray/mcp-server:latest \
     --project=$PROJECT_ID \
     .
 ```
@@ -215,7 +215,7 @@ Build and push the ADK agent container image:
 
 ```bash
 gcloud builds submit \
-    --tag us-docker.pkg.dev/$PROJECT_ID/llama-ray-mcp/adk-agent:latest \
+    --tag us-docker.pkg.dev/$PROJECT_ID/llama-ray/adk-agent:latest \
     --project=$PROJECT_ID \
     .
 ```
