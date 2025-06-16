@@ -139,7 +139,7 @@ kubectl create secret generic hf-secret \
   --dry-run=client -o yaml | kubectl apply -f -
 ```
 
-Follow [this tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/) deploy your Ray Serve application. You can navigate this folder by running this command:
+To deploy Ray Serve application, you should go to [this tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/) and follow the Step 2 (`Containerize and Deploy the Ray Serve Application`).
 
 ```bash
 cd ../../../ray-serve/ray-serve-vllm
@@ -278,7 +278,10 @@ Verify the deployment:
     ![](./image2.png)
 
 ## Step 5: Clean Up
+
 Destroy the provisioned infrastructure.
+
 ```bash
+cd ../terraform
 terraform destroy -var-file=default_env.tfvars
 ```
