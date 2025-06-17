@@ -1,5 +1,16 @@
-def app(_, start_response):
+# from => to
+REDIRECTS = {
+    '/docs/blueprints/ray-on-gke/': '/docs/tutorials/workflow-orchestration/ray-on-gke/',
+}
+
+
+def app(environ, start_response):
   try:
+    if environ['PATH_INFO'] in REDIRECTS:
+      new_url = REDIRECTS[environ['PATH_INFO']]
+      HTTP_HOST = environ.get('HTTP_HOST', '')
+      start_response('301 Moved Permanently', [('Location', 'https://' + HTTP_HOST + new_url)])
+      return []
     # Specify the file path
     file_path = "public/404.html"
     
