@@ -46,7 +46,7 @@ The following topics are also out of scope for this guide:
 
 If you are searching for a guide or an automation tool that can help you set up Slurm on Google Cloud, with a focus on HPC workloads, we recommend that you use the [Google Cloud Cluster Toolkit](https://cloud.google.com/cluster-toolkit/docs/overview).
 
-## Slurm on Solution architecture
+## Slurm on GKE (google Kubernetes Engine) solution architecture
 
 The implemented architecture is composed of multiple StatefulSets and Deployments in order to cover the different Slurm components. The following diagram shows a Slurm control plane and a data plane that are running in GKE.
 

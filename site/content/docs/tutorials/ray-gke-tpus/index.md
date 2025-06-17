@@ -19,7 +19,7 @@ cloudShell:
 This directory contains instructions for running [KubeRay](https://github.com/ray-project/kuberay) with [TPUs](https://cloud.google.com/tpu?hl=en) on Google Kubernetes Engine. This includes instructions for installing the [KubeRay TPU webhook](https://github.com/ai-on-gke/kuberay-tpu-webhook/tree/main) to enable multi-host TPU workloads.
 
 
-### Prerequisites
+## Prerequisites
 
 Please follow the official [Google Cloud documentation](https://cloud.google.com/tpu/docs/tpus-in-gke) for an introduction to TPUs. In particular, please ensure that your GCP project has sufficient quotas to provision the cluster, see [this link](https://cloud.google.com/tpu/docs/tpus-in-gke#ensure-quotas) for details.
 
@@ -30,7 +30,7 @@ In addition, please ensure the following are installed on your local development
 * Kubectl
 
 
-### Manually Installing the TPU Initialization Webhook
+## Manually Installing the TPU Initialization Webhook
 
 The TPU Initialization Webhook automatically bootstraps the TPU environment for TPU clusters. The webhook needs to be installed once per GKE cluster and requires a KubeRay Operator running v1.1+ and GKE cluster version of 1.28+. The webhook requires [cert-manager](https://github.com/cert-manager/cert-manager) to be installed in-cluster to handle TLS certificate injection. cert-manager can be installed in both GKE standard and autopilot clusters using the following helm commands:
 ```
@@ -59,13 +59,13 @@ The above command can be edited with `-f` or `--set` flags to pass in a custom v
 For common errors encountered when deploying the webhook, see the [Troubleshooting guide](https://github.com/ai-on-gke/kuberay-tpu-webhook/tree/main/Troubleshooting.md).
 
 
-### Creating the KubeRay Cluster
+## Creating the KubeRay Cluster
 
 You can find sample TPU cluster manifests for [single-host](https://github.com/ray-project/kuberay/blob/master/ray-operator/config/samples/ray-cluster.tpu-v4-singlehost.yaml) and [multi-host](https://github.com/ray-project/kuberay/blob/master/ray-operator/config/samples/ray-cluster.tpu-v4-multihost.yaml) here.
 
 For a quick-start guide to using TPUs with KubeRay, see [Use TPUs with KubeRay](https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/tpu.html).
 
-### Running Sample Workloads
+## Running Sample Workloads
 
 1. Save the following to a local file (e.g. `test_tpu.py`):
 

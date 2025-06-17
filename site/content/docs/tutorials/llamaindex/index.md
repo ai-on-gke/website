@@ -17,18 +17,18 @@ cloudShell:
 ---
 [LlamaIndex](https://docs.llamaindex.ai/en/stable/) bridges the gap between LLMs and domain-specific datasets, enabling efficient indexing and querying of unstructured data for intelligent, data-driven responses. When deployed on a [GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview) cluster, it ensures scalability and security by leveraging containerized workloads, GPU-based nodes, and seamless cloud-native integrations, making it ideal for ML-powered applications like RAG systems.
 
-# Overview
+## Overview
 
 This tutorial will guide you through creating a robust Retrieval-Augmented Generation (RAG) system using LlamaIndex and deploying it on Google Kubernetes Engine (GKE).
 
-## What will you learn
+### What will you learn
 
 1. **Data Preparation and Ingestion:** Use LlamaIndex to structure and index your data for efficient querying.
 2. **Model Integration:** Connect LlamaIndex with an LLM to build a RAG pipeline that can generate precise responses based on your indexed data.
 3. **Containerization:** Package the application as a container for deployment.
 4. **GKE Deployment:** Set up a GKE cluster using [Terraform](https://developer.hashicorp.com/terraform?product_intent=terraform) and deploy your RAG system, leveraging Kubernetes features.
 
-# Before you begin
+## Before you begin
 
 Ensure you have a GCP project with a billing account.
 
@@ -51,7 +51,7 @@ gcloud components update
 gcloud auth application-default login
 ```
 
-## Download the guide files
+### Download the guide files
 
 Clone the repository with our guides and cd to the llamaindex/rag directory by running these commands:
 ```bash
@@ -59,17 +59,17 @@ git clone https://github.com/ai-on-gke/tutorials-and-examples.git
 cd tutorials-and-examples/llamaindex/rag
 ```
 
-## Filesystem structure
+### Filesystem structure
 
 * `app` \- folder with demo Python application that uses llamaindex to ingest data to RAG and infer it through web API.
 * `templates` \- folder with Kubernetes manifests that require additional processing to specify additional values that are not known from the start.
 * `terraform` \- folder with terraform config that executes automated provisioning of required infrastructure resources.
 
-## Demo application
+### Demo application
 
 The demo application consists of following components:
 
-### Data ingestion
+#### Data ingestion
 
 The data ingestion is a process of adding data to be used by a RAG.
 It is defined in the `app/cmd/ingest_data.py`.
@@ -140,7 +140,7 @@ custom_schema = IndexSchema.from_dict(
 ```
 </details>
 
-### RAG server
+#### RAG server
 
 Simple web application that invokes llamaindex RAG system and returns response. The web application will be a simple FastAPI app, so we can invoke the RAG system via HTTP request. It is defined in the `app/rag_demo/main.py` file as a FastAPI application and a single `/invoke` API and connection to the Redis Vector Store.
 
@@ -172,9 +172,7 @@ query_engine = index.as_query_engine(llm=llm)
 
 </details>
 
-###
-
-# Infrastructure Setup
+## Infrastructure Setup
 
 In this section we will use `Terraform` to automate the creation of infrastructure resources. For more details how it is done please refer to the terraform config in the `terraform` folder.
 By default it creates an Autopilot GKE cluster but it can be changed to standard by setting `autopilot_cluster=false`
@@ -254,9 +252,9 @@ project_id = "akvelon-gke-aieco"
 gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location) --project $(terraform output -raw project_id)
 ```
 
-# Deploy the application to the cluster
+## Deploy the application to the cluster
 
-## 1. Deploy Redis-stack.
+### 1. Deploy Redis-stack.
 
    For this guide it was decided to use [redis-stack](https://hub.docker.com/r/redis/redis-stack) as a vector store, but there are many other [options](https://docs.llamaindex.ai/en/stable/module_guides/storing/vector_stores/).
 
@@ -274,7 +272,7 @@ kubectl apply -f ../redis-stack.yaml
 kubectl rollout status deployment/redis-stack
 ```
 
-## 2.  Deploy Ollama server
+### 2.  Deploy Ollama server
 
    [Ollama](https://ollama.com/) is a tool that will run LLMs. It interacts with Llama-index through its [ollama integration](https://docs.llamaindex.ai/en/stable/api_reference/llms/ollama/) and will serve the desired model, the `gemma2-9b` in our case.
 
@@ -328,7 +326,7 @@ kubectl rollout status deployment/ollama
 kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull gemma2:9b
 ```
 
-## 3. Build the demo app image
+### 3. Build the demo app image
 
 
 
@@ -342,7 +340,7 @@ gcloud builds submit ../app \
 
    More information about the container image and demo application can be found in the `app` folder.
 
-## 4. Ingest data to the vector database by running a Kubernetes job.
+### 4. Ingest data to the vector database by running a Kubernetes job.
 
 
 
@@ -425,7 +423,7 @@ Ingested 21 Nodes
 
 *NOTE: The job's pod might not be available to check if you wait too long, as Kubernetes can delete completed jobs after a period of time.*
 
-## 5.  Deploy RAG server
+### 5.  Deploy RAG server
 
 1. Apply created manifest:
 
@@ -466,7 +464,7 @@ spec:
 kubectl rollout status deployment/llamaindex-rag
 ```
 
-# Test the RAG
+## Test the RAG
 
 1. Forward port to get access from a local machine:
 
@@ -490,13 +488,13 @@ kubectl  port-forward svc/llamaindex-rag-service 8000:8000
 
 
 
-# Cleanup
+## Cleanup
 
 ```bash
 terraform destroy -var-file=default_env.tfvars
 ```
 
-# Troubleshooting
+## Troubleshooting
 
 * There may be a temporary error in the pods, where we mount buckets by using FUSE. Normally, they should be resolved without any additional actions.
 
