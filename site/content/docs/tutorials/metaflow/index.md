@@ -19,7 +19,7 @@ cloudShell:
 This tutorial will provide instructions on how to deploy and use the [Metaflow](https://docs.metaflow.org/) framework on GKE (Google Kubernetes Engine) and operate AI/ML workloads using [Argo-Workflows](https://argo-workflows.readthedocs.io/en/latest/).
 The tutorial is designed for ML Platform engineers who plan to use Metaflow for ML workloads on top of GKE by offloading resource-intensive tasks to a managed cluster.
 
-# Overview
+## Overview
 
 1. Provision [GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview) cluster and install [Argo Workflows](https://argoproj.github.io/workflows/) using [Terraform](https://developer.hashicorp.com/terraform/intro).
 2. Deploy and configure [Metaflow’s Metadata Service](https://docs.metaflow.org/getting-started/infrastructure).
@@ -28,7 +28,7 @@ The tutorial is designed for ML Platform engineers who plan to use Metaflow for 
 5. Fine-tune the model using Metaflow and Argo Workflow and GKE.
 6. Deploy the fine-tuned model on GKE for inference.
 
-# Before you begin
+## Before you begin
 
 1. Ensure you have a gcp project with billing enabled and [enabled the GKE API](https://cloud.google.com/kubernetes-engine/docs/how-to/enable-gkee).
 2. Ensure you have the following tools installed on your workstation
@@ -50,9 +50,9 @@ Ensure that you are signed in using the gcloud CLI tool. Run the following comma
 gcloud auth application-default login
 ```
 
-# Infrastructure Setup
+## Infrastructure Setup
 
-## Clone the repository
+### Clone the repository
 
 Clone the repository with our guides and cd to the llamaindex/rag directory by running these commands:
 ```bash
@@ -60,14 +60,14 @@ git clone https://github.com/ai-on-gke/tutorials-and-examples.git
 cd tutorials-and-examples/mlflow/finetune-gemma
 ```
 
-## Filesystem structure
+### Filesystem structure
 
 * `finetune_inside_metaflow/` \- folder with [Metaflow Flow](https://docs.metaflow.org/metaflow/basics) for fine-tuning the Gemma-2 model.
 * `serve_model/` \- a simple deployment manifest for serving the fine-tuned model within the same GKE cluster.
 * `metaflow/manifests/` \- folder with Kubernetes manifests. These files are [templates](https://developer.hashicorp.com/terraform/language/functions/templatefile) that require additional processing by the terraform to specify additional values that are not known from the start.
 * `terraform/` \- folder with terraform config that executes automated provisioning of required infrastructure resources.
 
-## Create cluster and other resources
+### Create cluster and other resources
 
 In this section we will use `Terraform` to automate the creation of infrastructure resources. For more details how it is done please refer to the terraform config in the `terraform/` folder.
 By default, the configuration provisions an Autopilot GKE cluster, but it can be changed to standard by setting `autopilot_cluster = false`.
@@ -149,9 +149,9 @@ project_id = "akvelon-gke-aieco"
 gcloud container clusters get-credentials $(terraform output -raw gke_cluster_name) --region $(terraform output -raw gke_cluster_location) --project $(terraform output -raw project_id)
 ```
 
-# Metaflow Configuration
+## Metaflow Configuration
 
-## Deploy Metadata Service
+### Deploy Metadata Service
 
 This tutorial includes two Kubernetes manifests for Metaflow Metadata service:
 
@@ -200,7 +200,7 @@ kubectl port-forward svc/metaflow-ui-svc 8083:8083
 
 
 
-## Install and configure Metaflow locally
+### Install and configure Metaflow locally
 
 1. Create a Python virtual environment, activate it and install Metaflow and other requirements.
 
@@ -248,9 +248,9 @@ More on Metaflow configuration values:
 | METAFLOW\_KUBERNETES\_DISK | Sets disk size for a container for metaflow run. The default value of this option is too big for Autopilot GKE cluster, so we decrease it to 2048 |
 
 
-# Model Fine-tuning and Serving
+## Gemma 2 Model Fine-tuning and Serving
 
-## Build the fine-tuning container image
+### Build the Gemma 2 fine-tuning container image
 
 The model fine-tuning process requires a dedicated environment, which we will encapsulate in a container image. The Dockerfile can be found in `finetune_inside_metaflow/image/Dockerfile`.
 
@@ -262,7 +262,7 @@ gcloud builds submit ../finetune_inside_metaflow/image --config=../cloudbuild.ya
 
 *More details can be found in the [cloudbuild.yaml](https://github.com/ai-on-gke/tutorials-and-examples/blob/main/metaflow/cloudbuild.yaml) file.*
 
-## Fine-tune the model
+### Fine-tune the Gemma 2 model
 
 1. Specify your [HuggingFace token](https://huggingface.co/settings/tokens). It will be used to access model that we want to finetune:
 
@@ -369,7 +369,7 @@ Note: this UI does not display the model upload status to HuggingFace
 
 
 
-## Serve the Fine-Tuned Model on GKE
+### Serve the Fine-Tuned Gemma 2 Model on GKE
 
 1. Replace the placeholder for your HuggingFace handle and run this command.
 
@@ -444,7 +444,7 @@ The output should look like this:
 {"predictions":["Prompt:\nQuestion: What is the total number of attendees with age over 30 at kubecon \"EU\"? Context: CREATE TABLE attendees (name VARCHAR, age INTEGER, kubecon VARCHAR)\nAnswer:\nOutput:\n SELECT COUNT(name) FROM attendees WHERE age > 30 AND kubecon = \"EU\"\nContext: CREATE TABLE attendees (name VARCHAR, age INTEGER"]}
 ```
 
-## Cleanup
+### Cleanup
 
 1. Destroy the provisioned infrastructure.
 
@@ -453,7 +453,7 @@ cd terraform
 terraform destroy -var-file=default_env.tfvars
 ```
 
-## Troubleshooting
+### Troubleshooting
 
 * In case of usage of this guide by multiple people at the same time, consider renaming resource names in the `default_env.tfvars` to avoid name collisions.
 * Some operations over the autopilot cluster can hang and complete once the initial scale-up event has finished.

@@ -18,7 +18,7 @@ cloudShell:
     folder: site/content/docs/tutorials/finetuning-gemma-3-1b-it-on-l4
     editorFile: index.md
 ---
-We’ll walk through fine-tuning a Gemma 3-1B-it model using GKE using L4 GPU. L4 GPU are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs, at a fraction of the cost of using a higher end GPU.
+We’ll walk through fine-tuning a Gemma 3-1B-it model using GKE using L4 GPU. L4 GPU are suitable for many use cases beyond serving models. We will demonstrate how the L4 GPU is a great option for fine tuning LLMs such as Gemma 3, at a fraction of the cost of using a higher end GPU.
 
 Let’s get started and fine-tune Gemma 3-1B-it on the [b-mc2/sql-create-context](https://huggingface.co/datasets/b-mc2/sql-create-context) dataset using GKE.
 Parameter Efficient Fine Tuning (PEFT) and LoRA is used so fine-tuning is posible
@@ -107,7 +107,7 @@ In your shell session, do the following:
     gcloud builds submit .
     ```
 
-## Run Fine-tuning Job on GKE
+## Run Gemma 3 Fine-tuning Job on GKE
 
 1. Open the `finetune.yaml` manifest.
 2. Edit the `<IMAGE_URL>` name with the container image built with Cloud Build and `NEW_MODEL` environment variable value. This `NEW_MODEL` will be the name of the model you would save as a public model in your Hugging Face account.
@@ -131,9 +131,9 @@ In your shell session, do the following:
 
 6. Once the job is completed, you can check the model in Hugging Face.
 
-## Serve the Fine-tuned Model on GKE
+## Serve the Fine-tuned Gemma 3 Model on Google Kubernetes Engine (GKE)
 
-To deploy the fine-tuned model on GKE you can follow the instructions from Deploy a pre-trained Gemma-3 model on  [vLLM](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#deploy-vllm). Select the `Gemma 3 1B-it` instruction and change the `MODEL_ID` to `<YOUR_HUGGING_FACE_PROFILE>/gemma-3-1b-it-sql-finetuned`.
+To deploy the fine-tuned Gemma 3 model on GKE you can follow the instructions from Deploy a pre-trained Gemma-3 model on  [vLLM](https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm#deploy-vllm). Select the `Gemma 3 1B-it` instruction and change the `MODEL_ID` to `<YOUR_HUGGING_FACE_PROFILE>/gemma-3-1b-it-sql-finetuned`.
 
 ### Set up port forwarding
 
@@ -149,7 +149,7 @@ The output is similar to the following:
 Forwarding from 127.0.0.1:8000 -> 8000
 ```
 
-### Interact with the model using curl
+### Interact with the Gemma 3 model using curl
 
 Once the model is deployed In a new terminal session, use curl to chat with your model:
 
