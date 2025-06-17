@@ -13,7 +13,7 @@ tags:
  - ADK
  - Tutorials
 ---
-# Overview
+## Overview
 
 In this tutorial we are going to create an agent that will receive user queries about weather conditions in various locations, parse the location and temperature unit (C/F) from the prompt and answer accordingly.
 The agent will use the following tool:
@@ -45,7 +45,7 @@ tutorials-and-examples/adk/llama/vllm/
 │   └── versions.tf
 ```
 
-# Before you begin
+## Before you begin
 
 Make sure you have installed:
    * terraform
@@ -60,7 +60,7 @@ Make sure you have enabled the following APIs:
 * [GKE](https://console.cloud.google.com/marketplace/product/google/container.googleapis.com)
 * [Artifact Registry API](https://console.cloud.google.com/marketplace/product/google/artifactregistry.googleapis.com)
 
-# Create a GKE cluster
+## Create a GKE cluster
 
 First of all, you need to clone the tutorials repository and go to the specific directory. Run these commands below:
   ```bash
@@ -95,7 +95,7 @@ Run the following command to get an access to your cluster:
   gcloud container clusters get-credentials ${CLUSTER_NAME} --location=us-east4
   ```
 
-# Deploy an LLM to a GKE Autopilot cluster
+## Deploy an LLM to a GKE Autopilot cluster
 
 In this section we will use vLLM for the deployment and [meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) (you have to visit their site and request an access) as a core LLM. So far, you are currently in the `terraform` folder.
 
@@ -140,7 +140,7 @@ Once your logs look like this:
   INFO:     Application startup complete.
   ```
 
-## Testing
+### Testing
 
 You can port-forward the service by running this command:
 
@@ -229,7 +229,7 @@ The output should look like this:
 
 If everything is okay, you can terminate the port-forwarding.
 
-# Create an ADK application
+## Create an ADK application
 
 You are currently in the `deploy-llm` folder. Go to the `deploy-agent` folder:
 
@@ -273,7 +273,7 @@ You can review the status by running logs \-f command on the associated pod. The
   INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
   ```
 
-## Testing
+### Testing
 
 To test your application, you can port-forward the agent service like this:
 
@@ -315,7 +315,7 @@ In this screen below we ask only one query to check logs inside the LLM's and th
   INFO:     10.23.0.144:43860 - "POST /v1/chat/completions HTTP/1.1" 200 OK
   ```
 
-## Clean up
+### Clean up
 
 Go back to the `terraform` folder
 

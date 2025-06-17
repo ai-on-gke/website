@@ -1,6 +1,6 @@
 ---
 linkTitle: "Slurm"
-title: "Slurm on GKE"
+title: "Slurm on Google Kubernetes Engine (GKE)"
 description: "This guide shows you how to deploy [Slurm](https://slurm.schedmd.com/documentation.html) on a Google Kubernetes Engine (GKE) cluster."
 weight: 30
 type: docs
@@ -46,7 +46,7 @@ The following topics are also out of scope for this guide:
 
 If you are searching for a guide or an automation tool that can help you set up Slurm on Google Cloud, with a focus on HPC workloads, we recommend that you use the [Google Cloud Cluster Toolkit](https://cloud.google.com/cluster-toolkit/docs/overview).
 
-## Solution architecture
+## Slurm on GKE (google Kubernetes Engine) solution architecture
 
 The implemented architecture is composed of multiple StatefulSets and Deployments in order to cover the different Slurm components. The following diagram shows a Slurm control plane and a data plane that are running in GKE.
 
@@ -181,7 +181,7 @@ The following are required to be present, configured or available:
 * kubectl  
 * A Google Cloud organization
 
-## Infrastructure and GKE
+## Infrastructure and Google Kubernetes Engine (GKE)
 
 This section describes the steps for creating and storing the container image.
 
@@ -214,7 +214,7 @@ To set up your environment with Cloud Shell, follow these steps:
 	git clone https://github.com/ai-on-gke/slurm-on-gke
 	```
 
-### Create your cluster infrastructure
+### Create your Google Kubernetes Engine cluster infrastructure
 
 In this section, you run a Terraform script to create a private, highly available, regional GKE cluster.
 
@@ -311,7 +311,7 @@ Note the address of your container image because it will be requested in the fol
 europe-west3-docker.pkg.dev/$PROJECT_ID/slurm/slurmd:535
 ```
 
-### Deploy Slurm
+### Deploy Slurm over Google Kubernetes Engine cluster
 
 In this section, you deploy the Slurm cluster over the newly created or provided GKE cluster.
 

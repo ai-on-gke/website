@@ -18,20 +18,20 @@ draft: false
 This repository provides the files needed to demonstrate how to use [MultiKueue](https://kueue.sigs.k8s.io/docs/concepts/multikueue/) with [Dynamic Workload Scheduler](https://cloud.google.com/blog/products/compute/introducing-dynamic-workload-scheduler?e=48754805) (DWS) and [GKE Autopilot](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview).  This setup allows you to run workloads across multiple GKE clusters in different regions, automatically leveraging available GPU resources thanks to DWS.
 
 
-# Prerequisites
+## Prerequisites
 - [Google Cloud](https://cloud.google.com/) account set up.
 - [gcloud](https://pypi.org/project/gcloud/) command line tool installed and configured to use your GCP project.
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) command line utility is installed.
 - [terraform](https://developer.hashicorp.com/terraform/install) command line installed.
 
-# Check out the necessary code files:
+## Check out the necessary code files:
 
 ```bash
 git clone https://github.com/ai-on-gke/tutorials-and-examples.git
 cd tutorials-and-examples/workflow-orchestration/multikueue-dws
 ```
 
-## Repository Contents
+### Repository Contents
 
 This repository contains the following files:
 
@@ -41,9 +41,9 @@ This repository contains the following files:
 * `dws-multi-worker.yaml`: Kueue configuration for the worker clusters, including manager configuration.
 * `job-multi-dws-autopilot.yaml`: Example job definition to be submitted to the MultiKueue setup.
 
-## Setup and Usage
+### Setup and Usage
 
-### Create Clusters
+#### Create Clusters
 
 ```bash
 terraform -chdir=tf init
@@ -51,7 +51,7 @@ terraform -chdir=tf plan
 terraform -chdir=tf apply -var project_id=<YOUR PROJECT ID>
 ```
 
-### Install Kueue
+#### Install Kueue
 
 After creating the GKE clusters and updating your kubeconfig files, install the Kueue components:
 
@@ -59,7 +59,7 @@ After creating the GKE clusters and updating your kubeconfig files, install the 
 ./deploy-multikueue.sh  
 ```
 
-### Validate installation
+#### Validate installation
 
 Verify the Kueue installation and the connection between the manager and worker clusters:
 
@@ -81,7 +81,7 @@ MC-US - Active: True Reason: Active Message: Connected
 MC-EU - Active: True Reason: Active Message: Connected
 ```
 
-### Launch job
+#### Launch job
 
 Submit your job to the Kueue controller, which will run it on a worker cluster with available resources:
 
@@ -90,7 +90,7 @@ kubectl create -f job-multi-dws-autopilot.yaml
 kubectl create -f job-multi-dws-cpuonly.yaml
 ```
 
-### Get the status of the job
+#### Get the status of the job
 
 To check the job status and see where it's scheduled:
 
@@ -107,7 +107,7 @@ In the output message, you can find where the job is scheduled
 [{"lastTransitionTime":"2025-05-13T13:13:45Z","message":"The workload got reservation on \"multikueue-dws-worker-eu\"","name":"sample-dws-multikueue","state":"Ready"}]
 ```
 
-### Destroy resources
+#### Destroy resources
 
 ```bash
 terraform -chdir=tf destroy -var project_id=<YOUR PROJECT ID>

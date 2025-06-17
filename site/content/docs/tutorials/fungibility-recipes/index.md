@@ -17,11 +17,11 @@ cloudShell:
     editorFile: index.md
 ---
 
-# **Background**
+## **Background**
 
 This user guide shows you how to optimize AI inference by configuring Google Kubernetes Engine (GKE) to dynamically scale workloads across TPU & GPUs, which helps you better manage demand fluctuations and capacity constraints. In this example we show you how to prioritize high-performance TPU nodes so you deliver optimal speed and responsiveness to your application while ensuring continuous service under peak demand by seamlessly transitioning workloads with additional TPU and GPU nodes, as needed.
 
-## Caveats
+### Caveats
 
 1. This deployment could result in having Deployments with a heterogenous set of servers with different performance and operational characteristics.  
 2. Time Per Output Token (TPOT) and Time to First Token (TTFT) characteristics could be different between GPU replicas and TPU replicas, although they belong in the same Deployment.  
@@ -29,7 +29,7 @@ This user guide shows you how to optimize AI inference by configuring Google Kub
 4. Since the TPU type is hardcoded as an environment variable, this yaml is not able to be fungible between different generations of TPUs (ie v5e to v6e)  
 5. Users should ensure they have access to the TPUs they need for scaling purposes. If there is a GCE_STOCKOUT error when provisioning TPUs, it could take up to 10 hours to fall back from a TPU node to a GPU. Users can work around this issue by 1) limiting autoscaling to the number of TPUs nodes they have access to or 2) falling back from GPUs to TPUs. We plan to remove this limitation in the future.
 
-# **Prepare the Environment**
+## **Prepare the Environment**
 
 To set up your environment with Cloud Shell, follow these steps:
 
@@ -48,9 +48,9 @@ export COMPUTE_CLASS=vllm-fallback
 export HF_TOKEN=HUGGING_FACE_TOKEN
 ```
 
-# **Create and configure Google Cloud Resources**
+## **Create and configure Google Cloud Resources**
 
-## Create a GKE Cluster
+### Create a GKE Cluster
 
 ```bash
 gcloud container clusters create $CLUSTER_NAME \
@@ -60,7 +60,7 @@ gcloud container clusters create $CLUSTER_NAME \
 --labels=created-by=ai-on-gke,guide=fungibility-recipes
 ```
 
-## Create v6e TPU, L4 Preemptible, and L4 on demand node pools
+### Create v6e TPU, L4 Preemptible, and L4 on demand node pools
 
 All node pools will have autoscaling enabled in order to demonstrate that [custom compute class (CCC)](https://cloud.google.com/kubernetes-engine/docs/concepts/about-custom-compute-classes) is able to autoscale any type of node pool. We will also add a label and taint with the CCC name so that it can be used in the priority list.
 
@@ -96,14 +96,14 @@ gcloud container node-pools create l4 \
 	--max-nodes=2
 ```
 
-# **Configure Kubectl to communicate with your cluster**
+## **Configure Kubectl to communicate with your cluster**
 To configure kubectl to communicate with your cluster, run the following command:
 
 ```bash
   gcloud container clusters get-credentials ${CLUSTER_NAME} --region=${REGION}
 ```
 
-# **Create Kubernetes Secret for Hugging Face credentials**
+## **Create Kubernetes Secret for Hugging Face credentials**
 To create a Kubernetes Secret that contains the Hugging Face token, run the following command:
 
 ```bash
@@ -111,7 +111,7 @@ kubectl create secret generic hf-secret --from-literal=hf_api_token=${HF_TOKEN}
 ```
 
 
-# **Setup Custom Compute Class**
+## **Setup Custom Compute Class**
 
 Inspect the following `ccc.yaml`, where we define the priority order of the nodepools.  l4 scales up first, and v6e-1-spot scales up last.
 
@@ -132,7 +132,7 @@ Apply the manifest
 kubectl apply -f ccc.yaml
 ```
 
-# **Build the vLLM Fungibility images**
+## **Build the vLLM Fungibility images**
 
 We need a bash script that determines what type of hardware is present in the machine before starting up the vLLM server so that  if the machine has TPUs, the TPU container will start the server, while the GPU container sleeps, and vice versa.
 
@@ -208,7 +208,7 @@ docker image tag vllm-gpu $REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fung
 docker push $REGION_NAME-docker.pkg.dev/$PROJECT_ID/vllm/vllm-fungibility:GPU
 ```
 
-# **Deploy the vLLM Server**
+## **Deploy the vLLM Server**
 
 Inspect the following manifest `vllm.yaml`
 
@@ -362,11 +362,11 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
 ```
 
-# **Setup the autoscaling configuration**
+## **Setup the autoscaling configuration**
 
 Follow this portion of the guide to set up HPA (Horizontal Pod Autoscaling) using custom Prometheus metrics via Google Managed Prometheus (GMP)  metrics from the vLLM server. 
 
-## Deploy the custom stackdriver metrics adapter 
+### Deploy the custom stackdriver metrics adapter 
 
 Run the following command to set up the custom stackdriver metrics adapter on your cluster. Note you need to have Kubernetes Engine Cluster Administrator and Kubernetes Engine Administrator in order to run this.
 
@@ -374,7 +374,7 @@ Run the following command to set up the custom stackdriver metrics adapter on yo
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml
 ```
 
-## Deploy a PodMonitoring spec to set up prometheus metric scraping 
+### Deploy a PodMonitoring spec to set up prometheus metric scraping 
 
 Now deploy a Pod Monitoring spec for the prometheus metrics scraper. Refer to [https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed](https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed) for more details on Google Managed Prometheus and setup. This should be enabled by default on the GKE cluster though. Save the following yaml as vllm\_pod\_monitor.yaml
 
@@ -421,7 +421,7 @@ wait
 nohup ./load.sh &
 ```
 
-## Deploy the HPA Configuration
+### Deploy the HPA Configuration
 
 Now, create a HPA configuration yaml file `vllm-hpa.yaml` and apply it to the cluster. vLLM metrics in GMP are in the format of `vllm:<metric name>`. We will use `num_requests_waiting` which we recommend for scaling throughput. Alternatively, you could use `gpu_cache_usage_perc` for latency sensitive use cases. Despite the naming convention, this metric works for TPU as well.
 
@@ -473,9 +473,9 @@ vllm-hpa   Deployment/vllm       25098m/1      1         6         3          62
 vllm-hpa   Deployment/vllm       35348m/1      1         6         3          77s
 ```
 
-# **Clean up** 
+## **Clean up** 
 
-## Delete the deployed resources:
+### Delete the deployed resources:
 
 To avoid incurring charges to your Google Cloud account for the resources that you created in this guide, run the following commands:
 
