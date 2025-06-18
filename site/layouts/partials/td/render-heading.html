@@ -1,0 +1,52 @@
+<h{{ .Level }} {{- range $key, $value := .Attributes -}}
+  {{ printf " %s=%q" $key (string $value) | safeHTMLAttr -}} {{ end -}}>
+  {{- .Text | safeHTML -}}
+  {{ partial "td/heading-self-link.html" . -}}
+</h{{ .Level }}>
+{{- define "partials/td/heading-self-link.html" -}}
+<a class="td-heading-self-link"
+  onclick="copyHeadingLink(this, '{{ .Anchor }}'); event.preventDefault();"
+  onmousedown="this.classList.add('active-link');"
+  onmouseup="this.classList.remove('active-link');"
+  onmouseleave="this.classList.remove('active-link');"
+  href="#{{ .Anchor | safeURL }}" aria-label="Heading self-link"
+  title="Copy link to this section: {{ .Text }}"><i class="fa-solid fa-link"></i></a>
+<style>
+  .td-heading-self-link {
+    transition: background 0.2s;
+    border-radius: 4px;
+    padding: 2px;
+  }
+  .td-heading-self-link.active-link {
+    background: #e0e7ef;
+    transition: background 0.2s;
+  }
+</style>
+<script>
+  function copyHeadingLink(anchor, anchorId) {
+    navigator.clipboard.writeText(location.origin + location.pathname + '#' + anchorId);
+    let popup = document.getElementById('global-copy-popup');
+    if (!popup) {
+      // Create the popup if it doesn't exist
+      popup = document.createElement('span');
+      popup.id = 'global-copy-popup';
+      popup.className = 'copy-popup';
+      popup.textContent = 'Copied to clipboard';
+      popup.setAttribute('style', 'position:fixed; bottom:24px; left:24px; background:#222; color:#fff; padding:8px 18px; border-radius:6px; font-size:0.8em; white-space:nowrap; z-index:9999; box-shadow:0 2px 8px rgba(0,0,0,0.15); transform:translateY(100px); opacity:0; transition:transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s cubic-bezier(.4,0,.2,1);');
+      document.body.appendChild(popup);
+    }
+    popup.style.display = 'block';
+    // Trigger reflow for transition
+    void popup.offsetWidth;
+    popup.style.transform = 'translateY(0)';
+    popup.style.opacity = '1';
+    clearTimeout(window.__copyPopupTimeout);
+    window.__copyPopupTimeout = setTimeout(() => {
+      popup.style.transform = 'translateY(100px)';
+      popup.style.opacity = '0';
+      setTimeout(() => { popup.style.display = 'none'; }, 300);
+    }, 1200);
+  }
+</script>
+
+{{- end -}}

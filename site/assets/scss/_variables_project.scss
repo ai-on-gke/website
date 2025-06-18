@@ -1059,3 +1059,21 @@ nav.foldable-nav .ul-1 .with-child > label:before {
     cursor: pointer;
   }
 }
+
+.td-heading-self-link {
+  font-size: 70%!important;
+  margin-left: 5px;;
+  color:  #2f80ed!important;
+  &::before {
+    content: ""!important;
+  }
+
+   transition: background 0.2s;
+    border-radius: 4px;
+    padding: 2px;
+
+  &.active-link {
+    background: #e0e7ef;
+    transition: background 0.2s;
+  }
+}
