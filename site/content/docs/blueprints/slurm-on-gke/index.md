@@ -176,9 +176,9 @@ Another best practice is to tag your images with the NVIDIA driver version that 
 The current version of this guide does **not** address running the login pod with users different from root.  
 The following are required to be present, configured or available:
 
-* terraform v1.9.3 or newer  
-* docker 20.10.21 or newer  
-* kubectl  
+* Terraform v1.9.3 or newer  
+* Docker 20.10.21 or newer  
+* `kubectl`  
 * A Google Cloud organization
 
 ## Infrastructure and Google Kubernetes Engine (GKE)
@@ -199,8 +199,8 @@ To set up your environment with Cloud Shell, follow these steps:
 	export PROJECT_ID=YOUR_PROJECT_ID
 	export REGION=europe-west3 
 	```
-	>[!NOTE]
-	>Replace *YOUR_PROJECT_ID* with your Google Cloud [project ID](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
+> [!NOTE]
+> Replace *YOUR_PROJECT_ID* with your Google Cloud [project ID](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
 
 3. Set the default environment variables.
 
@@ -240,8 +240,8 @@ The Terraform module will also create a new project and anything that might be n
 	folder_id                   = "folders/FOLDER_ID"
 	```
 
-	>[!NOTE]
-	>Ensure your selected region or zone offers GPU availability. Consult the [Google Cloud documentation for a complete list](https://cloud.google.com/compute/docs/gpus/gpu-regions-zones).
+> [!NOTE]
+> Ensure your selected region or zone offers GPU availability. Consult the [Google Cloud documentation for a complete list](https://cloud.google.com/compute/docs/gpus/gpu-regions-zones).
 
 7. After you fill out the file, use the following command to apply the Terraform configuration and create the infrastructure.
 
@@ -419,10 +419,11 @@ To avoid incurring charges to your Google Cloud account for the resources that y
 
 The easiest way to avoid billing is to delete the project that you created for the tutorial.
 
-Caution: Deleting a project has the following effects:
-
-* Everything in the project is deleted. If you used an existing project for the tasks in this document, deleting the project also deletes any other work that you've done in the project.  
-* Custom project IDs are lost. When you created this project, you might have created a custom project ID that you want to use in the future. To preserve the URLs that use the project ID, such as an appspot.com URL, delete selected resources inside the project instead of deleting the whole project.
+> [!CAUTION]
+> Deleting a project has the following effects:
+>
+> - Everything in the project is deleted. If you used an existing project for the tasks in this document, deleting the project also deletes any other work that you've done in the project.  
+> - Custom project IDs are lost. When you created this project, you might have created a custom project ID that you want to use in the future. To preserve the URLs that use the project ID, such as an appspot.com URL, delete selected resources inside the project instead of deleting the whole project.
 
 If you plan to explore multiple architectures, tutorials, or quickstarts, reusing projects can help you avoid exceeding project quota limits.
 
@@ -451,8 +452,8 @@ individual resources.
 	terraform  destroy
 	```
 
-	>[!CAUTION]
-	>This step deletes all the resources that you created previously: the GKE cluster, the VPC network, the firewall rules, and the Google Cloud project.
+> [!CAUTION]
+> This step deletes all the resources that you created previously: the GKE cluster, the VPC network, the firewall rules, and the Google Cloud project.
 
 ## License
 
