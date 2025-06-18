@@ -14,9 +14,9 @@ tags:
  - Tutorials
 ---
 ## Introduction
-This guide shows how to host a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server with Server Sent Events (SSE) transport on Google Kubernetes Engine (GKE), along with guidance for authenticating MCP clients. MCP is an open protocol that standardizes how AI agents interact with their environment and external data sources. MCP clients can communicate with the MCP servers using two distinct transport mechanisms:
-   * [Standard Input/Output (stdio)](https://modelcontextprotocol.io/docs/concepts/transports#standard-input%2Foutput-stdio) - Direct process communication
-   * [Server Sent Events (SSE)](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) or Streamable HTTP - web-based streaming communication
+This guide shows how to host a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server with Server Sent Events (SSE) transport on Google Kubernetes Engine (GKE). MCP is an open protocol that standardizes how AI agents interact with their environment and external data sources. MCP clients can communicate with the MCP servers using two distinct transport mechanisms:
+   * [Standard Input/Output (stdio)](https://modelcontextprotocol.io/docs/concepts/transports#standard-input%2Foutput-stdio) - direct process communication
+   * [Server-Sent Events (SSE) or Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) or Streamable HTTP - web-based streaming communication
 
 ### You have several options for deploying MCP:
 1. Local Development: Host both MCP clients and servers on the same local machine
@@ -25,7 +25,7 @@ This guide shows how to host a [Model Context Protocol (MCP)](https://modelconte
 
 3. Full Cloud Deployment: Host both MCP clients and servers on a cloud platform.
 
-> Important Note: while GKE supports hosting MCP servers with stdio transport (through multi-container pods or sidecar patterns), streamable HTTP transport is the recommended approach for Kubernetes deployments. HTTP-based transport aligns better with Kubernetes networking principles, enables independent scaling of components, and provides better observability and debugging capabilities.
+> Important Note: while GKE supports hosting MCP servers with stdio transport (through multi-container pods or sidecar patterns), streamable HTTP transport is the recommended approach for Kubernetes deployments. HTTP-based transport aligns better with Kubernetes networking principles, enables independent scaling of components, and provides better observability and debugging capabilities, and offers better security isolation between components.
 
 ## Before you begin
 
@@ -49,18 +49,18 @@ gcloud auth application-default login
 ```
 
 ### MCP server Development
-You have two main approaches for implementing an MCP server:
-- Develop a custom MCP server using official SDKs or third-party frameworks (like FastMCP).
-- Use existing MCP servers: browse the official MCP servers GitHub repository, curated MCP servers available on Docker Hub, etc.
+You have two main approaches for implementing an [MCP server](https://modelcontextprotocol.io/introduction):
+- **Developing your own MCP server**: We recommended that you use an MCP server SDK to develop your MCP server, such as the [official Python, TypeScript, Java, or Kotlin SDKs](https://modelcontextprotocol.io/) or [FastMCP](https://gofastmcp.com/).
+- **Existing MCP servers**: You can find a list of official and community MCP servers on the [MCP servers GitHub repository](https://github.com/modelcontextprotocol/servers#readme). [Docker Hub](https://hub.docker.com) also provides a [curated list of MCP servers](https://hub.docker.com/u/mcp).
 
 ## Overview:
-[In the tutorial with adk and vllm](https://gke-ai-labs.dev/docs/agentic/adk-llama-vllm/), we successfully built a weather agent. However, the weather agent cannot answer questions such as "What's tomorrow's weather in Seattle" because it lacks access to a live weather data source. In this tutorial, we'll address this limitation by building and deploying a custom MCP server using FastMCP. This server will provide our agent with real-time weather capabilities and will be deployed on GKE. We will continue to use the same LLM backend powered by RayServe/vLLM ([per Ray Serve for Self-Hosted LLMs tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/)).
+In the [Building Agents with Agent Development Kit (ADK) on GKE Autopilot cluster using Self-Hosted LLM](https://gke-ai-labs.dev/docs/agentic/adk-llama-vllm/) tutorial, we successfully built a weather agent. However, the weather agent cannot answer questions such as "What's tomorrow's weather in Seattle" because it lacks access to a live weather data source. In this tutorial, we'll address this limitation by building and deploying a custom MCP server using FastMCP. This server will provide our agent with real-time weather capabilities and will be deployed on GKE. We will continue to use the same LLM backend powered by RayServe/vLLM ([per Ray Serve for Self-Hosted LLMs tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/)).
 
 Folder structure:
 ```
 tutorials-and-examples/adk/ray-mcp/
-├── adk_agent
-│  └── weather_agent
+├── adk_agent/
+│  └── weather_agent/
 │  │   ├── __init__.py
 │  │   ├── weather_agent.py
 │  │   └── deployment_agent.yaml
@@ -68,13 +68,13 @@ tutorials-and-examples/adk/ray-mcp/
 │  └── requirements.txt
 │  └── Dockerfile
 │
-└── mcp_server
+└── mcp_server/
 │  ├── weather_mcp.py
 │  └── deployment_weather_mcp.yaml
 │  └── Dockerfile
 │  └── requirements.txt
 │
-└── terraform
+└── terraform/
     ├── artifact_registry.tf
     └── main.tf
     └── outputs.tf
@@ -85,7 +85,7 @@ tutorials-and-examples/adk/ray-mcp/
     └── workload_identity.tf
 ```
 
-## Step 1: Set Up the Infrastructure with Terraform and install Ray Cluster
+## Step 1: Set Up the Infrastructure with Terraform
 
 Start by setting up the GKE cluster, service account, IAM roles, and Artifact Registry using Terraform.
 
@@ -101,9 +101,9 @@ Set the environment variables, replacing `<PROJECT_ID>` and `<MY_HF_TOKEN>`:
 ```bash
 gcloud config set project <PROJECT_ID>
 export PROJECT_ID=$(gcloud config get project)
-export REGION=us-central1
+export REGION=$(terraform output -raw gke_cluster_location)
 export HF_TOKEN=<MY_HF_TOKEN>
-export CLUSTER_NAME=llama-ray-cluster
+export CLUSTER_NAME=$(terraform output -raw gke_cluster_name)
 ```
 
 Update the `<PROJECT_ID>` placeholder in `default_env.tfvars` with your own Google Cloud Project ID Name.
@@ -131,28 +131,29 @@ gcloud container clusters get-credentials $CLUSTER_NAME --region=$REGION --proje
 
 ## Step 2: Containerize and Deploy the Ray Serve Application
 
-Create a Kubernetes secret for the Hugging Face token:
+Before deploying our MCP server, we need to set up the Ray Serve application that will power our LLM backend. Follow the [Ray Serve for Self-Hosted LLMs tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/) tutorial to deploy the LLM backend. Specifically, complete `Step 2: Containerize and Deploy the Ray Serve Application` from that guide. You can access the content of this step by running this command:
 
 ```bash
-kubectl create secret generic hf-secret \
-  --from-literal=hf_api_token=$HF_TOKEN \
-  --dry-run=client -o yaml | kubectl apply -f -
+cd tutorials-and-examples/ray-serve/ray-serve-vllm
 ```
 
-To deploy Ray Serve application, you should go to [this tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/) and follow the Step 2 (`Containerize and Deploy the Ray Serve Application`).
+After completing the `Step 2` in Ray Serve tutorial, verify the deployment:
 
 ```bash
-cd ../../../ray-serve/ray-serve-vllm
+kubectl get pods | grep ray
+kubectl get services | grep ray
 ```
 
-After you finish this step, proceed to the `Step 3: Deploy the MCP server` in this tutorial. our agent will connect to this Ray Serve application to invoke the LLM.
+You should see Ray head and worker pods running, plus Ray services.
+
+Next: Once Ray Serve is running, proceed to Step 3 to deploy our MCP server that will connect to this LLM backend.
 
 ## Step 3: Deploy the MCP server
 
-Based on the previous step, you should be in `tutorials-and-examples/ray-serve/ray-serve-vllm` directory. Let's navigate to the MCP Server directory:
+Navigate to MCP Server Directory
 
 ```bash
-cd ../../adk/ray-mcp/mcp_server
+cd tutorials-and-examples/adk/ray-mcp/mcp_server
 ```
 
 Now we can build and push the MCP Server container image:
@@ -169,7 +170,12 @@ Update the `./deployment_weather_mcp.yaml` file `<PROJECT_ID>` placeholders wher
 kubectl apply -f deployment_weather_mcp.yaml
 ```
 
-To validate our MCP Server, we can use MCP Inspector. Let's port-forward our MCP Server and launch the inspector. Run this command to port-forward the MCP Server:
+### Test with MCP Inspector
+
+Let's validate our MCP server using the official MCP Inspector tool.
+
+Run this command to port-forward the MCP Server:
+
 ```bash
 kubectl port-forward svc/weather-mcp-server 8000:8080
 ```
@@ -179,7 +185,7 @@ And in another terminal session run this command:
 npx @modelcontextprotocol/inspector@0.14.2
 ```
 
-You should see this output:
+Expected output:
 ```log
 Starting MCP inspector...
 ⚙️ Proxy server listening on 127.0.0.1:6277
@@ -196,7 +202,7 @@ Use this token to authenticate requests or set DANGEROUSLY_OMIT_AUTH=true to dis
 To connect to your MCP Server, you need to do the following:
    * `Transport Type` - choose `SSE`.
    * `URL` - paste `http://127.0.0.1:8000/sse`.
-   * `Configutation` -> `Proxy Session Token` - paste `<SESSION_TOKEN>` from the terminal (see example logs above).
+   * `Configuration` -> `Proxy Session Token` - paste `<SESSION_TOKEN>` from the terminal (see example logs above).
 
 Press the `Connect` button, and navigate to the `tools` tab. Here you can push the `List Tools` button and check how these tools work.
 ![](./image1.png)
@@ -208,7 +214,7 @@ Now you can cancel the port-forwarding and close the inspector.
 Navigate to the ADK agent directory:
 
 ```bash
-cd ../adk_agent
+cd tutorials-and-examples/adk/ray-mcp/adk_agent
 ```
 
 Build and push the ADK agent container image:
@@ -234,7 +240,7 @@ Verify the deployment:
     kubectl get pods
     ```
 
-    You should see three pods: the two Ray pods and the ADK agent pod.
+    You should see five pods: the two Ray pods and the ADK agent pod.
     ```bash
     NAME                                                  READY   STATUS    RESTARTS       AGE
     adk-agent-6c8488db64-hjt86                            1/1     Running   0              61m
@@ -282,6 +288,6 @@ Verify the deployment:
 Destroy the provisioned infrastructure.
 
 ```bash
-cd ../terraform
+cd tutorials-and-examples/adk/ray-mcp/terraform
 terraform destroy -var-file=default_env.tfvars
 ```
