@@ -156,7 +156,13 @@ Navigate to MCP Server Directory
 cd tutorials-and-examples/adk/ray-mcp/mcp_server
 ```
 
-Now we can build and push the MCP Server container image:
+Let's create a new namespace where we deploy our ADK application and MCP Server:
+
+```bash
+kubectl create namespace adk-weather-tutorial
+```
+
+Build and push the MCP Server container image:
 
 ```bash
 gcloud builds submit \
@@ -177,7 +183,7 @@ Let's validate our MCP server using the official MCP Inspector tool.
 Run this command to port-forward the MCP Server:
 
 ```bash
-kubectl port-forward svc/weather-mcp-server 8000:8080
+kubectl -n adk-weather-tutorial port-forward svc/weather-mcp-server 8000:8080
 ```
 
 And in another terminal session run this command:
@@ -237,7 +243,7 @@ Verify the deployment:
 - Check the pods:
 
     ```bash
-    kubectl get pods
+    kubectl -n adk-weather-tutorial get pods
     ```
 
     You should see five pods: the two Ray pods and the ADK agent pod.
@@ -252,7 +258,7 @@ Verify the deployment:
 - Check the services:
 
     ```bash
-    kubectl get services
+    kubectl -n adk-weather-tutorial get services
     ```
 
     You should see seven services, including the ADK service.
@@ -271,7 +277,7 @@ Verify the deployment:
 - Access your ADK Agent using port-forwarding:
 
     ```bash
-    kubectl port-forward svc/adk-agent 8000:80
+    kubectl -n adk-weather-tutorial port-forward svc/adk-agent 8000:80
     ```
 
     You should see the following output:
