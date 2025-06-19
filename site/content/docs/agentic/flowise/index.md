@@ -240,10 +240,11 @@ It creates the following resources. For more information such as resource names 
 
 ## Flowise Deployment and Configuration
 
-1. Add Flowise helm repository:
+1. Add Flowise helm repository or just update if it already exists:
 
     ```bash
     helm repo add cowboysysop https://cowboysysop.github.io/charts/
+    helm repo update cowboysysop
     ```
 
 2. Create yml file with values to customize the Flowise helm chart:
@@ -264,10 +265,16 @@ It creates the following resources. For more information such as resource names 
     serviceAccount:
       create: false
       name: $(terraform output -raw k8s_service_account_name)
+    service:
+      type: NodePort
+      ports:
+        http: 80
     EOF
     ```
 
-	 
+    > [!NOTE]
+    > If you do not want to expose the app with IAP and just use `port-forward`,
+    you may want to change the type of the service from the `NodePort` to `ClusterIP`, since `port-forward` does not require an external port.	 
 
 3. Install Flowise helm chart with the values from the file that was created previously.
 To learn more about the chart, please refer to its [page](https://artifacthub.io/packages/helm/cowboysysop/flowise). Especially for the [templates](https://artifacthub.io/packages/helm/cowboysysop/flowise?modal=template&template=deployment.yaml) and [default values](https://artifacthub.io/packages/helm/cowboysysop/flowise?modal=values).
@@ -306,22 +313,55 @@ To learn more about the chart, please refer to its [page](https://artifacthub.io
 
    ```
    NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
-   flowise      ClusterIP   34.118.227.187   <none>        3000/TCP    36m
-   kubernetes   ClusterIP   34.118.224.1     <none>        443/TCP     72m
-   ollama       ClusterIP   34.118.232.55    <none>        11434/TCP   43m
+   flowise      NodePort    <SOME_IP>        <none>        3000:31935/TCP   3m17s
+   kubernetes   ClusterIP   34.118.224.1     <none>        443/TCP          32m
+   ollama       ClusterIP   34.118.237.109   <none>        11434/TCP        8m35s
    ```
 
-5. Forward port of the Flowise service in order to access its web UI:
+
+### Securely expose Flowise web-ui.
+
+1. Create a new directory for Terraform config:
 
     ```bash
-    kubectl port-forward svc/flowise 3000:3000
+    mkdir ../iap
     ```
 
-    In case of errors, try looking at logs:
+2. Prepare the tfvars file that will be needed during the IAP guide. We also can specify some of the known variable values, so you only need to specify the remaining ones with `<>` placeholders.
 
     ```bash
-    kubectl logs -l app.kubernetes.io/name=flowise
+    cat <<EOF > ../iap/values.tfvars
+    project_id               = "$(terraform output -raw project_id)"
+    cluster_name             = "$(terraform output -raw gke_cluster_name)"
+    cluster_location         = "$(terraform output -raw gke_cluster_location)"
+    app_name                 = "flowise"
+    k8s_namespace            = "$(kubectl get svc flowise -o=jsonpath='{.metadata.namespace}')"
+    k8s_backend_service_name = "$(kubectl get svc flowise -o=jsonpath='{.metadata.name}')"
+    k8s_backend_service_port = "$(kubectl get svc flowise -o=jsonpath='{.spec.ports[0].port}')"
+    support_email            = "<SUPPORT_EMAIL>"
+    client_id                = "<CLIENT_ID>"
+    client_secret            = "<CLIENT_SECRET>"
+    EOF
     ```
+
+3. Go to the newly created directory:
+
+    ```bash
+    cd ../iap
+    ```
+
+4. Navigate to the [Secure your app with Identity Aware Proxy guide](../../common/identity_aware_proxy) and follow the instructions to enable IAP.
+
+
+
+### [Alternative] Use Port-forward
+
+As an alternative, for a local testing, instead of IAP you can use the port-forward command:
+
+   ```bash
+   kubectl port-forward svc/flowise 3000:3000
+   ```
+
 
 ## Trying multi-agent example
 
@@ -329,7 +369,7 @@ In the example we create an agentflow that uses LLMs from the Ollama service tha
 
 ### Load the example agentflow
 
-1. Open web UI at [http://localhost:3000](http://localhost:3000)   
+1. Open web UI at the URL that is created during the IAP guide or [http://localhost:3000](http://localhost:3000) if you use port-forward.
 2. Create new agentflow by clicking on the “Add New” button in the “Agentflows” section:
 
    ![alt text](1_create_agentflow.png)
