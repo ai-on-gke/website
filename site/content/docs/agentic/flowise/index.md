@@ -319,7 +319,7 @@ To learn more about the chart, please refer to its [page](https://artifacthub.io
    ```
 
 
-### Securely expose Flowise web-ui.
+### Securely expose Flowise Web-UI with Identity Aware Proxy.
 
 1. Create a new directory for Terraform config:
 
@@ -327,7 +327,7 @@ To learn more about the chart, please refer to its [page](https://artifacthub.io
     mkdir ../iap
     ```
 
-2. Prepare the tfvars file that will be needed during the IAP guide. We also can specify some of the known variable values, so you only need to specify the remaining ones with `<>` placeholders.
+2. Prepare the tfvars file that will be needed during the IAP guide. We also can specify some of the known variable values, so you only need to specify the remaining ones with the `<>` placeholder.
 
     ```bash
     cat <<EOF > ../iap/values.tfvars

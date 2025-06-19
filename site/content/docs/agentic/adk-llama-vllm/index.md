@@ -273,15 +273,54 @@ You can review the status by running logs \-f command on the associated pod. The
   INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
   ```
 
+### Securely expose Agent's Web-UI with Identity Aware Proxy (IAP).
+
+Create a new directory for Terraform config:
+
+   ```bash
+   mkdir ../iap
+   ```
+
+Prepare the tfvars file that will be needed during the IAP guide. We also can specify some of the known variable values, so you only need to specify the remaining ones with the `<>` placeholder.
+
+   ```bash
+   cat <<EOF > ../iap/values.tfvars
+   project_id               = "$(terraform output -raw project_id)"
+   cluster_name             = "$(terraform output -raw gke_cluster_name)"
+   cluster_location         = "$(terraform output -raw gke_cluster_location)"
+   app_name                 = "adk-llama-vllm"
+   k8s_namespace            = "$(kubectl get svc adk-agent -o=jsonpath='{.metadata.namespace}')"
+   k8s_backend_service_name = "$(kubectl get svc adk-agent -o=jsonpath='{.metadata.name}')"
+   k8s_backend_service_port = "$(kubectl get svc adk-agent -o=jsonpath='{.spec.ports[0].port}')"
+   support_email            = "<SUPPORT_EMAIL>"
+   client_id                = "<CLIENT_ID>"
+   client_secret            = "<CLIENT_SECRET>"
+   EOF
+   ```
+
+Go to the newly created directory:
+
+   ```bash
+   cd ../iap
+   ```
+
+Navigate to the [Secure your app with Identity Aware Proxy guide](../../common/identity_aware_proxy) and follow the instructions to enable IAP.
+
+
+
+### [Alternative] Use Port-forward
+
+As an alternative, for a local testing, instead of IAP you can use the port-forward command:
+
+   ```bash
+   kubectl port-forward svc/adk-agent 8001:80
+   ```
+
+
 ### Testing
 
-To test your application, you can port-forward the agent service like this:
-
-  ```bash
-  kubectl port-forward svc/adk-agent 8001:80
-  ```
-
-And go to the [http://127.0.0.1:8001](http://127.0.0.1:8001). Try to ask about the weather in some city and check what will happen. It should look like this:
+Open web UI at the URL that is created during the IAP guide or [http://127.0.0.1:8001](http://127.0.0.1:8001) if you use port-forward.
+Try to ask about the weather in some city and check what will happen. It should look like this:
 ![](./image1.png)
 
 Note, that our tool has dummy data:
