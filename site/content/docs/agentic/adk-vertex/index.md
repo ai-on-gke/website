@@ -161,8 +161,8 @@ It creates the following resources. For more information such as resource names 
     
     # Get the directory where main.py is located
     AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
-    # Example session DB URL (e.g., SQLite)
-    SESSION_DB_URL = ""
+    # Example session service URI (e.g., SQLite)
+    SESSION_SERVICE_URI = ""
     # Example allowed origins for CORS
     ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
     # Set web=True if you intend to serve a web interface, False otherwise
@@ -172,7 +172,7 @@ It creates the following resources. For more information such as resource names 
     # Ensure the agent directory name ('capital_agent') matches your agent folder
     app: FastAPI = get_fast_api_app(
         agents_dir=AGENT_DIR,
-        session_db_url=SESSION_DB_URL,
+        session_service_uri=SESSION_SERVICE_URI,
         allow_origins=ALLOWED_ORIGINS,
         web=SERVE_WEB_INTERFACE,
     )
@@ -235,10 +235,10 @@ It creates the following resources. For more information such as resource names 
 4. Create `app/requirements.txt` file with necessary Python packages:
 
     ```python
-    google_adk>=0.1.0
-    fastapi>=0.95.0
-    uvicorn>=0.22.0
-    pydantic>=2.0.0
+    google_adk==1.4.1
+    fastapi==0.115.13
+    uvicorn==0.34.0
+    pydantic==2.11.7
     ```
 
 4. Create `app/Dockerfile` to build app container image:
