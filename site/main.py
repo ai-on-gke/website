@@ -21,6 +21,8 @@ REDIRECTS = {
 
 def app(environ, start_response):
   try:
+    if environ['PATH_INFO'].endswith('/'):
+      environ['PATH_INFO'] = environ['PATH_INFO'][:-1]
     if environ['PATH_INFO'] in REDIRECTS:
       new_url = REDIRECTS[environ['PATH_INFO']]
       HTTP_HOST = environ.get('HTTP_HOST', '')
