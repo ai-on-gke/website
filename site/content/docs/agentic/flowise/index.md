@@ -274,7 +274,7 @@ It creates the following resources. For more information such as resource names 
 
     > [!NOTE]
     > If you do not want to expose the app with IAP and just use `port-forward`,
-    you may want to change the type of the service from the `NodePort` to `ClusterIP`, since `port-forward` does not require an external port.	 
+    you may want to change the type of the service from the `NodePort` to `ClusterIP`, since `port-forward` does not require an external port.
 
 3. Install Flowise helm chart with the values from the file that was created previously.
 To learn more about the chart, please refer to its [page](https://artifacthub.io/packages/helm/cowboysysop/flowise). Especially for the [templates](https://artifacthub.io/packages/helm/cowboysysop/flowise?modal=template&template=deployment.yaml) and [default values](https://artifacthub.io/packages/helm/cowboysysop/flowise?modal=values).
@@ -350,7 +350,7 @@ To learn more about the chart, please refer to its [page](https://artifacthub.io
     cd ../iap
     ```
 
-4. Navigate to the [Secure your app with Identity Aware Proxy guide](../../common/identity_aware_proxy) and follow the instructions to enable IAP.
+4. Navigate to the [Secure your app with Identity Aware Proxy guide](../../tutorials/security/identity-aware-proxy) and follow the instructions to enable IAP.
 
 
 

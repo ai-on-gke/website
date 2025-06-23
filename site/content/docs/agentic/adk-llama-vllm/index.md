@@ -260,6 +260,11 @@ Run this command to submit our application to the repository:
 
 Now you can replace `<PROJECT_ID>` in the `deploy-agent.yaml` and run this command:
 
+
+ > [!NOTE]
+ > If you do not want to expose the app with IAP and just use `port-forward`,
+ you may want to change the type of the service from the `NodePort` to `ClusterIP`, since `port-forward` does not require an external port.
+
   ```bash
   kubectl apply -f deploy-agent.yaml
   ```
@@ -304,7 +309,7 @@ Go to the newly created directory:
    cd ../iap
    ```
 
-Navigate to the [Secure your app with Identity Aware Proxy guide](../../common/identity_aware_proxy) and follow the instructions to enable IAP.
+Navigate to the [Secure your app with Identity Aware Proxy guide](../../tutorials/security/identity-aware-proxy) and follow the instructions to enable IAP.
 
 
 

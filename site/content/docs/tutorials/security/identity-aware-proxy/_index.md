@@ -247,7 +247,7 @@ cd iap
 
 ### Can not create valid Healthcheck
 
-By default the Health check that is created for the GCP LoadBalancer backend is derived from the Pod readiness probe, so make sure that itvalues are compatible with GCP healthcheck.
+By default the Health check that is created for a GCP LoadBalancer backend is derived from the Pod readiness probe, so make sure that its values are compatible with GCP healthcheck.
 
 For example the service object has to use a port only from range 80 to 443.
 
