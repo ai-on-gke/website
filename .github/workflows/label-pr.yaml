@@ -16,7 +16,9 @@
 # This workflow utilizes https://github.com/actions/github-script in GitHub Actions to apply labels to pull requests.
 #
 name: Label PR
-on: [pull_request_target]
+on: 
+  pull_request_target:
+  workflow_dispatch:
 jobs:
   label:
     runs-on: ubuntu-latest
@@ -28,31 +30,30 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |-
-            const keywords = {
-              "breaking": "kind/breaking",
-              "bug": "kind/bug",
-              "enhancement": "kind/enhancement",
-              "cleanup": "kind/cleanup",
-              "documentation": "kind/documentation"
-            };
+            const keywords = [
+              "breaking",
+              "bug",
+              "enhancement",
+              "cleanup",
+              "documentation"
+            ];
             const prBody = context.payload.pull_request.body;
             const prLabels = [];
             if (prBody === null || prBody.trim() === "") {
               console.log("Pull Request body is empty");
-              prLabels.push("kind/other");
+              prLabels.push("other");
             } else {
               const regex = /^\s*\/kind\s+(.+)$/m;
               const match = prBody.match(regex);
               console.log(`PR body: '${prBody}'`);
               console.log(`Regex match: '${match}'`);
-              if (match && match[1] in keywords) {
-                const keyword = match[1];
-                const label = keywords[keyword];
-                console.log(`Adding label: '${label}' based on keyword '${keyword}'`);
+              if (match && keywords.includes(match[1])) {
+                const label = match[1];
+                console.log(`Adding label: '${label}' based on keyword '${label}' found in PR body.`);
                 prLabels.push(label);
               } else {
-                console.log(`Adding label: 'kind/other' as no matching keyword found.`);
-                prLabels.push("kind/other");
+                console.log(`Adding label: 'other' as no matching keyword found.`);
+                prLabels.push("other");
               }
             }
             try {
