@@ -28,18 +28,18 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |-
-            const keywords = {
-              "breaking": "kind/breaking",
-              "bug": "kind/bug",
-              "enhancement": "kind/enhancement",
-              "cleanup": "kind/cleanup",
-              "documentation": "kind/documentation"
-            };
+            const keywords = [
+              "breaking",
+              "bug",
+              "enhancement",
+              "cleanup",
+              "documentation"
+            ];
             const prBody = context.payload.pull_request.body;
             const prLabels = [];
             if (prBody === null || prBody.trim() === "") {
               console.log("Pull Request body is empty");
-              prLabels.push("kind/other");
+              prLabels.push("other");
             } else {
               const regex = /^\s*\/kind\s+(.+)$/m;
               const match = prBody.match(regex);
