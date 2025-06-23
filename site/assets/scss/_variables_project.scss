@@ -651,8 +651,15 @@ aside {
   line-height: 18px;
 }
 
+.highlight {
+  .code-toolbar {
+    max-width: 100% !important;
+  }
+}
+
 .code-toolbar {
   margin-top: 36px !important;
+  max-width: 95% !important;
 }
 
 .language-jupyter {
@@ -805,6 +812,11 @@ h5 {
 }
 
 .alert-note {
+  background-color: rgb(232, 240, 254) !important;
+  color: rgb(48, 63, 159) !important;
+}
+
+.alert-important {
   background-color: rgb(232, 240, 254) !important;
   color: rgb(48, 63, 159) !important;
 }
