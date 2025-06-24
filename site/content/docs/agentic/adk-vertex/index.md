@@ -331,7 +331,7 @@ It creates the following resources. For more information such as resource names 
     metadata:
       name: adk-agent
     spec:       
-      type: ClusterIP
+      type: NodePort
       ports:
         - port: 80
           targetPort: 8080
@@ -339,6 +339,10 @@ It creates the following resources. For more information such as resource names 
         app: adk-agent
     EOF
     ```
+
+    > [!NOTE]
+    > If you do not want to expose the app with IAP and just use `port-forward`,
+    you may want to change the type of the service from the `NodePort` to `ClusterIP`, since `port-forward` does not require an external port.	 
 
 7. Apply the manifest:
 
@@ -352,32 +356,71 @@ It creates the following resources. For more information such as resource names 
     kubectl rollout status deployment/adk-agent
     ```
 
+
+### Securely expose Agent's Web-UI with Identity Aware Proxy (IAP).
+
+1. Create a new directory for Terraform config:
+
+   ```bash
+   mkdir ../iap
+   ```
+
+2. Prepare the tfvars file that will be needed during the IAP guide. We also can specify some of the known variable values, so you only need to specify the remaining ones with the `<>` placeholder.
+
+   ```bash
+   cat <<EOF > ../iap/values.tfvars
+   project_id               = "$(terraform output -raw project_id)"
+   cluster_name             = "$(terraform output -raw gke_cluster_name)"
+   cluster_location         = "$(terraform output -raw gke_cluster_location)"
+   app_name                 = "adk-vertex"
+   k8s_namespace            = "$(kubectl get svc adk-agent -o=jsonpath='{.metadata.namespace}')"
+   k8s_backend_service_name = "$(kubectl get svc adk-agent -o=jsonpath='{.metadata.name}')"
+   k8s_backend_service_port = "$(kubectl get svc adk-agent -o=jsonpath='{.spec.ports[0].port}')"
+   support_email            = "<SUPPORT_EMAIL>"
+   client_id                = "<CLIENT_ID>"
+   client_secret            = "<CLIENT_SECRET>"
+   EOF
+   ```
+
+3. Go to the newly created directory:
+
+   ```bash
+   cd ../iap
+   ```
+
+4. Navigate to the [Secure your app with Identity Aware Proxy guide](../../tutorials/security/identity-aware-proxy) and follow the instructions to enable IAP.
+
+
+
+### [Alternative] Use Port-forward
+
+As an alternative, for a local testing, instead of IAP you can use the port-forward command:
+
+   ```bash
+   kubectl port-forward svc/adk-agent 8080:80
+   ```
+
+
 ## Testing your Deployed Agent
 
-1. Forward port of the deployed application service:
+Open web UI at the URL that is created during the IAP guide or [http://127.0.0.1:8080](http://127.0.0.1:8080) if you use port-forward and test the web UI.
 
-    ```bash
-    kubectl port-forward svc/adk-agent 8080:80
-    ```
+The ADK dev UI allows you to interact with your agent, manage sessions, and view execution details directly in the browser.
+    
+To verify your agent is working as intended, you can:
+    
+   1. Select your agent from the dropdown menu.  
+   2. Type a message and verify that you receive an expected response from your agent.
+    
+   ![alt text](webui.png)
+    
+   As you can see from the screenshot, the agent works as expected and gives answers only for cities that are listed in the tool function.
+    
+   If you experience any unexpected behavior, check the pod logs for your agent using:
 
-2. Go to the [http://localhost:8080/](http://localhost:8080/) and test the web UI. You can test your agent by simply navigating to the kubernetes service URL in your web browser.
-
-    The ADK dev UI allows you to interact with your agent, manage sessions, and view execution details directly in the browser.
-    
-    To verify your agent is working as intended, you can:
-    
-    1. Select your agent from the dropdown menu.  
-    2. Type a message and verify that you receive an expected response from your agent.
-    
-    ![alt text](webui.png)
-    
-    As you can see from the screenshot, the agent works as expected and gives answers only for cities that are listed in the tool function.
-    
-    If you experience any unexpected behavior, check the pod logs for your agent using:
-
-    ```bash
-    kubectl logs -l app=adk-agent
-    ```
+   ```bash
+   kubectl logs -l app=adk-agent
+   ```
 
 ## Troubleshooting
 
