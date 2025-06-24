@@ -9,14 +9,14 @@ owner:
     link: https://github.com/volatilemolotov
 
 tags:
- - Evaluation
  - ADK
  - Tutorials
+ - MCP
 ---
 ## Introduction
 This guide shows how to host a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server with Server Sent Events (SSE) transport on Google Kubernetes Engine (GKE). MCP is an open protocol that standardizes how AI agents interact with their environment and external data sources. MCP clients can communicate with the MCP servers using two distinct transport mechanisms:
    * [Standard Input/Output (stdio)](https://modelcontextprotocol.io/docs/concepts/transports#standard-input%2Foutput-stdio) - direct process communication
-   * [Server-Sent Events (SSE) or Streamable HTTP](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) or Streamable HTTP - web-based streaming communication
+   * [Server-Sent Events (SSE)](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http) or Streamable HTTP - web-based streaming communication
 
 ### You have several options for deploying MCP:
 1. Local Development: Host both MCP clients and servers on the same local machine
@@ -34,7 +34,6 @@ Ensure you have the following tools installed on your workstation
    * [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
    * [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
    * [Helm](https://helm.sh/docs/intro/install/)
-   * [NodeJS](https://nodejs.org/en/download)
 
 If you previously installed the gcloud CLI, get the latest version by running:
 
@@ -50,11 +49,11 @@ gcloud auth application-default login
 
 ### MCP server Development
 You have two main approaches for implementing an [MCP server](https://modelcontextprotocol.io/introduction):
-- **Developing your own MCP server**: We recommended that you use an MCP server SDK to develop your MCP server, such as the [official Python, TypeScript, Java, or Kotlin SDKs](https://modelcontextprotocol.io/) or [FastMCP](https://gofastmcp.com/).
+- **Developing your own MCP server**: We recommend that you use an MCP server SDK to develop your MCP server, such as the [official Python, TypeScript, Java, or Kotlin SDKs](https://modelcontextprotocol.io/) or [FastMCP](https://gofastmcp.com/).
 - **Existing MCP servers**: You can find a list of official and community MCP servers on the [MCP servers GitHub repository](https://github.com/modelcontextprotocol/servers#readme). [Docker Hub](https://hub.docker.com) also provides a [curated list of MCP servers](https://hub.docker.com/u/mcp).
 
 ## Overview:
-In the [Building Agents with Agent Development Kit (ADK) on GKE Autopilot cluster using Self-Hosted LLM](https://gke-ai-labs.dev/docs/agentic/adk-llama-vllm/) tutorial, we successfully built a weather agent. However, the weather agent cannot answer questions such as "What's tomorrow's weather in Seattle" because it lacks access to a live weather data source. In this tutorial, we'll address this limitation by building and deploying a custom MCP server using FastMCP. This server will provide our agent with real-time weather capabilities and will be deployed on GKE. We will continue to use the same LLM backend powered by RayServe/vLLM ([per Ray Serve for Self-Hosted LLMs tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/)).
+In the [Building Agents with Agent Development Kit (ADK) on GKE Autopilot cluster using Self-Hosted LLM](https://gke-ai-labs.dev/docs/agentic/adk-llama-vllm/) tutorial, we successfully built a weather agent. However, the weather agent cannot answer questions such as "What's tomorrow's weather in Seattle" because it lacks access to a live weather data source. In this tutorial, we'll address this limitation by building and deploying a custom MCP server using FastMCP. This server will provide our agent with real-time weather capabilities and will be deployed on GKE. We will continue to use the same LLM backend powered by Ray Serve/vLLM ([per Ray Serve for Self-Hosted LLMs tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/)).
 
 Folder structure:
 ```
@@ -131,7 +130,7 @@ gcloud container clusters get-credentials $CLUSTER_NAME --region=$REGION --proje
 
 ## Step 2: Containerize and Deploy the Ray Serve Application
 
-Before deploying our MCP server, we need to set up the Ray Serve application that will power our LLM backend. Follow the [Ray Serve for Self-Hosted LLMs tutorial](https://gke-ai-labs.dev/docs/agentic/ray-serve/) tutorial to deploy the LLM backend. Specifically, complete `Step 2: Containerize and Deploy the Ray Serve Application` from that guide. You can access the content of this step by running this command:
+Before deploying our MCP server, we need to set up the Ray Serve application that will power our LLM backend. Follow the [Ray Serve for Self-Hosted LLMs](https://gke-ai-labs.dev/docs/agentic/ray-serve/) tutorial to deploy the LLM backend. Specifically, complete `Step 2: Containerize and Deploy the Ray Serve Application` from that guide. You can access the content of this step by running this command:
 
 ```bash
 cd tutorials-and-examples/ray-serve/ray-serve-vllm
@@ -171,7 +170,7 @@ gcloud builds submit \
     .
 ```
 
-Update the `./deployment_weather_mcp.yaml` file `<PROJECT_ID>` placeholders where applicable. Apply the manifest:
+Update the `<PROJECT_ID>` placeholders in the `./deployment_weather_mcp.yaml` file where applicable. Apply the manifest:
 ```bash
 kubectl apply -f deployment_weather_mcp.yaml
 ```
@@ -186,7 +185,7 @@ Run this command to port-forward the MCP Server:
 kubectl -n adk-weather-tutorial port-forward svc/weather-mcp-server 8000:8080
 ```
 
-And in another terminal session run this command:
+In another terminal session, run this command:
 ```bash
 npx @modelcontextprotocol/inspector@0.14.2
 ```
@@ -210,7 +209,7 @@ To connect to your MCP Server, you need to do the following:
    * `URL` - paste `http://127.0.0.1:8000/sse`.
    * `Configuration` -> `Proxy Session Token` - paste `<SESSION_TOKEN>` from the terminal (see example logs above).
 
-Press the `Connect` button, and navigate to the `tools` tab. Here you can push the `List Tools` button and check how these tools work.
+Press the `Connect` button, and navigate to the `tools` tab. Here you can click the `List Tools` button and check how these tools work.
 ![](./image1.png)
 
 Now you can cancel the port-forwarding and close the inspector.
@@ -286,7 +285,7 @@ Verify the deployment:
     Forwarding from [::1]:8000 -> 8080
     ```
 
-    Follow the http://127.0.0.1:8000 and test your agent.
+    Navigate to http://127.0.0.1:8000 and test your agent.
     ![](./image2.png)
 
 ## Step 5: Clean Up
