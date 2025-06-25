@@ -47,6 +47,9 @@ Ensure that you are signed in using the gcloud CLI tool. Run the following comma
 gcloud auth application-default login
 ```
 
+Make sure you have a permission to [create custom IAM roles](https://cloud.google.com/iam/docs/creating-custom-roles#required-roles).
+Your user must have `roles/iam.roleAdmin` or `roles/iam.organizationRoleAdmin` role.
+
 ## Infrastructure Setup
 
 ### Clone the repository
