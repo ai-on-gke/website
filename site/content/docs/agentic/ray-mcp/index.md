@@ -1,8 +1,8 @@
 ---
-linkTitle: "Deploying MCP Servers on GKE: Building AI Agents with ADK and Ray-Served Models"
+linkTitle: "Deploying MCP Servers on GKE"
 title: "Deploying MCP Servers on GKE: Building AI Agents with ADK and Ray-Served Models"
 description: "This guide provides instructions for deploying a **Ray cluster with the AI Device Kit (ADK)** and a **custom Model Context Protocol (MCP) server** on **Google Kubernetes Engine (GKE)**. It covers setting up the infrastructure with Terraform, containerizing and deploying the Ray Serve application, deploying a custom MCP server for real-time weather data, and finally deploying an ADK agent that utilizes these components. The guide also includes steps for verifying deployments and cleaning up resources."
-weight: 20
+weight: 30
 type: docs
 owner:
   - name: "Vlado Djerek"
