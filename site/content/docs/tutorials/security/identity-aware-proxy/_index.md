@@ -41,7 +41,7 @@ cd iap
 
    ```
    module "iap_auth" {
-     source = "github.com/ai-on-gke/common-infra//common/modules/iap-with-cluster?ref=refactor-iap"
+     source = "github.com/ai-on-gke/common-infra//common/modules/iap-with-cluster?ref=main"
    
      project_id =  var.project_id
      cluster_name = var.cluster_name
