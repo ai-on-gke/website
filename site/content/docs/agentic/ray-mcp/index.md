@@ -25,7 +25,8 @@ This guide shows how to host a [Model Context Protocol (MCP)](https://modelconte
 
 3. Full Cloud Deployment: Host both MCP clients and servers on a cloud platform.
 
-> Important Note: while GKE supports hosting MCP servers with stdio transport (through multi-container pods or sidecar patterns), streamable HTTP transport is the recommended approach for Kubernetes deployments. HTTP-based transport aligns better with Kubernetes networking principles, enables independent scaling of components, and provides better observability and debugging capabilities, and offers better security isolation between components.
+>[!NOTE]
+> While GKE supports hosting MCP servers with stdio transport (through multi-container pods or sidecar patterns), streamable HTTP transport is the recommended approach for Kubernetes deployments. HTTP-based transport aligns better with Kubernetes networking principles, enables independent scaling of components, and provides better observability and debugging capabilities, and offers better security isolation between components.
 
 ## Before you begin
 
@@ -166,8 +167,7 @@ Build and push the MCP Server container image:
 ```bash
 gcloud builds submit \
     --tag us-docker.pkg.dev/$PROJECT_ID/llama-ray/mcp-server:latest \
-    --project=$PROJECT_ID \
-    .
+    --project=$PROJECT_ID .
 ```
 
 Update the `<PROJECT_ID>` placeholders in the `./deployment_weather_mcp.yaml` file where applicable. Apply the manifest:
@@ -227,8 +227,7 @@ Build and push the ADK agent container image:
 ```bash
 gcloud builds submit \
     --tag us-docker.pkg.dev/$PROJECT_ID/llama-ray/adk-agent:latest \
-    --project=$PROJECT_ID \
-    .
+    --project=$PROJECT_ID .
 ```
 
 Update the `./deployment_agent.yaml` file `<PROJECT-ID>` placeholders where applicable. Apply the manifest:
