@@ -94,15 +94,15 @@ In your shell session, do the following:
 
 ## Create your Cloud Storage bucket
 
-Now, create the Cloud Storage bucket for the model weights, by running the following command.
+Now, [create the Cloud Storage bucket with hierarchical namespace enabled](https://cloud.google.com/storage/docs/create-hns-bucket) for the model weights, by running the following command. We recommend that you enable hierarchical namespace in your Cloud Storage bucket to improve read performance of your LLM.
 
 >[!NOTE]
->Cloud Storage bucket's names must be globally unique, and you must have the Storage Admin (`roles/storage.admin`) IAM role for the project where the bucket is created. See [Create a Bucket](https://cloud.google.com/storage/docs/creating-buckets) for details.
+>Cloud Storage bucket names must conform to the [naming requirements](https://cloud.google.com/storage/docs/buckets#naming), and in order to get the required permissions for creating a Cloud Storage bucket, you must have the Storage Admin (`roles/storage.admin`) IAM role for the project where the bucket is created. See [Required roles](https://cloud.google.com/storage/docs/creating-buckets#required-roles) for details.
 
 ```bash
 export BUCKET_NAME=${PROJECT_ID}-hf-gcs-transfer
 export BUCKET_URI=gs://${BUCKET_NAME}
-gcloud storage buckets create ${BUCKET_URI} --project=${PROJECT_ID}
+gcloud storage buckets create ${BUCKET_URI} --project=${PROJECT_ID} --uniform-bucket-level-access --enable-hierarchical-namespace
 ```
 
 ## Deploy the Kubernetes Job to populate the Cloud Storage Bucket
