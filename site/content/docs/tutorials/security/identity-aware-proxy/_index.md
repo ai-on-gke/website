@@ -29,10 +29,10 @@ This guide will use our [Terraform module](https://github.com/ai-on-gke/common-i
 
 1. Create a directory for IAP terraform config. If you came here from another guide, then you should already have this directory created, otherwise, create it now:
 
-```shell
-mkdir iap
-cd iap
-```
+   ```shell
+   mkdir iap
+   cd iap
+   ```
 
 2. Create terraform files with the following contents:
 
