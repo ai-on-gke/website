@@ -163,7 +163,7 @@ gcloud storage buckets create ${BUCKET_URI} --project=${PROJECT_ID} --uniform-bu
             - |
               start=$(date +%s)
               apt-get update && apt-get install -y aria2 git
-              
+
               # Get directory name from MODEL_ID (e.g., "meta-llama/Meta-Llama-3-8B" -> "Meta-Llama-3-8B")
               git_dir="${MODEL_ID##*/}"
 
@@ -202,6 +202,7 @@ gcloud storage buckets create ${BUCKET_URI} --project=${PROJECT_ID} --uniform-bu
               cat download_list.txt
               echo "----------------------------------------"
 
+              mkdir -p "${MODEL_DIR}"
               # Use xargs to read 2 arguments per line (-n 2): the URL ($1) and the filename ($2).
               # Then, use the -o option in aria2c to specify the output filename.
               cat download_list.txt | xargs -P 4 -n 2 sh -c '
@@ -247,7 +248,12 @@ gcloud storage buckets create ${BUCKET_URI} --project=${PROJECT_ID} --uniform-bu
             args:
             - |
               start=$(date +%s)
-              gcloud storage cp -r "${MODEL_DIR}" "${BUCKET_URI}"
+              model_dir="${MODEL_DIR}"
+              # If BUCKET_PATH is empty, copy the contents of MODEL_DIR to the root of the bucket.
+              if [ -z "$BUCKET_PATH" ]; then
+                model_dir="${MODEL_DIR}/*"
+              fi
+              gcloud storage cp -r $model_dir "${BUCKET_URI}${BUCKET_PATH}"
               end=$(date +%s)
               echo "gcloud storage cp took $((end-start)) seconds"
             env:
@@ -288,7 +294,7 @@ gcloud storage buckets create ${BUCKET_URI} --project=${PROJECT_ID} --uniform-bu
     envsubst '$NAMESPACE $SERVICE_ACCOUNT $HF_USER $BUCKET_URI $MODEL_ID $MEMORY_REQUIREMENTS $BUCKET_PATH' < producer-job.yaml | kubectl apply -f -
     ```
 
-    It might take a few minutes for the c3 node to be auto-provisioned, and for pods to be scheduled, and finish copying data to the GCS bucket. When the Job completes, its status is marked "Complete". After the Job completes, your Cloud Storage bucket should contain the `MODEL_ID`'s model's files (except for the `.gitattributes` and the `original/` folder) within the specified `BUCKET_PATH`. If you didn't change the `MODEL_ID`, you should see the [meta-llama/Meta-Llama-3-8B files](https://huggingface.co/meta-llama/Meta-Llama-3-8B/tree/main) in your Cloud Storage bucket, within the `/model` folder.
+    It might take a few minutes for the c3 node to be auto-provisioned, and for pods to be scheduled, and finish copying data to the GCS bucket. When the Job completes, its status is marked "Complete". After the Job completes, your Cloud Storage bucket should contain the `MODEL_ID`'s model's files (except for the `.gitattributes` and the `original/` folder) within the specified `BUCKET_PATH`. If you didn't change the `MODEL_ID`, you should see the [meta-llama/Meta-Llama-3-8B files](https://huggingface.co/meta-llama/Meta-Llama-3-8B/tree/main) in your Cloud Storage bucket, within the `/model` folder. You can use `BUCKET_PATH=""` to upload the model's files into the GCS bucket's root directory.
 
 1. Monitor the status of the transfer. 
 
