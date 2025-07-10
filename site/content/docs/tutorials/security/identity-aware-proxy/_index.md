@@ -158,7 +158,7 @@ This guide will use our [Terraform module](https://github.com/ai-on-gke/common-i
    
    variable "members_allowlist" {
      type    = list(string)
-     default = ["domain:your-domain.com"]
+     default = []
    }
    ```
 
@@ -196,6 +196,7 @@ This guide will use our [Terraform module](https://github.com/ai-on-gke/common-i
    support_email            = "<SUPPORT_EMAIL>"
    client_id                = "<CLIENT_ID>"
    client_secret            = "<CLIENT_SECRET>"
+   members_allowlist        = [<MEMBERS_ALLOWLIST>]
    ```
 
    Where:
@@ -210,12 +211,13 @@ This guide will use our [Terraform module](https://github.com/ai-on-gke/common-i
       * `support_email` \- A support email to be shown in the authorization screen.  
       * `client_id` \- ID of a created OAuth client.  
       * `client_secret` \- Secret if a created OAuth client
+      * `members_allowlist` - List of members that have access through IAP. As a simplest example, it can be just a user from your personal GCP account - `user:<YOUR_ACCOUNT_EMAIL>`. For more info, you can read [this](https://cloud.google.com/iam/docs/principal-identifiers).
    
    For information about other variables please refer to the `variables.tf` file. 
 
 4. Init the Terraform config:
 
-   ```
+   ```shell
    terraform init
    ```
 
@@ -233,13 +235,13 @@ This guide will use our [Terraform module](https://github.com/ai-on-gke/common-i
 
 7. Get the url of the app:
 
-   ```
+   ```shell
    terraform output app_url
    ```
 
 ## Cleanup
 
-   ```
+   ```shell
    terraform destroy -var-file values.tfvars
    ```
 
