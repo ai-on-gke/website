@@ -321,7 +321,7 @@ It creates the following resources. For more information such as resource names 
                 value: "true"
             readinessProbe:
               httpGet:
-                path: /
+                path: /dev-ui/
                 port: 8080
               initialDelaySeconds: 10
               periodSeconds: 10
