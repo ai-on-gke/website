@@ -144,8 +144,8 @@ Deploy the Ray Serve application:
     # Confirm the repo exists
     helm search repo kuberay --devel
     
-    # Install both CRDs and KubeRay operator v1.3.2.
-    helm install kuberay-operator kuberay/kuberay-operator --version 1.3.2
+    # Install both CRDs and KubeRay operator v1.3.0.
+    helm install kuberay-operator kuberay/kuberay-operator --version 1.3.0
     
     # Check the KubeRay operator Pod in `default` namespace
     kubectl get pods
