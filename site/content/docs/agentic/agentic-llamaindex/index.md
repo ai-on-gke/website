@@ -205,11 +205,8 @@ It creates:
 * IAM service accounts:
 	* for a cluster
  	* for Kubernetes permissions for app deployments (using [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation))
-      	* GCS bucket to store data to be ingested to the RAG.
+  * GCS bucket to store data to be ingested to the RAG.
 	* [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) as a storage for an app-demo  image
-
-
-
 
 1. Go the terraform directory:
 
@@ -219,7 +216,6 @@ It creates:
 
 2. Specify the following values inside the `default_env.tfvars` file (or make a separate copy):
 	- `<PROJECT_ID>` – replace with your project id (you can find it in the project settings).
-
 
     Other values can be changed, if needed, but can be left with default values.
 
@@ -239,8 +235,6 @@ It creates:
     ```bash
     terraform init
     ```
-
-
 
 5. Optionally run the `plan` command to view an execution plan:
 
@@ -376,8 +370,6 @@ It creates:
 
       The manifests are generated from templates in the `templates` directory and put in the `gen` directory.
 
-
-
         ```bash
         kubectl apply -f ../gen/ingest-data-job.yaml
         ```
@@ -415,7 +407,6 @@ It creates:
         - Mounts the GCS bucket containing `imdb_top_1000.csv` via GCS Fuse.
         - Runs `ingest_data.py` to index the dataset into Redis.
         </details>
-
 
 3. Wait for data to be ingested. It may take few minutes:
 
