@@ -111,7 +111,6 @@ File `app/rag_demo/__init__.py`:
 
 <details><summary>Expand to see key parts</summary>
 
-
 The application uses [Redis Stack](https://redis.io/about/about-stack/) as the vector store, with a defined schema for indexing movie data.
 
 ```python
@@ -143,83 +142,54 @@ The schema defines:
 
 ### RAG server
 
-The RAG server is a FastAPI application that exposes a `/recommend` endpoint to query the indexed movie dataset and return LLM-generated recommendations. It is defined in `app/main.py`.
+The RAG server is a FastAPI application that exposes a `/recommend` endpoint to run a multi-step, self-refining movie recommender. It is defined in `app/rag_demo/main.py`.
 
 File: `app/main.py`
 <details><summary>Expand to see key parts</summary>
 
 ```python
-query_engine = index.as_query_engine(
-    llm=llm,
-    similarity_top_k=3,
-    text_qa_template=RECOMMENDATION_PROMPT,
-    verbose=True
+# Agentic pipeline: expansion, validation, correction, coordination
+expander  = QueryExpander(llm=llm)       # Context‑aware sub‑query generation
+validator = ValidationAgent(llm=llm)     # YES/NO relevance check
+corrector = CorrectionAgent(llm=llm)     # JSON‑based correction step
+coordinator = MultiStepCoordinator(
+    expander=expander,
+    query_engine=query_engine,
+    validator=validator,
+    corrector=corrector,
+    max_steps=3
 )
 
-class MovieRecommendationAgent(ReActAgent):
-    def chat(self, message: str) -> Dict:
-        try:
-            logger.info(f"Processing query: {message}")
-            # Letting the agent handle the query
-            response = super().chat(message)
-            logger.info(f"Agent response: {response.response}, sources: {response.sources}")
-            
-            # If no tools were used, return the agent's direct response
-            if not response.sources:
-                logger.info("No tools used; returning agent's direct response")
-                return {
-                    "message": response.response if response.response else "I can only assist with movie recommendations. Please ask about movies.",
-                    "recommendations": []
-                }
-            
-            # Extract recommendations from tool output
-            recommendations = []
-            for tool_output in response.sources:
-                if tool_output.tool_name == "movie_recommendation_tool":
-                    query_response = tool_output.raw_output  # QueryResponse from query engine
-                    for node in query_response.source_nodes:
-                        metadata = node.node.metadata
-                        recommendations.append({
-                            "title": metadata["series_title"],
-                            "imdb_rating": metadata["imdb_rating"],
-                            "overview": metadata["overview"],
-                            "genre": metadata["genre"],
-                            "released_year": metadata["released_year"],
-                            "director": metadata["director"],
-                            "stars": metadata["stars"]
-                        })
-            
-            # Construct final response based on tool output
-            if recommendations:
-                result = {
-                    "message": "Here are the top movie recommendations:",
-                    "recommendations": recommendations[:3]
-                }
-            else:
-                result = {
-                    "message": "No relevant movies found for your query. Please try a more specific movie-related query.",
-                    "recommendations": []
-                }
-            
-            logger.info(f"Final response: {result}")
-            return result
-        except Exception as e:
-            logger.error(f"Error processing query: {str(e)}")
-            return {
-                "message": f"Error processing your query: {str(e)}",
-                "recommendations": []
-            }
+# FastAPI endpoints
+app = FastAPI()
+class QueryRequest(BaseModel):
+    query: str
 
 @app.post("/recommend")
-async def recommend_movies(request: QueryRequest, agent=Depends(get_agent)):
-    response = agent.chat(request.query)
-    json_compatible_item_data = jsonable_encoder(response)
-    return JSONResponse(content=json_compatible_item_data)
+async def recommend_movies(request: QueryRequest):
+    """
+    1) Expand query via LLM  
+    2) Retrieve top‑K from Redis  
+    3) Validate relevance (YES/NO)  
+    4) If invalid, correct and retry 
+    5) Return final JSON with `message` + `recommendations`
+    """
+    result = await coordinator.run(request.query)
+    return JSONResponse(content=jsonable_encoder(result))
+
+@app.get("/recommend")
+async def recommend_movies_get(query: str):
+    if not query:
+        raise HTTPException(400, "Query parameter is required")
+    result = await coordinator.run(query)
+    return JSONResponse(content=jsonable_encoder(result))
 ```
 
 Key components:
-* **Query Engine**: Uses the indexed Redis vector store and the `gemma2:9b` LLM (via Ollama) to retrieve and generate recommendations.
-* **Regex Parsing**: Extracts structured movie recommendations from the LLM’s response, handling variations in formatting (e.g., `8.6/10` ratings, extra sections).
+* **Query Expander**: Enriches the user query with related sub‑queries for better recall.
+* **Multi-Step Coordinator**: Orchestrates expand -> retrieve -≥ validate -≥ correct loops.
+* **Validation Agent**: Asks the LLM “YES/NO” if the retrieved titles match intent.
+* **Correction Agent**: Prompts the LLM to output a corrected JSON list when validation fails.
 * **FastAPI Endpoint**: The `/recommend` endpoint accepts queries (e.g., `{"query": "best drama movies"}`) and returns JSON responses with up to 3 movie recommendations.
 </details>
 
