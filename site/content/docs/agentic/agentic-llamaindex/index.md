@@ -9,7 +9,7 @@ owner:
     link: https://github.com/volatilemolotov
 tags:
  - Serving
- - Llama
+ - Llamaindex
  - Agentic
  - RAG
 cloudShell:
@@ -65,7 +65,7 @@ cd tutorials-and-examples/agentic-llamaindex/rag
 
 * `app` \- folder with demo Python application that uses llamaindex to ingest data to RAG and infer it through web API.
 * `templates` \- folder with Kubernetes manifests that require additional processing to specify additional values that are not known from the start.
-* `terraform` \- folder with terraform config that executes automated provisioning of required infrastructure resources.
+* `terraform` \- folder with Terraform config that executes automated provisioning of required infrastructure resources.
 
 ## Demo application
 
@@ -144,7 +144,7 @@ The schema defines:
 
 The RAG server is a FastAPI application that exposes a `/recommend` endpoint to run a multi-step, self-refining movie recommender. It is defined in `app/rag_demo/main.py`.
 
-File: `app/main.py`
+File: `app/rag_demo/main.py`
 <details><summary>Expand to see key parts</summary>
 
 ```python
@@ -187,7 +187,7 @@ async def recommend_movies_get(query: str):
 
 Key components:
 * **Query Expander**: Enriches the user query with related sub‑queries for better recall.
-* **Multi-Step Coordinator**: Orchestrates expand -> retrieve -≥ validate -≥ correct loops.
+* **Multi-Step Coordinator**: Orchestrates expand -> retrieve -> validate -> correct loops.
 * **Validation Agent**: Asks the LLM “YES/NO” if the retrieved titles match intent.
 * **Correction Agent**: Prompts the LLM to output a corrected JSON list when validation fails.
 * **FastAPI Endpoint**: The `/recommend` endpoint accepts queries (e.g., `{"query": "best drama movies"}`) and returns JSON responses with up to 3 movie recommendations.
@@ -206,7 +206,7 @@ It creates:
 	* for a cluster
  	* for Kubernetes permissions for app deployments (using [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation))
   * GCS bucket to store data to be ingested to the RAG.
-	* [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) as a storage for an app-demo  image
+	* [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) as storage for an app-demo image
 
 1. Go the terraform directory:
 
