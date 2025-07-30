@@ -332,13 +332,13 @@ It creates:
         ```
         </details>
 
-2. Wait for Ollama is successfully deployed:
+2. Wait for Ollama to be successfully deployed:
 
     ```bash
     kubectl rollout status deployment/ollama
     ```
 
-3. Pull the  `gemma2:9b` model within Ollama server pod:
+3. Pull the  `gemma2:9b` model within the Ollama server pod:
 
     ```bash
     kubectl exec $(kubectl get pod -l app=ollama -o name) -c ollama -- ollama pull gemma2:9b
@@ -346,7 +346,7 @@ It creates:
 
 ## 3. Build the demo app image
 
-   1. Build the  `llamaindex-rag-demo` container image using [Cloud Build](https://cloud.google.com/build/docs/overview) and push it to the repository that is created by terraform. It uses `cloudbuild.yaml` file which uses the `app/Dockerfile` for a build. That may take some time:
+   1. Build the  `llamaindex-rag-demo` container image using [Cloud Build](https://cloud.google.com/build/docs/overview) and push it to the repository that is created by terraform. It uses `cloudbuild.yaml` file which uses the `app/Dockerfile` for a build. This may take some time:
 
         ```bash
         gcloud builds submit ../app \
@@ -358,7 +358,7 @@ It creates:
 
 ## 4. Ingest data to the vector database by running a Kubernetes job.
   
-  1. Upload sample data into our bucket, which is created by the Terraform. This data then will  be ingested to our RAG’s vector store.
+  1. Upload sample data into our bucket, which is created by the Terraform. This data will then be ingested to our RAG’s vector store.
 
         ```bash
         curl -o imdb_top_1000.zip -L https://www.kaggle.com/api/v1/datasets/download/harshitshankhdhar/imdb-dataset-of-top-1000-movies-and-tv-shows | \
@@ -469,10 +469,10 @@ It creates:
 
 # Test the RAG
 
-1. Forward port to get access from a local machine:
+1. Forward the port to get access from a local machine:
 
     ```bash
-    kubectl  port-forward svc/llamaindex-rag-service 8000:8000
+    kubectl port-forward svc/llamaindex-rag-service 8000:8000
     ```
 
 2. Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) in your browser to access the FastAPI Swagger UI, which provides an interactive interface for the `/recommend` endpoint.
