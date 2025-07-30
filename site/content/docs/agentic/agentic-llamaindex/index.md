@@ -250,7 +250,7 @@ It creates:
 
     And you should see your resources created:
 
-    ```
+    ```bash
     Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
 
     Outputs:
@@ -279,15 +279,15 @@ It creates:
 
    1. Apply Redis-stack manifest:
 
-    ```bash
-    kubectl apply -f ../redis-stack.yaml
-    ```
+      ```bash
+      kubectl apply -f ../redis-stack.yaml
+      ```
 
    2. Wait for Redis-stack is successfully deployed
 
-    ```bash
-    kubectl rollout status deployment/redis-stack
-    ```
+      ```bash
+      kubectl rollout status deployment/redis-stack
+      ```
 
 ## 2. Deploy Ollama server
 
