@@ -79,7 +79,6 @@ The data ingestion process indexes a movie dataset (`imdb_top_1000.csv`) into a 
 File: `app/cmd/ingest_data.py`
 <details><summary>Expand to see key parts</summary>
 
-
 ```python
 pipeline = IngestionPipeline(
     transformations=[embed_model],
@@ -185,13 +184,96 @@ async def recommend_movies_get(query: str):
     return JSONResponse(content=jsonable_encoder(result))
 ```
 
-Key components:
-* **Query Expander**: Enriches the user query with related sub‑queries for better recall.
-* **Multi-Step Coordinator**: Orchestrates expand -> retrieve -> validate -> correct loops.
-* **Validation Agent**: Asks the LLM “YES/NO” if the retrieved titles match intent.
-* **Correction Agent**: Prompts the LLM to output a corrected JSON list when validation fails.
-* **FastAPI Endpoint**: The `/recommend` endpoint accepts queries (e.g., `{"query": "best drama movies"}`) and returns JSON responses with up to 3 movie recommendations.
 </details>
+
+Key components:
+
+* **Query Expander**: 
+  
+  File: `app/rag_demo/agents/query_expansion.py`
+
+  The system uses an LLM to generate 3-5 expanded queries or keywords for the original query. For example, for "movies like inception," the LLM doesn't just look for synonyms of "movie" or "Inception." It understands the context (e.g., Inception's themes of mind-bending sci-fi, dream sequences, and Nolan's style) and generates expansions like 'mind bending movies', 'science fiction thrillers', 'films with complex narratives', 'psychological action movies', 'time manipulation movies'. This makes the expansion context-aware and improves retrieval relevance.
+
+  <details><summary>Expand to see action log</summary>
+
+  ```log
+    13:58:04 rag_demo.agents.coordinator INFO   [Step 1] Expanding query: movies like inception
+    13:58:09 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:58:09 rag_demo.agents.query_expansion INFO   Expanded query 'movies like inception' to: ['mind bending sci-fi', 'films with dream sequences', 'neo noir thrillers', 'Christopher Nolan movies', 'thought provoking action']
+    13:58:09 rag_demo.agents.coordinator INFO   [Step 1] Expanded queries: ['mind bending sci-fi', 'films with dream sequences', 'neo noir thrillers', 'Christopher Nolan movies', 'thought provoking action']
+    13:58:09 rag_demo.agents.coordinator INFO   [Step 1] Querying with expanded: mind bending sci-fi
+  ```
+
+  </details>
+
+* **Multi-Step Coordinator**:
+
+  File: `app/rag_demo/agents/coordinator.py`
+
+  The multi-step coordinator orchestrates the entire workflow. If validation fails, the system doesn't just give up — it reasons that the current approach was flawed and enters a correction phase, using the CorrectionAgent (`app/rag/demo/agents/correction.py`) to fix the results. This demonstrates the "expand -> retrieve -> validate -> correct" loop in action.
+
+  <details><summary>Expand to see action log</summary>
+
+  ```log
+    13:58:04 rag_demo.agents.coordinator INFO   [Step 1] Expanding query: movies like inception
+    13:58:09 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:58:09 rag_demo.agents.query_expansion INFO   Expanded query 'movies like inception' to: ['mind bending sci-fi', 'films with dream sequences', 'neo noir thrillers', 'Christopher Nolan movies', 'thought     provoking action']
+    13:58:09 rag_demo.agents.coordinator INFO   [Step 1] Expanded queries: ['mind bending sci-fi', 'films with dream sequences', 'neo noir thrillers', 'Christopher Nolan movies', 'thought provoking action']
+    13:58:09 rag_demo.agents.coordinator INFO   [Step 1] Querying with expanded: mind bending sci-fi
+    Batches:   0%|          | 0/1 [00:00<?, ?it/s]/usr/local/lib/python3.12/site-packages/torch/nn/modules/module.py:1747: FutureWarning: `encoder_attention_mask` is deprecated and will be removed in version 4.55.0    for `BertSdpaSelfAttention.forward`.
+      return forward_call(*args, **kwargs)
+    Batches: 100%|██████████| 1/1 [00:00<00:00,  1.51it/s]
+    13:58:10 llama_index.vector_stores.redis.base INFO   Querying index movies with query *=>[KNN 3 @vector $vector AS vector_distance] RETURN 5 id doc_id text _node_content vector_distance SORTBY vector_distance    ASC DIALECT 2 LIMIT 0 3
+    13:58:10 llama_index.vector_stores.redis.base INFO   Found 3 results for query with id ['movie:movie_Avatar', 'movie:movie_Inception', 'movie:movie_Alien']
+    13:58:12 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:58:12 rag_demo.agents.coordinator INFO   [Step 1] Querying with expanded: films with dream sequences
+    Batches: 100%|██████████| 1/1 [00:00<00:00, 15.60it/s]
+    13:58:12 llama_index.vector_stores.redis.base INFO   Querying index movies with query *=>[KNN 3 @vector $vector AS vector_distance] RETURN 5 id doc_id text _node_content vector_distance SORTBY vector_distance    ASC DIALECT 2 LIMIT 0 3
+    13:58:12 llama_index.vector_stores.redis.base INFO   Found 3 results for query with id ['movie:movie_Le_charme_discret_de_la_bourgeoisie', 'movie:movie_8½', 'movie:movie_Requiem_for_a_Dream']
+    13:58:23 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:58:23 rag_demo.agents.coordinator INFO   [Step 1] Querying with expanded: neo noir thrillers
+    Batches: 100%|██████████| 1/1 [00:00<00:00, 25.27it/s]
+    13:58:23 llama_index.vector_stores.redis.base INFO   Querying index movies with query *=>[KNN 3 @vector $vector AS vector_distance] RETURN 5 id doc_id text _node_content vector_distance SORTBY vector_distance    ASC DIALECT 2 LIMIT 0 3
+    13:58:23 llama_index.vector_stores.redis.base INFO   Found 3 results for query with id ['movie:movie_Shadow_of_a_Doubt', 'movie:movie_Prisoners', 'movie:movie_Sicario']
+    13:58:35 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:58:35 rag_demo.agents.coordinator INFO   [Step 1] Querying with expanded: Christopher Nolan movies
+    Batches: 100%|██████████| 1/1 [00:00<00:00, 24.42it/s]
+    13:58:35 llama_index.vector_stores.redis.base INFO   Querying index movies with query *=>[KNN 3 @vector $vector AS vector_distance] RETURN 5 id doc_id text _node_content vector_distance SORTBY vector_distance    ASC DIALECT 2 LIMIT 0 3
+    13:58:35 llama_index.vector_stores.redis.base INFO   Found 3 results for query with id ['movie:movie_Dunkirk', 'movie:movie_The_Dark_Knight', 'movie:movie_The_Prestige']
+    13:58:48 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:58:48 rag_demo.agents.coordinator INFO   [Step 1] Querying with expanded: thought provoking action
+    Batches: 100%|██████████| 1/1 [00:00<00:00, 24.75it/s]
+    13:58:48 llama_index.vector_stores.redis.base INFO   Querying index movies with query *=>[KNN 3 @vector $vector AS vector_distance] RETURN 5 id doc_id text _node_content vector_distance SORTBY vector_distance    ASC DIALECT 2 LIMIT 0 3
+    13:58:48 llama_index.vector_stores.redis.base INFO   Found 3 results for query with id ['movie:movie_The_Conversation', 'movie:movie_Terminator_2:_Judgment_Day', 'movie:movie_Saw']
+    13:58:50 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:58:50 rag_demo.agents.coordinator INFO   [Step 1] Got 15 unique recs; validating…
+    13:58:54 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:58:54 rag_demo.agents.coordinator INFO   [Step 1] Validation failed; correcting…
+    13:59:06 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:59:06 rag_demo.agents.correction INFO   Successfully parsed corrected recommendations: [{'title': 'The Matrix', 'imdb_rating': 8.7, 'overview': 'A computer hacker learns from mysterious rebels about the true    nature of his reality and his role in the war against machines.', 'genre': 'Action, Sci-Fi', 'released_year': 1999, 'director': 'Lana Wachowski, Lilly Wachowski', 'stars': ['Keanu Reeves', 'Laurence Fishburne',    'Carrie-Anne Moss']}, {'title': 'Interstellar', 'imdb_rating': 8.6, 'overview': 'A team of explorers travel through a wormhole in space in an attempt to find a new home for humanity.', 'genre': 'Adventure,    Sci-Fi', 'released_year': 2014, 'director': 'Christopher Nolan', 'stars': ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain']}, {'title': 'Paprika', 'imdb_rating': 8.0, 'overview': 'A device allows   therapists to enter the dreams of their patients, but when the technology falls into the wrong hands, reality and dreams begin to blur.', 'genre': 'Animation, Sci-Fi', 'released_year': 2006, 'director':     'Satoshi Kon', 'stars': ['Shinobu Otake', 'Yuko  Miyamura', 'Megumi Hayashibara']}]
+    13:59:06 rag_demo.agents.coordinator INFO   [Step 1] Correction succeeded; stopping loop
+  ```
+
+  </details>
+
+* **Validation & Correction Agents**: 
+
+  The MultiStepCoordinator runs a loop where it expands the query, retrieves recommendations from all expansions, aggregates unique results, validates relevance, and corrects if needed. If the validation fails (e.g., recommendations don't match the intent), it enters correction phase using the CorrectionAgent to generate new results based on the original query and previous recs. This shows multi-step reasoning and agent coordination.
+
+  <details><summary>Expand to see action log</summary>
+
+  ```log
+    13:58:50 rag_demo.agents.coordinator INFO   [Step 1] Got 15 unique recs; validating…
+    13:58:54 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:58:54 rag_demo.agents.coordinator INFO   [Step 1] Validation failed; correcting…
+    13:59:06 httpx INFO   HTTP Request: POST http://ollama-service:11434/api/chat "HTTP/1.1 200 OK"
+    13:59:06 rag_demo.agents.correction INFO   Successfully parsed corrected recommendations: [{'title': 'The Matrix', 'imdb_rating': 8.7, 'overview': 'A computer hacker learns from mysterious rebels about the true    nature of his reality and his role in the war against machines.', 'genre': 'Action, Sci-Fi', 'released_year': 1999, 'director': 'Lana Wachowski, Lilly Wachowski', 'stars': ['Keanu Reeves', 'Laurence Fishburne',    'Carrie-Anne Moss']}, {'title': 'Interstellar', 'imdb_rating': 8.6, 'overview': 'A team of explorers travel through a wormhole in space in an attempt to find a new home for humanity.', 'genre': 'Adventure,    Sci-Fi', 'released_year': 2014, 'director': 'Christopher Nolan', 'stars': ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain']}, {'title': 'Paprika', 'imdb_rating': 8.0, 'overview': 'A device allows   therapists to enter the dreams of their patients, but when the technology falls into the wrong hands, reality and dreams begin to blur.', 'genre': 'Animation, Sci-Fi', 'released_year': 2006, 'director':     'Satoshi Kon', 'stars': ['Shinobu Otake', 'Yuko  Miyamura', 'Megumi Hayashibara']}]
+    13:59:06 rag_demo.agents.coordinator INFO   [Step 1] Correction succeeded; stopping loop
+  ```
+
+  </details>
+
+* **FastAPI Endpoint**: The `/recommend` endpoint accepts queries (e.g., `{"query": "movies like inception"}`) and returns JSON responses with up to 3 movie recommendations.
 
 ###
 
