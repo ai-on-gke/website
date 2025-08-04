@@ -130,7 +130,7 @@ This guide expects that you already have an existing GKE cluster.
    EOF
    ```
 
-## Deploy vllm server with models.
+## Deploy VLLM server with models.
 
    > [!NOTE]
    > If you already have a VLLM server deployment created in your cluster, then this section can be skipped, otherwise, you can use it as an example.
@@ -172,17 +172,15 @@ Besides infrastructure objects, terraform config also creates some Kubernetes re
    
 The file `terraform/example.tfvars` already has pre-defined variables of an example setup, so you only have to specify these variables:
      
-```
 * `project_id` -  The project ID.  
 * `cluster_name` - Name of a target cluster.  
 * `cluster_location` - Location of a target cluster. 
-```
 
 > [!NOTE]
 > This is a minimal setup without encryption and for demo purposes. Read further to enable additional features.
 
 
-This example uses models that are deployed in the [Deploy vllm server with models section](#deploy-vllm-server-with-models). If you have your own VLLM server deployment, then make sure to correctly set up the next variables:
+This example uses models that are deployed in the [Deploy VLLM server with models section](#deploy-vllm-server-with-models). If you have your own VLLM server deployment, then make sure to correctly set up the next variables:
 
 
 * `inference_pool_name` - Name of the Inference Pool to create.
@@ -196,7 +194,7 @@ This example uses models that are deployed in the [Deploy vllm server with model
 #### IP Address
    By default, the terraform reserves a new external static [IP address](https://cloud.google.com/vpc/docs/ip-addresses). You can use already existing address by specifying the next variables:
    
-   ```
+   ```tfvars
    create_ip_address = false
    ip_address_name = "<NAME_OF_EXISTING_IP_ADDRESS>
    ```
@@ -211,7 +209,7 @@ This guide uses [Certificate Manager](https://cloud.google.com/certificate-manag
 
 By default, the TLS encryption is not enabled and it can be enabled by specifying the next variables:
 
-   ```
+   ```tfvars
    use_tls = true
    domain  = "<YOUR_DOMAIN>"
    ```
@@ -222,14 +220,15 @@ The `domain` variable is a domain name under your control. When TLS is enabled, 
 A certificate itself can be configured in two ways:
    * New certificate created by terraform:
 
-      ```
+      ```tfvars
       create_tls_certificate = true
       ```
 
       
 
    * Existing certificate:
-      ```
+
+      ```tfvars
       create_tls_certificate = false
       tls_certificate_name = "<EXISTING_CERTIFICATE_NAME>"
       ```
@@ -323,7 +322,7 @@ terraform output ip_address
 
    Now the response has to be `403`
 
-   ```
+   ```log
    HTTP/2 403 
    content-length: 87
    content-type: text/plain
