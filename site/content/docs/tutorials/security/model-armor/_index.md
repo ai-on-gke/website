@@ -321,7 +321,7 @@ terraform output ip_address
    }'
    ```
 
-   Now the response how to be `403`
+   Now the response has to be `403`
 
    ```
    HTTP/2 403 
