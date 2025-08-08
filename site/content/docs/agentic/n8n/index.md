@@ -266,7 +266,7 @@ We deploy an Ollama server to host LLM that we will use in n8n.
    cd ../iap
    ```
 
-4. Navigate to the [Secure your app with Identity Aware Proxy guide](http://../../tutorials/security/identity-aware-proxy) and follow the instructions to enable IAP.
+4. Navigate to the [Secure your app with Identity Aware Proxy guide](/docs/tutorials/security/identity-aware-proxy) and follow the instructions to enable IAP.
 
 ### [Alternative] Use Port-forward
 
