@@ -165,7 +165,7 @@ It creates the following resources. For more information such as resource names 
 
 We deploy an Ollama server to host LLM that we will use in n8n. 
 
-1. Apply the Kubernetes manifest file `gen/ollama.yaml`  that is previously generated from the template by the terrafrom 
+1. Apply the Kubernetes manifest file `gen/ollama.yaml`  that is previously generated from the template by the terraform:
 
    ```shell
    kubectl apply -f ../gen/ollama.yaml
