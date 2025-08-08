@@ -324,6 +324,6 @@ The example itself is a workflow based on [this template](https://n8n.io/workflo
 
 1. Destroy the provisioned infrastructure.
 
-```shell
-terraform destroy -var-file=example.tfvars
-```
+   ```shell
+   terraform destroy -var-file=example.tfvars
+   ```
