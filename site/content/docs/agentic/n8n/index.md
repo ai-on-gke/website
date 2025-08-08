@@ -134,7 +134,7 @@ It creates the following resources. For more information such as resource names 
    terraform plan -var-file=example.tfvars
    ```
 
-5. Execute the plan:
+5. Execute the plan. This may take around 10-15 minutes to complete:
 
    ```shell
    terraform apply -var-file=example.tfvars
@@ -277,7 +277,7 @@ As an alternative, for a local testing, instead of IAP you can use the port-forw
 
 ## Trying example workflow with the Database Chat Example Workflow 
 
-In the example we create a workflow that uses LLMs from the Ollama service that we deployed earlier on the GKE cluster alongside with the n8n. All nodes of the example workflow use only locally deployed LLMs that are served by Ollama.
+In the example we create a workflow that uses LLMs from the Ollama service that we deployed earlier on the GKE cluster alongside the n8n. All nodes of the example workflow use only locally deployed LLMs that are served by Ollama.
 
 The example itself is a workflow based on [this template](https://n8n.io/workflows/2090-chat-with-a-database-using-ai/) that uses an agent to interact with a database. In this example the target database is n8n’s database itself.
 
