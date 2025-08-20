@@ -139,7 +139,7 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} --location=${CLUSTER_L
 
 2. Load the notebook:
     - Once logged in to JupyterHub, choose the **CPU** preset with **Default** storage. 
-    - Click **File** -> **Open From URL** and paste: `https://github.com/ai-on-gke/quick-start-guides/rag/example_notebooks/rag-kaggle-ray-sql-interactive.ipynb`
+    - Click **File** -> **Open From URL** and paste: `https://raw.githubusercontent.com/ai-on-gke/quick-start-guides/refs/heads/main/rag/example_notebooks/rag-kaggle-ray-sql-interactive.ipynb`
 
 3. Configure Kaggle:
     - Create a [Kaggle account](https://www.kaggle.com/account/login?phase=startRegisterTab&returnUrl=%2F).
