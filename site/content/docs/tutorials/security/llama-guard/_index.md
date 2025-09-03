@@ -131,19 +131,27 @@ It creates the following resources. For more information such as resource names 
 
 We need to deploy vLLM servers that will serve the Llama Guard model and another normal model that the LLama Guard will secure.
 
-1. Apply vLLM deployment manifest with base Llama model:
-
+1. Create a secret with your HuggingFace token:
+   
    ```sh
-   kubectl apply ../vllm/vllm-llama.yaml
+   kubectl create secret generic hf-token-secret --from-literal=token="<YOUR_TOKEN>"
    ```
 
-2. Apply vLLM deployment manifest with Llama Guard model:
+
+
+2. Apply vLLM deployment manifest with base Llama model:
 
    ```sh
-   kubectl apply ../vllm/vllm-llama-guard.yaml
+   kubectl apply -f ../vllm/vllm-llama.yaml
    ```
 
-3. Wait until these deployments are ready:
+3. Apply vLLM deployment manifest with Llama Guard model:
+
+   ```sh
+   kubectl apply -f ../vllm/vllm-llama-guard.yaml
+   ```
+
+4. Wait until these deployments are ready:
 
    ```sh
    kubectl rollout status deployment/vllm-llama3 deployment/vllm-llama-guard-3
