@@ -22,7 +22,6 @@ At the moment of writing this tutorial, the PromptGuard 2 model is used by Llama
 
 This example uses Google ADK to interact with LLM, but it is more focused on LLamaFirewall. For more detailed guide in Google ADK, please refer to our another guide - [Agent Development Kit (ADK) on GKE](/docs/agentic/adk-llama-vllm/)
 
-
 The tutorial will cover:
 
 * Setting up your Google Cloud environment.  
@@ -169,8 +168,6 @@ We need to deploy vLLM servers that will serve the model that the LlamaFirewall 
    kubectl create secret generic hf-token-secret --from-literal=token="<YOUR_TOKEN>"
    ```
 
-
-
 2. Apply vLLM deployment manifest with base Llama model:
 
    ```sh
@@ -188,7 +185,6 @@ We need to deploy vLLM servers that will serve the model that the LlamaFirewall 
 This application consists of a simple ADK agent that uses [Callbacks](https://google.github.io/adk-docs/callbacks/). It uses [Before Model Callback](https://google.github.io/adk-docs/callbacks/types-of-callbacks/#before-model-callback) and [After Model Callback](https://google.github.io/adk-docs/callbacks/types-of-callbacks/#after-model-callback) to invoke LlamaFirewall on the user prompt and the model's response respectively. 
 
 For more info you can also look at the [adk-app/secured_agent/agent.py](https://github.com/ai-on-gke/tutorials-and-examples/blob/main/security/llama-firewall/adk-app/llama_firewall_secured_agent/agent.py) file which has the variable `secured_agent`, which is an instance of the [LlmAgent](https://google.github.io/adk-docs/agents/llm-agents/) class and its two constructor arguments: `before_model_callback` and `after_model_callback`. These callbacks are used to invoke LLama Firewall.
-
 
 1. Build image with our ADK application:
    ```sh 
