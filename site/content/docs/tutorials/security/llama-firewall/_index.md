@@ -16,7 +16,7 @@ tags:
 
 This tutorial provides instructions on how to securely deploy a self-hosted [ADK](https://google.github.io/adk-docs/) agent with [LlamaFirewall](https://meta-llama.github.io/PurpleLlama/LlamaFirewall/) on [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview).
 
-In order to sanitize its input, LlamaFirewall uses the [Llama PromptGuard 2](https://www.llama.com/docs/model-cards-and-prompt-formats/prompt-guard) model. 
+The goal is to host a general purpose LLM locally on cluster and secure interaction with it by also using locally hosted LLM of the LLamaFirewall. In order to sanitize its input, LlamaFirewall uses the [Llama PromptGuard 2](https://www.llama.com/docs/model-cards-and-prompt-formats/prompt-guard) model.
 
 At the moment of writing this tutorial, the PromptGuard 2 model is used by LlamaFirewall internally on the same machine, without ability to connect to the PromptGuard 2 that is hosted remotely (for example on a separate vLLM deployment), that's why in this tutorial we attach GPU to the pod that runs ADK app itself.  
 
