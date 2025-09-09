@@ -158,7 +158,7 @@ KServe relies on [Knative](https://knative.dev/docs/concepts/) and requires a ne
    kubectl delete pod webhook-64c67b4fc-nmzwt -n knative-serving
    ```
    
-After successfully installing KServe, you can now explore various examples such as, [first inference service](https://kserve.github.io/website/master/get_started/first_isvc/), [canary rollout](https://kserve.github.io/website/master/modelserving/v1beta1/rollout/canary-example/), inference [batcher](https://kserve.github.io/website/master/modelserving/batcher/batcher/) and [auto-scaling](https://kserve.github.io/website/master/modelserving/autoscaling/autoscaling/).
+After successfully installing KServe, you can now explore various examples such as, [first inference service](https://kserve.github.io/website/docs/getting-started/genai-first-isvc), [canary rollout](https://kserve.github.io/website/docs/model-serving/predictive-inference/rollout-strategies/canary-example), inference [batcher](https://kserve.github.io/website/docs/model-serving/predictive-inference/batcher) and [auto-scaling](https://kserve.github.io/website/docs/model-serving/predictive-inference/autoscaling/kpa-autoscaler).
 In the next step, we'll demonstrate how to deploy Gemma2 using vLLM in KServe with GKE Autopilot.
 
 ## Deploy Gemma2 served with vllm.

@@ -106,7 +106,7 @@ The `database` block can auto-create a new MariaDB instance, which will be hoste
 
 The `storage` block specifies where to mount the shared filesystem in the data plane pods (`slurmd`) that will execute the jobs. The configuration of all the Slurm components, except for the database, will auto-mount on the specified shared filesystem.
 
-The `munge` block specifies the Munge key that’s used for the secure communication between the cluster nodes. If you’re not familiar with it or with any previous Slurm setup, and you want to create a new one, the Munge key must be 32 kB. The Munge client has a [specific command](https://manpages.ubuntu.com/manpages/focal/man8/create-munge-key.8.html) to create a Munge key, and the SchedMD documentation also describes [another approach](https://slurm.schedmd.com/authentication.html#munge_setup) to creating a Munge key by using `dd`.
+The `munge` block specifies the Munge key that’s used for the secure communication between the cluster nodes. If you’re not familiar with it or with any previous Slurm setup, and you want to create a new one, the Munge key must be 32 kB. The Munge client has a [specific command](https://manpages.ubuntu.com/manpages/noble/en/man8/mungekey.8.html) to create a Munge key, and the SchedMD documentation also describes [another approach](https://slurm.schedmd.com/authentication.html#munge_setup) to creating a Munge key by using `dd`.
 
 For more information related to the image, see the Image section of this document.
 
