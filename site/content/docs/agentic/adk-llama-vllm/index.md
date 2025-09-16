@@ -111,6 +111,9 @@ To successfully deploy our model, we need to create a HuggingFace secret (with a
 
 Run these commands to create the HuggingFace secret:
 
+  >[!NOTE]
+  > In order to access the `meta-llama/Llama-3.1-8B-Instruct` model, make sure you have approved access request to its gated repository.
+
   ```bash
   export HF_TOKEN=<YOUR_HF_TOKEN>
   kubectl create secret generic hf-token-secret \
@@ -280,6 +283,9 @@ You can review the status by running logs \-f command on the associated pod. The
 
 ### Securely expose Agent's Web-UI with Identity Aware Proxy (IAP).
 
+>[!NOTE]
+>If you do not need IAP you can just use [port-forwarding](#alternative-use-port-forward).
+
 Create a new directory for Terraform config:
 
    ```bash
@@ -287,6 +293,7 @@ Create a new directory for Terraform config:
    ```
 
 Prepare the tfvars file that will be needed during the IAP guide. We also can specify some of the known variable values, so you only need to specify the remaining ones with the `<>` placeholder.
+More information about the remaining values can be found in the IAP guide, which you will find a link to in the following steps.
 
    ```bash
    cat <<EOF > ../iap/values.tfvars
@@ -300,6 +307,7 @@ Prepare the tfvars file that will be needed during the IAP guide. We also can sp
    support_email            = "<SUPPORT_EMAIL>"
    client_id                = "<CLIENT_ID>"
    client_secret            = "<CLIENT_SECRET>"
+   members_allowlist        = [<MEMBERS_ALLOWLIST>]
    EOF
    ```
 
