@@ -112,7 +112,7 @@ To successfully deploy our model, we need to create a HuggingFace secret (with a
 Run these commands to create the HuggingFace secret:
 
   >[!NOTE]
-  > In order to access the `meta-llama/Llama-3.1-8B-Instruct` model, make sure you have approved access request to its gated repository.
+  > In order to access the `meta-llama/Llama-3.1-8B-Instruct` model, confirm that the gating request is approved here: https://huggingface.co/settings/gated-repos.
 
   ```bash
   export HF_TOKEN=<YOUR_HF_TOKEN>
