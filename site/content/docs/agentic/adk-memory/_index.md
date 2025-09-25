@@ -93,7 +93,6 @@ It creates the following resources. For more information such as resource names 
     - Cluster IAM Service Account (derives name from a cluster name, e.g. `tf-gke-<cluster name>`) – manages permissions for the GKE cluster.
 * [Artifact registry](https://cloud.google.com/artifact-registry/docs/overview) – stores container images for the application.  
     
-
 1. Go the the terraform directory:
 
     ```bash
@@ -156,7 +155,6 @@ It creates the following resources. For more information such as resource names 
    kubectl rollout status deployment/adk-agent
    ```
 
-
 ## Test the ADK app and memory
 
 1. Expose the webui port of the ADK app:
@@ -183,7 +181,6 @@ It creates the following resources. For more information such as resource names 
    3.2. Make agent search its memory, for example by prompting "What are my plans for next month?":
 
    ![alt_text](search-in-memory.png)
-
 
    The agent should find previously saved information by using the `search_memory` tool.
 
