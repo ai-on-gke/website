@@ -16,9 +16,9 @@ tags:
     - NVIDIA vLLM
     - GRPO
 externalSource:
-    repository: "ai-on-gke/tutorials-and-examples"
+    repository: "https://github.com/ai-on-gke/tutorials-and-examples/tree/main/nemo-rl-on-gke"
     branch: "main"
-    filePath: "nemo-rl-on-gke/README.md"
+    filePath: "https://github.com/ai-on-gke/tutorials-and-examples/blob/main/nemo-rl-on-gke/README.md"
 cloudShell: 
     enabled: true
     folder: site/content/docs/blueprints/nemo-rl-on-gke
