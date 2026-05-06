@@ -21,4 +21,11 @@ cache_exclude_status = ["429","500..599","400..499"]
 cache = true
 no_progress = true
 verbose = "error"
-exclude = ["console.cloud.google.com/marketplace"]
+base = "site/public" 
+exclude = [
+  "console.cloud.google.com/marketplace",
+  "redis.io/about/about-stack",
+  "github.com/AI-Hypercomputer/inference-benchmark/issues/new",
+  "github.com/ai-on-gke/tutorials-and-examples/blob/main/nemo-rl-on-gke/llama3_1_8b_it",
+  "github.com/ai-on-gke/tutorials-and-examples/blob/main/nemo-rl-on-gke/qwen2_5_1_5b_it",
+]
