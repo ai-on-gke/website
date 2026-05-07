@@ -21,11 +21,12 @@ cache_exclude_status = ["429","500..599","400..499"]
 cache = true
 no_progress = true
 verbose = "error"
-base = "site/public" 
+root_dir = "site/public" 
 exclude = [
   "console.cloud.google.com/marketplace",
-  "redis.io/about/about-stack",
-  "github.com/AI-Hypercomputer/inference-benchmark/issues/new",
+  # GitHub issues/new requires authentication and cannot be link-checked
+  "github.com/.*/issues/new",
+  # Broken links in upstream nemo-rl-on-gke external README (subdirectory READMEs don't exist yet)
   "github.com/ai-on-gke/tutorials-and-examples/blob/main/nemo-rl-on-gke/llama3_1_8b_it",
   "github.com/ai-on-gke/tutorials-and-examples/blob/main/nemo-rl-on-gke/qwen2_5_1_5b_it",
-]
+ ]

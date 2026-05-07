@@ -112,7 +112,7 @@ File `app/rag_demo/__init__.py`:
 <details><summary>Expand to see key parts</summary>
 
 
-In this demo we use [Redis-stack](https://redis.io/about/about-stack/) as our vector storage and we also have to define a data schema for it.
+In this demo we use [Redis-stack](https://redis.io/about/redis-stack/) as our vector storage and we also have to define a data schema for it.
 
 ```python
 custom_schema = IndexSchema.from_dict(

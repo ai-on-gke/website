@@ -60,7 +60,7 @@ Additionally, this tutorial includes an example of serving Gemma2 with vLLM in K
    ```
 
 ## Install KServe
-KServe relies on [Knative](https://knative.dev/docs/concepts/) and requires a networking layer. In this tutorial, we will use [Istio](https://istio.io/), the networking layer that integrates best with Knative.
+KServe relies on [Knative](https://knative.dev/docs/) and requires a networking layer. In this tutorial, we will use [Istio](https://istio.io/), the networking layer that integrates best with Knative.
 
 > [!NOTE]
 > You will see warnings that Autopilot mutated the CRDs during this tutorial. These warnings are safe to ignore.
