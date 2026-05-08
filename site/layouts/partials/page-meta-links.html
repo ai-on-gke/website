@@ -42,7 +42,10 @@
 
   {{ $viewURL := printf "%s/tree/%s" $gh_repo $gh_repo_path -}}
   {{ $editURL := printf "%s/edit/%s" $gh_repo $gh_repo_path -}}
-  {{ $issuesURL := printf "%s/issues/new?title=%s&template=documentation-issue-report.md" $gh_repo (safeURL $.Title ) -}}
+  {{ $issuesURL := printf "%s/issues/new?title=%s" $gh_repo (safeURL $.Title) -}}
+  {{ if not .Page.Params.externalSource.repository -}}
+    {{ $issuesURL = printf "%s&template=documentation-issue-report.md" $issuesURL -}}
+  {{ end -}}
   {{ $newPageStub := resources.Get "stubs/new-page-template.md" -}}
   {{ $newPageQS := querify "value" $newPageStub.Content "filename" "change-me.md" | safeURL -}}
   {{ $newPageURL := printf "%s/new/%s?%s" $gh_repo (path.Dir $gh_repo_path) $newPageQS -}}

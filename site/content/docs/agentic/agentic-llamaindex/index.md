@@ -110,7 +110,7 @@ File `app/rag_demo/__init__.py`:
 
 <details><summary>Expand to see key parts</summary>
 
-The application uses [Redis Stack](https://redis.io/about/about-stack/) as the vector store, with a defined schema for indexing movie data.
+The application uses [Redis Stack](https://redis.io/about/redis-stack/) as the vector store, with a defined schema for indexing movie data.
 
 ```python
 custom_schema = IndexSchema.from_dict(
