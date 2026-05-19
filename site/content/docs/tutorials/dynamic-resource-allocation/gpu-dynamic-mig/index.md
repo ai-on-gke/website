@@ -41,7 +41,7 @@ export CLUSTER_NAME=gpu-vllm-dynamicmig
 export LOCATION=us-east5 # Choose a region that has NVIDIA H100 GPUs available
 export ZONE=us-east5-a # Choose a zone within the region that has H100 GPUs available.
 export HF_TOKEN=HUGGING_FACE_TOKEN # Replace with your actual Hugging Face token
-export CLUSTER_VERSION="1.35.2-gke.1269001" # Must be 1.36 or later, or 1.34+ with alpha features enabled.
+export CLUSTER_VERSION="1.36" # Must be 1.36 or later, or 1.34+ with alpha features enabled.
 export NAMESPACE=default
 ```
 
@@ -49,18 +49,11 @@ export NAMESPACE=default
 
 ### Create a GKE Cluster
 
-> [!IMPORTANT]
-> Until Kubernetes 1.36 is available on GKE, this tutorial requires that the `DRAPartitionableDevices` alpha feature is enabled. In GKE, this typically requires creating an alpha cluster by adding the `--enable-kubernetes-alpha` flag to the `gcloud container clusters create` command. Please note that GKE alpha clusters expire and are automatically deleted after 30 days.
-
 ```bash
 gcloud container clusters create $CLUSTER_NAME \
     --location=$LOCATION \
     --cluster-version=$CLUSTER_VERSION \
     --project=$PROJECT_ID \
-    --enable-kubernetes-alpha \
-    --no-enable-autoupgrade \
-    --no-enable-autorepair \
-    --alpha-cluster-feature-gates=DRAPartitionableDevices=true \
     --num-nodes=1 \
     --labels=created-by=ai-on-gke,guide=gpu-mig-sharing
 ```
@@ -74,8 +67,6 @@ gcloud container node-pools create h100-pool \
     --cluster=${CLUSTER_NAME} \
     --location=${LOCATION} \
     --node-locations=${ZONE} \
-    --no-enable-autoupgrade \
-    --no-enable-autorepair \
     --machine-type="a3-highgpu-1g" \
     --accelerator="type=nvidia-h100-80gb,count=1,gpu-driver-version=disabled" \
     --num-nodes=1 \
@@ -111,14 +102,11 @@ kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/container
 
 ## **Install the NVIDIA GPU DRA driver**
 
-We install the NVIDIA GPU DRA driver using a Helm chart. We enable Dynamic MIG support by setting `featureGates.DynamicMIG=true`.
+We install the NVIDIA GPU DRA driver using a Helm chart from the official Kubernetes OCI registry. We enable Dynamic MIG support by setting `featureGates.DynamicMIG=true`.
 
 ```bash
-helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
-helm repo update
-
-helm install nvidia-dra-driver-gpu nvidia/nvidia-dra-driver-gpu \
-    --version="25.12.0" --create-namespace --namespace=nvidia-dra-driver-gpu \
+helm install dra-driver-nvidia-gpu oci://registry.k8s.io/dra-driver-nvidia/charts/dra-driver-nvidia-gpu \
+    --version="0.4.0" --create-namespace --namespace=dra-driver-nvidia-gpu \
     --set nvidiaDriverRoot="/home/kubernetes/bin/nvidia/" \
     --set gpuResourcesEnabledOverride=true \
     --set resources.computeDomains.enabled=false \
@@ -132,13 +120,13 @@ helm install nvidia-dra-driver-gpu nvidia/nvidia-dra-driver-gpu \
 Check that the NVIDIA GPU DRA driver is installed and working by inspecting the driver pod:
 
 ```bash
-kubectl -n nvidia-dra-driver-gpu get pods
+kubectl -n dra-driver-nvidia-gpu get pods
 ```
 
 The pod should be in a Running state. If not, you can inspect the logs with:
 
 ```bash
-kubectl -n nvidia-dra-driver-gpu logs -l app.kubernetes.io/name=nvidia-dra-driver-gpu -c gpus
+kubectl -n dra-driver-nvidia-gpu logs -l app.kubernetes.io/name=dra-driver-nvidia-gpu -c gpus
 ```
 
 Verify that the driver has published a ResourceSlice object that lists the GPU on the node:
@@ -149,6 +137,9 @@ Verify that the driver has published a ResourceSlice object that lists the GPU o
 ```bash
 kubectl get resourceslices
 ```
+
+You should see two resourceslices.
+
 
 ## **Create the DRA ResourceClaimTemplate**
 
@@ -230,7 +221,7 @@ spec:
         resourceClaimTemplateName: gpu-claim-template-prod
       containers:
       - name: vllm-gpu
-        image: vllm/vllm-openai:v0.7.2
+        image: vllm/vllm-openai:v0.21.0
         command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
         args:
         - --host=0.0.0.0
@@ -297,7 +288,7 @@ spec:
         resourceClaimTemplateName: gpu-claim-template-dev
       containers:
       - name: vllm-gpu
-        image: vllm/vllm-openai:v0.7.2
+        image: vllm/vllm-openai:v0.21.0
         command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
         args:
         - --host=0.0.0.0
