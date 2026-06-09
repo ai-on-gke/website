@@ -149,7 +149,7 @@ You should see a representation of the TPU chips under `devices`.
 To claim TPU hardware dynamically, we use a `ResourceClaimTemplate`. This template defines the type of device class we are requesting (in this case, `tpu.google.com`). When a pod references this template, GKE dynamically generates a `ResourceClaim` to allocate the hardware.
 
 > [!IMPORTANT]
-> The TPU DRA driver does not currently support TPU subslicing. Therefore, a Pod must claim all TPU chips on a node.
+> The TPU DRA driver does not currently support allocating a subset of TPU chips on a node. Therefore, a Pod must claim all TPU chips on a node.
 
 Inspect the following `claim-template.yaml`:
 
