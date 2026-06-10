@@ -41,7 +41,7 @@ export CLUSTER_NAME=gpu-vllm-timeslicing
 export LOCATION=us-central1 # Choose a region that has NVIDIA A100 GPUs available
 export ZONE=us-central1-c # Choose a zone within the region that has A100 GPUs available. Look at https://cloud.google.com/compute/docs/gpus/gpu-regions-zones for availability.
 export HF_TOKEN=HUGGING_FACE_TOKEN # Replace with your actual Hugging Face token
-export CLUSTER_VERSION="1.35.2-gke.1269001" # Must be 1.34 or later
+export CLUSTER_VERSION="1.36" # Must be 1.34 or later
 export NAMESPACE=default
 ```
 
@@ -51,11 +51,11 @@ export NAMESPACE=default
 
 ```bash
 gcloud container clusters create $CLUSTER_NAME \
---location=$LOCATION \
---cluster-version=$CLUSTER_VERSION \
---project=$PROJECT_ID \
---num-nodes=1 \
---labels=created-by=ai-on-gke,guide=gpu-time-slicing
+    --location=$LOCATION \
+    --cluster-version=$CLUSTER_VERSION \
+    --project=$PROJECT_ID \
+    --num-nodes=1 \
+    --labels=created-by=ai-on-gke,guide=gpu-time-slicing
 ```
 
 ### Create a node pool with A100 GPUs
@@ -103,17 +103,14 @@ kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/container
 
 ## **Install the NVIDIA GPU DRA driver**
 
-We install the NVIDIA GPU DRA driver using a Helm chart. Make sure that you have Helm installed, if not,
+We install the NVIDIA GPU DRA driver using a Helm chart from the official Kubernetes OCI registry. Make sure that you have Helm installed, if not,
 you can follow the [Helm documentation](https://helm.sh/docs/intro/install/) to install it. Time slicing is
 still a beta feature in the NVIDIA GPU DRA driver, so we need to enable it by setting
 `featureGates.TimeSlicingSettings=true`.
 
 ```bash
-helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
-helm repo update
-
-helm install nvidia-dra-driver-gpu nvidia/nvidia-dra-driver-gpu \
-    --version="25.12.0" --create-namespace --namespace=nvidia-dra-driver-gpu \
+helm install dra-driver-nvidia-gpu oci://registry.k8s.io/dra-driver-nvidia/charts/dra-driver-nvidia-gpu \
+    --version="0.4.0" --create-namespace --namespace=dra-driver-nvidia-gpu \
     --set nvidiaDriverRoot="/home/kubernetes/bin/nvidia/" \
     --set gpuResourcesEnabledOverride=true \
     --set resources.computeDomains.enabled=false \
@@ -127,13 +124,13 @@ helm install nvidia-dra-driver-gpu nvidia/nvidia-dra-driver-gpu \
 Check that the NVIDIA GPU DRA driver is installed and working by inspecting the driver pod:
 
 ```bash
-kubectl -n nvidia-dra-driver-gpu get pods
+kubectl -n dra-driver-nvidia-gpu get pods
 ```
 
 The pod should be in a Running state. If not, you can inspect the logs with:
 
 ```bash
-kubectl -n nvidia-dra-driver-gpu logs -l app.kubernetes.io/name=nvidia-dra-driver-gpu -c gpus
+kubectl -n dra-driver-nvidia-gpu logs -l app.kubernetes.io/name=dra-driver-nvidia-gpu -c gpus
 ```
 
 Verify that the driver has published a ResourceSlice object that lists the GPU on the node:
@@ -260,7 +257,7 @@ spec:
         resourceClaimName: gpu-claim
       containers:
       - name: vllm-gpu
-        image: vllm/vllm-openai:v0.7.2
+        image: vllm/vllm-openai:v0.21.0
         command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
         args:
         - --host=0.0.0.0
