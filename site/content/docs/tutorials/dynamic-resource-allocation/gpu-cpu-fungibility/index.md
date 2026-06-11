@@ -4,8 +4,10 @@ title: "Workload fungibility between GPUs and CPUs with DRA"
 description: "This tutorial guides you through how to achieve workload fungibility across NVIDIA GPUs and CPUs on Google Kubernetes Engine (GKE) using Dynamic Resource Allocation (DRA) and Device Binding Conditions."
 weight: 40
 owner:
-  - name: "Morten Torkildsen"
-    link: "https://github.com/mortent"
+  - name: "John Belamaric"
+    link: "https://github.com/johnbelamaric"
+  - name: "Tsubasa Watanabe"
+    link: "https://github.com/ttsuuubasa"
 type: docs
 tags:
  - GPU
