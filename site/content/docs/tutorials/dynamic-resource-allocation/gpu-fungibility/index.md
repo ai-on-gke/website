@@ -66,7 +66,7 @@ To set up your environment with Cloud Shell, follow these steps:
 ```bash
 export PROJECT_ID=$(gcloud config get project)
 export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(projectNumber)")
-export CLUSTER_NAME=mortent-gpu-fungibility
+export CLUSTER_NAME=gpu-dra-fungibility
 export LOCATION=us-central1 # Choose a region that has NVIDIA A100 GPUs available
 export ZONE=us-central1-c # Choose a zone within the region that has A100 GPUs available. Look at https://cloud.google.com/compute/docs/gpus/gpu-regions-zones for availability.
 export HF_TOKEN=HUGGING_FACE_TOKEN # Replace with your actual Hugging Face token
