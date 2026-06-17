@@ -5,6 +5,7 @@ description: "This tutorial guides you through how to dynamically allocate Googl
 weight: 40
 owner:
   - name: "AI on GKE Contributors"
+    link: "https://github.com/ai-on-gke"
 type: docs
 tags:
  - TPU

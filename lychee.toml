@@ -27,4 +27,5 @@ exclude = [
   "github.com/.*/issues/new",
   "github.com/ai-on-gke/tutorials-and-examples/blob/main/nemo-rl-on-gke/llama3_1_8b_it",
   "github.com/ai-on-gke/tutorials-and-examples/blob/main/nemo-rl-on-gke/qwen2_5_1_5b_it",
+  "https://github.com/kubernetes-sigs/gateway-api-inference-extension/tree/main/config/charts/inferencepool"
  ]
