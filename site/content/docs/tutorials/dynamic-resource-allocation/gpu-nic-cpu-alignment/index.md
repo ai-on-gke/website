@@ -554,7 +554,7 @@ The default aligned pod (`aligned-gpu-nic-cpu-pod`) is already running. To measu
 of cross-socket traffic, we declare a negative constraint to force host CPU exclusive cores to be allocated on
 NUMA Socket 1, while the GPU and NIC remain co-located on Socket 0.
 
-The Kubernetes DRA API provides a **[`distinctAttribute`](https://kubernetes.io/docs/concepts/extend-kubernetes/compute-resource-sharing/#dynamic-resource-allocation)**
+The Kubernetes DRA API provides a **[`distinctAttribute`](https://kubernetes.io/docs/concepts/scheduling-eviction/dynamic-resource-allocation/#distinctattribute-constraint)**
 field, which instructs the scheduler to ensure that selected requests are allocated resources with *distinct* values
 for that attribute.
 
