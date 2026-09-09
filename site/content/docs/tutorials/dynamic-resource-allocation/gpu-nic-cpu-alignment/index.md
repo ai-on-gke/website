@@ -297,10 +297,10 @@ metadata:
 
 ## Install the CPU DRA Driver
 
-Install the CPU DRA Driver:
+Install the CPU DRA Driver using the [official Helm chart](https://github.com/kubernetes-sigs/dra-driver-cpu). We override the `healthzPort` to `18080` to prevent port conflicts with other system services:
 
 ```bash
-kubectl apply -f https://github.com/kubernetes-sigs/dra-driver-cpu/releases/download/v0.1.0/install.yaml
+helm install dra-driver-cpu oci://registry.k8s.io/dra-driver-cpu/charts/dra-driver-cpu -n kube-system --set healthzPort=18080
 ```
 
 **Verification:**
