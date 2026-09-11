@@ -30,7 +30,8 @@ Consider an inference service running vLLM that scales horizontally. Each Pod pr
 Achieving this level of workload fungibility requires coordinating three distinct layers:
 1. **Infrastructure Autoscaling with Custom Compute Classes (CCC)**: In GKE, Custom Compute Classes allow you to declare a ranked list of node pool priorities for **node autoscaling**. When pending Pods require nodes, Cluster Autoscaler scales the first node pool (`gpu-pool`) until it reaches its limits (such as `max-nodes` or quota constraints), and then falls back to scaling the next node pool (`cpu-pool`).
 2. **Prioritized Device Allocation and Pod Scoring with DRA (`firstAvailable`)**: In your `ResourceClaimTemplate`, you define a prioritized list of resource requests: NVIDIA GPU (`gpu.nvidia.com`) first, and exclusive CPUs (`dra.cpu`) second. When scheduling Pods across existing nodes, kube-scheduler scores nodes that can satisfy earlier `firstAvailable` entries higher, ensuring Pods land on GPU nodes whenever GPU capacity is available.
-3. **Runtime Image Mutation with Device Binding Conditions (KEP-5007)**: A GPU inference workload (`vllm/vllm-openai`) and a CPU inference workload (`vllm/vllm-cpu`) require different container images. However, the scheduler's choice between GPU and CPU is only known at scheduling time. By adding a gating device with a binding condition (`image-configurator.x-k8s.io/image-updated`), Kubelet blocks Pod startup until the `dra-driver-image-configurator` controller observes the allocation result, mutates the Pod's runtime container image to the matching vLLM image, emits an `ImagePatched` event, and satisfies the condition.
+3. **Runtime Image Mutation with Device Binding Conditions (KEP-5007)**: A GPU inference workload (`vllm/vllm-openai`) and a CPU inference workload (`vllm/vllm-openai-cpu`) require different container images. However, the scheduler's choice between GPU and CPU is only known at scheduling time. By adding a gating device with a binding condition (`image-configurator.x-k8s.io/image-updated`), Kubelet blocks Pod startup until the `dra-driver-image-configurator` controller observes the allocation result, mutates the Pod's runtime container image to the matching vLLM image, emits an `ImagePatched` event, and satisfies the condition.
+4. **Device Detection and Runtime Parameter Adaptation**: While `image-configurator` mutates the container image, hardware-specific parameters (such as CPU threads, NUMA-aware KV cache allocation, and eager execution on CPU) are adapted at container startup by detecting the allocated device.
 
 Together, these capabilities allow a **single Kubernetes Deployment** to scale seamlessly across both GPU and CPU nodes.
 
@@ -48,7 +49,7 @@ export PROJECT_ID=$(gcloud config get project)
 export PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(projectNumber)")
 export CLUSTER_NAME=gpu-cpu-fungibility
 export LOCATION=us-central1 # Choose a region with NVIDIA L4 GPUs available
-export ZONE=us-central1-c # Choose a zone within the region with L4 capacity
+export ZONE=us-central1-a # Choose a zone within the region with L4 capacity
 export HF_TOKEN=HUGGING_FACE_TOKEN # Replace with your actual Hugging Face token
 export CLUSTER_VERSION="1.36.0-gke.100" # Must be 1.36 or later
 export NAMESPACE=default
@@ -152,12 +153,14 @@ Since we disabled the installation of the GPU Device Plugin at node pool creatio
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/master/nvidia-driver-installer/cos/daemonset-preloaded.yaml
 ```
 
-## **Build, Push, and Install the DRA Drivers**
+## **Build, Push, and Install the DRA Drivers and Workload Images**
 
 In this tutorial, we deploy three distinct DRA components:
 1. **NVIDIA GPU DRA Driver**: Implements allocation for GPUs (`gpu.nvidia.com`).
 2. **CPU DRA Driver**: Implements allocation for exclusive CPUs (`dra.cpu`).
 3. **Image Configurator Controller & No-Op Driver**: Observes allocation results, mutates container runtime images, emits events, and resolves binding conditions (`image-configurator.x-k8s.io`).
+
+We also build and push specialized container images for our vLLM workload to our regional Artifact Registry.
 
 > [!NOTE]
 > The no-op driver is necessary for now when using the image configurator, but features coming in later versions of Kubernetes will eliminate the need to run this driver.
@@ -169,26 +172,36 @@ Clone the `dra-driver-nvidia-gpu` repository from the `kubernetes-sigs` GitHub o
 ```bash
 git clone https://github.com/kubernetes-sigs/dra-driver-nvidia-gpu.git
 
-helm install dra-driver-nvidia-gpu ./dra-driver-nvidia-gpu/deployment/helm/dra-driver-nvidia-gpu \
+helm install dra-driver-nvidia-gpu ./dra-driver-nvidia-gpu/deployments/helm/dra-driver-nvidia-gpu \
     --namespace=kube-system \
-    --set 'kubeletPlugin.tolerations[0].operator=Exists' # Needed to run on tainted GPU nodes
+    --set 'kubeletPlugin.tolerations[0].operator=Exists' \
+    --set nvidiaDriverRoot=/home/kubernetes/bin/nvidia \
+    --set gpuResourcesEnabledOverride=true \
+    --set image.tag=v0.5.0
 ```
 
 > [!NOTE]
-> The NVIDIA DRA driver chart defaults to pulling driver container images directly from the official Kubernetes container image registry (`registry.k8s.io`).
+> - `nvidiaDriverRoot=/home/kubernetes/bin/nvidia`: On GKE Container-Optimized OS (COS), the preloaded NVIDIA drivers and libraries are mounted under `/home/kubernetes/bin/nvidia`.
+> - `gpuResourcesEnabledOverride=true`: Forces the driver to discover and manage NVIDIA GPUs on GKE.
+> - `image.tag=v0.5.0`: Uses the stable release image compatible with Kubernetes 1.36.
 
 ### Install the CPU DRA driver
 
-Clone the `dra-driver-cpu` repository and install the driver using its official Helm chart, targeted to nodes labeled for the CPU DRA driver:
+Install the CPU DRA driver using the official Helm chart from the Kubernetes container registry:
 
 ```bash
-git clone https://github.com/kubernetes-sigs/dra-driver-cpu.git
-
-helm install dra-driver-cpu ./dra-driver-cpu/deployment/helm/dra-driver-cpu \
+helm install dra-driver-cpu oci://registry.k8s.io/dra-driver-cpu/charts/dra-driver-cpu \
+    --version 0.2.0 \
     --namespace=kube-system \
-    --set 'nodeSelector.cloud\.google\.com/gke-cpu-dra-driver=true' \
+    --set healthzPort=8085 \
     --set 'tolerations[0].operator=Exists'
+
+# Ensure the DaemonSet runs exclusively on nodes labeled for CPU DRA
+kubectl patch ds -n kube-system dra-driver-cpu -p '{"spec":{"template":{"spec":{"nodeSelector":{"cloud.google.com/gke-cpu-dra-driver":"true"}}}}}'
 ```
+
+> [!NOTE]
+> Setting `--set healthzPort=8085` is required on GKE because the CPU driver runs with `hostNetwork: true` and the default port `8080` conflicts with existing cluster services.
 
 ### Build, Push, and Install the Image Configurator and No-Op Driver
 
@@ -214,6 +227,9 @@ helm install dra-driver-noop ./dra-drivers/dra-driver-noop/deployments/helm \
     --set driverNames="image-configurator.x-k8s.io" \
     --set image.repository="${REPO_URI}/dra-driver-noop" \
     --set image.tag="latest"
+
+# Allow the noop driver to run on tainted nodes
+kubectl patch ds -n kube-system dra-driver-noop -p '{"spec":{"template":{"spec":{"tolerations":[{"operator":"Exists"}]}}}}'
 ```
 
 The `dra-driver-image-configurator` runs as a Deployment in the `kube-system` namespace. Update its deployment manifest to point to your Artifact Registry image, then apply the deployment and the `DeviceClass`:
@@ -227,6 +243,45 @@ kubectl apply -f ./dra-drivers/dra-driver-image-configurator/deploy/deviceclass.
 
 > [!NOTE]
 > The `dra-driver-image-configurator` repository also includes an optional Validating Admission Webhook (`deploy/webhook.yaml`) that can be used in clusters with `cert-manager` to validate `ImageConfig` parameters in `ResourceClaim` and `ResourceClaimTemplate` objects at creation time.
+
+### Build and Push Specialized vLLM Workload Images
+
+While you can run public upstream images directly, building specialized container images for GPU and CPU inference and pushing them to your regional Google Artifact Registry repository provides two important advantages:
+1. **Clean Separation of Concerns**: Each image encapsulates its own architecture-specific flags and environment settings (`OMP_NUM_THREADS=12`, `VLLM_CPU_KVCACHE_SPACE=4`, `--max-model-len=8192`, `--enforce-eager` on CPU vs. standard serving on GPU). This keeps the Kubernetes `Deployment` manifest clean, portable, and declarative without needing inline shell wrapper scripts.
+2. **Much Faster Image Pulls**: Pulling base images (~30 GB) directly from Docker Hub during pod startup can take several minutes and is subject to network latency or rate limits. Pulling from your regional Google Artifact Registry (`${LOCATION}-docker.pkg.dev`) allows GKE nodes to stream and cache layers within Google Cloud's high-speed internal network in seconds.
+
+Create the Dockerfiles for GPU and CPU:
+
+```bash
+mkdir -p images/vllm-gpu images/vllm-cpu
+
+# GPU Dockerfile: Standard vLLM serving for NVIDIA GPUs
+cat << 'EOF' > images/vllm-gpu/Dockerfile
+FROM vllm/vllm-openai:latest
+ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server", "--host=0.0.0.0", "--port=8000", "--model=google/gemma-4-E2B-it"]
+EOF
+
+# CPU Dockerfile: Optimized serving for exclusive CPUs via DRA
+cat << 'EOF' > images/vllm-cpu/Dockerfile
+FROM vllm/vllm-openai-cpu:latest
+ENV OMP_NUM_THREADS=12
+ENV VLLM_CPU_KVCACHE_SPACE=4
+ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server", "--host=0.0.0.0", "--port=8000", "--model=google/gemma-4-E2B-it", "--max-model-len=8192", "--enforce-eager"]
+EOF
+```
+
+Build both images and push them to your Google Artifact Registry repository:
+
+```bash
+docker build -t ${REPO_URI}/vllm-gemma4-gpu:latest images/vllm-gpu
+docker push ${REPO_URI}/vllm-gemma4-gpu:latest
+
+docker build -t ${REPO_URI}/vllm-gemma4-cpu:latest images/vllm-cpu
+docker push ${REPO_URI}/vllm-gemma4-cpu:latest
+```
+
+> [!NOTE]
+> Building specialized images is optional. You can alternatively use the public upstream images (`vllm/vllm-openai:latest` and `vllm/vllm-openai-cpu:latest`) directly and provide a runtime device-detection wrapper script in the `Deployment` manifest (as shown later in this guide). However, building and pushing specialized images to Artifact Registry is strongly recommended for faster node scaling and cleaner manifest definitions.
 
 ### Verify that the drivers are working
 
@@ -282,13 +337,13 @@ To enable dynamic fallback between GPU and CPU at the device level, we define a 
 
 The scheduler evaluates the requested subrequests in order:
 1. `gpu`: Prioritizes allocating an NVIDIA GPU (`gpu.nvidia.com`). Nodes that can satisfy earlier entries in `firstAvailable` are scored higher by kube-scheduler.
-2. `cpu`: Falls back to allocating 8 exclusive CPUs (`dra.cpu`) if a GPU is unavailable.
+2. `cpu`: Falls back to allocating 12 exclusive CPUs (`dra.cpu`) if a GPU is unavailable.
 
 We also request the `image-config` gating device from `image-configurator.x-k8s.io`. This device injects the `bindingConditions: ["image-configurator.x-k8s.io/image-updated"]` condition, blocking Pod startup until the container image has been updated.
 
 The `config` section provides opaque `ImageConfig` parameters for each subrequest:
-- When `device/gpu` is selected, the controller mutates the container image to `vllm/vllm-openai:v0.7.2`.
-- When `device/cpu` is selected, the controller mutates the container image to `vllm/vllm-cpu:v0.7.2`.
+- When `device/gpu` is selected, the controller mutates the container image to our specialized GPU image (`${REPO_URI}/vllm-gemma4-gpu:latest`).
+- When `device/cpu` is selected, the controller mutates the container image to our specialized CPU image (`${REPO_URI}/vllm-gemma4-cpu:latest`).
 
 Inspect the following `claim-template.yaml`:
 
@@ -309,7 +364,7 @@ spec:
           deviceClassName: dra.cpu
           capacity:
             requests:
-              dra.cpu/cpu: "8"
+              dra.cpu/cpu: "12"
       - name: image-config
         exactly:
           deviceClassName: image-configurator.x-k8s.io
@@ -321,7 +376,7 @@ spec:
             apiVersion: image-configurator.x-k8s.io/v1alpha1
             kind: ImageConfig
             containerName: vllm
-            image: vllm/vllm-openai:v0.7.2
+            image: ${REPO_URI}/vllm-gemma4-gpu:latest
       - requests: ["device/cpu"]
         opaque:
           driver: image-configurator.x-k8s.io
@@ -329,13 +384,14 @@ spec:
             apiVersion: image-configurator.x-k8s.io/v1alpha1
             kind: ImageConfig
             containerName: vllm
-            image: vllm/vllm-cpu:v0.7.2
+            image: ${REPO_URI}/vllm-gemma4-cpu:latest
 ```
 
 Apply the manifest:
 
 ```bash
-kubectl apply -f claim-template.yaml --namespace=${NAMESPACE}
+# Substitute REPO_URI and apply the claim template
+envsubst < claim-template.yaml | kubectl apply --namespace=${NAMESPACE} -f -
 ```
 
 ## **Deploy the vLLM Workload as a Single Deployment**
@@ -344,9 +400,12 @@ Rather than creating separate Deployments for GPU and CPU, we create a single un
 
 Key configuration elements:
 - `nodeSelector`: Specifies `cloud.google.com/compute-class: fungible-gpu-cpu`, directing GKE's Cluster Autoscaler to follow the priorities declared in our Custom Compute Class (`gpu-pool` first, then `cpu-pool`) whenever new nodes are required.
-- `tolerations`: Includes tolerations for the Custom Compute Class taint and NVIDIA GPU taints.
+- `tolerations`: 
+  - Tolerates `cloud.google.com/compute-class` and `nvidia.com/gpu` taints.
+  - Tolerates `DeletionCandidateOfClusterAutoscaler: PreferNoSchedule`: In autoscaled clusters, Cluster Autoscaler taints idle nodes with `DeletionCandidateOfClusterAutoscaler`. Without this toleration, kube-scheduler's `TaintToleration` score plugin penalizes idle GPU nodes, which could cause `firstAvailable` to fall back to CPU even when GPU capacity is available.
 - `resourceClaims`: References our `gpu-or-cpu` `ResourceClaimTemplate`. For every Pod replica created by the Deployment, Kubernetes creates an associated `ResourceClaim`.
-- `containers[0].image`: Uses a placeholder image (`registry.k8s.io/pause:3.10`). The `dra-driver-image-configurator` controller inspects the scheduler's device allocation, mutates the Pod image to the corresponding vLLM image, emits an `ImagePatched` event, and satisfies the binding condition before Kubelet starts the container.
+- `containers[0].image`: Uses a placeholder image (`registry.k8s.io/pause:3.10`). The `dra-driver-image-configurator` controller inspects the scheduler's device allocation, mutates the Pod image to the corresponding specialized image (`${REPO_URI}/vllm-gemma4-gpu:latest` or `${REPO_URI}/vllm-gemma4-cpu:latest`), emits an `ImagePatched` event, and satisfies the binding condition before Kubelet starts the container.
+- **Clean Container Definition**: Because each specialized image already encapsulates its own optimized entrypoint, threading (`OMP_NUM_THREADS=12`), KV cache configuration, and flags (`--enforce-eager`), the container spec requires no custom `command` or wrapper scripts.
 
 Inspect the following `deployment.yaml`:
 
@@ -375,17 +434,14 @@ spec:
       - key: "nvidia.com/gpu"
         operator: "Exists"
         effect: "NoSchedule"
+      - key: "DeletionCandidateOfClusterAutoscaler"
+        operator: "Exists"
       resourceClaims:
       - name: device
         resourceClaimTemplateName: gpu-or-cpu
       containers:
       - name: vllm
         image: registry.k8s.io/pause:3.10 # Will be mutated by the controller
-        command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
-        args:
-        - --host=0.0.0.0
-        - --port=8000
-        - --model=google/gemma-4-2b-it
         env:
         - name: HF_TOKEN
           valueFrom:
@@ -420,6 +476,24 @@ spec:
   ports:
   - port: 8000
     targetPort: 8000
+```
+
+> [!NOTE]
+> **Alternative: Runtime Device Detection in Deployment Spec**
+> If you prefer not to build custom images and instead use the upstream public images (`vllm/vllm-openai:latest` and `vllm/vllm-openai-cpu:latest`) directly, you can provide an inline device-detection script in the `Deployment` container `command` and `args`:
+> ```yaml
+>         command: ["/bin/sh", "-c"]
+>         args:
+>         - |
+>           if [ -e /dev/nvidia0 ]; then
+>             exec python3 -m vllm.entrypoints.openai.api_server --host=0.0.0.0 --port=8000 --model=google/gemma-4-E2B-it
+>           else
+>             export OMP_NUM_THREADS=12
+>             export VLLM_CPU_KVCACHE_SPACE=4
+>             exec python3 -m vllm.entrypoints.openai.api_server --host=0.0.0.0 --port=8000 --model=google/gemma-4-E2B-it --max-model-len=8192 --enforce-eager
+>           fi
+> ```
+> Both approaches achieve full fungibility, but pre-building specialized images and pushing them to your regional Artifact Registry is faster and avoids Docker Hub rate limits.
 ```
 
 Apply the deployment and service:
@@ -478,7 +552,7 @@ The output shows the `image-configurator.x-k8s.io/image-updated` condition with 
 ]
 ```
 
-Confirm that the Pod's container image was mutated from `pause` to `vllm/vllm-openai:v0.7.2`:
+Confirm that the Pod's container image was mutated from `pause` to `${REPO_URI}/vllm-gemma4-gpu:latest`:
 
 ```bash
 kubectl get pods -l app=vllm-fungible -o jsonpath='{.items[0].spec.containers[0].image}'
@@ -502,7 +576,7 @@ kubectl scale deployment vllm-fungible --replicas=2 --namespace=${NAMESPACE}
 Observe how GKE and DRA handle the new Pod:
 1. **Pending Pod & Autoscaler Trigger**: Because the first GPU node's L4 GPU is claimed, Pod 2 is temporarily `Pending`.
 2. **Custom Compute Class Evaluation**: Cluster Autoscaler evaluates the `priorities` list in `fungible-gpu-cpu`. The top priority is `gpu-pool`. Since `gpu-pool` currently has 1 node and its limit is `max-nodes: 2`, Cluster Autoscaler scales up `gpu-pool` to 2 nodes.
-3. **Scheduling & Image Mutation**: When the second GPU node becomes ready, kube-scheduler places Pod 2 onto it. DRA allocates the node's L4 GPU, and `dra-driver-image-configurator` mutates the container image to `vllm/vllm-openai:v0.7.2`, emits an `ImagePatched` event, and satisfies the binding condition.
+3. **Scheduling & Image Mutation**: When the second GPU node becomes ready, kube-scheduler places Pod 2 onto it. DRA allocates the node's L4 GPU, and `dra-driver-image-configurator` mutates the container image to `${REPO_URI}/vllm-gemma4-gpu:latest`, emits an `ImagePatched` event, and satisfies the binding condition.
 
 Verify that both Pods are running on GPU nodes:
 
@@ -521,8 +595,8 @@ kubectl scale deployment vllm-fungible --replicas=4 --namespace=${NAMESPACE}
 Observe the fallback to CPU capacity:
 1. **GPU Limit Reached**: Both L4 GPUs across the 2 nodes in `gpu-pool` are occupied. Because `gpu-pool` has reached its `max-nodes: 2` limit, Cluster Autoscaler cannot scale `gpu-pool` any further.
 2. **Fallback to CPU Pool**: Cluster Autoscaler moves to the second priority in the `ComputeClass`: `cpu-pool`. It scales up `cpu-pool` from 0 nodes to 2 nodes.
-3. **DRA Prioritized Allocation**: Once the CPU nodes join the cluster, kube-scheduler places Pods 3 and 4 onto them. Because no GPUs are present on these nodes, DRA falls back to allocating 8 CPUs per Pod from `dra.cpu`.
-4. **Image Mutation to CPU**: The `dra-driver-image-configurator` controller observes that `device/cpu` was satisfied for Pods 3 and 4, mutates their container images from `registry.k8s.io/pause:3.10` to `vllm/vllm-cpu:v0.7.2`, emits `ImagePatched` events, and unblocks Kubelet.
+3. **DRA Prioritized Allocation**: Once the CPU nodes join the cluster, kube-scheduler places Pods 3 and 4 onto them. Because no GPUs are present on these nodes, DRA falls back to allocating 12 CPUs per Pod from `dra.cpu`.
+4. **Image Mutation to CPU**: The `dra-driver-image-configurator` controller observes that `device/cpu` was satisfied for Pods 3 and 4, mutates their container images from `registry.k8s.io/pause:3.10` to `${REPO_URI}/vllm-gemma4-cpu:latest`, emits `ImagePatched` events, and unblocks Kubelet.
 
 ### 4. Verify the Heterogeneous Deployment
 
@@ -539,11 +613,11 @@ STATUS:.status.phase
 You should see output showing all 4 Pods running under the same Deployment, with 2 running on GPU nodes and 2 running on CPU nodes:
 
 ```
-NAME                             NODE                                    IMAGE                     STATUS
-vllm-fungible-7988d44bb5-x8k2p   gke-gpu-cpu-fungibility-gpu-pool-...    vllm/vllm-openai:v0.7.2   Running
-vllm-fungible-7988d44bb5-m4z9n   gke-gpu-cpu-fungibility-gpu-pool-...    vllm/vllm-openai:v0.7.2   Running
-vllm-fungible-7988d44bb5-c7q2d   gke-gpu-cpu-fungibility-cpu-pool-...    vllm/vllm-cpu:v0.7.2      Running
-vllm-fungible-7988d44bb5-f1p8w   gke-gpu-cpu-fungibility-cpu-pool-...    vllm/vllm-cpu:v0.7.2      Running
+NAME                             NODE                                    IMAGE                                              STATUS
+vllm-fungible-7988d44bb5-x8k2p   gke-gpu-cpu-fungibility-gpu-pool-...    .../dra-drivers/vllm-gemma4-gpu:latest             Running
+vllm-fungible-7988d44bb5-m4z9n   gke-gpu-cpu-fungibility-gpu-pool-...    .../dra-drivers/vllm-gemma4-gpu:latest             Running
+vllm-fungible-7988d44bb5-c7q2d   gke-gpu-cpu-fungibility-cpu-pool-...    .../dra-drivers/vllm-gemma4-cpu:latest             Running
+vllm-fungible-7988d44bb5-f1p8w   gke-gpu-cpu-fungibility-cpu-pool-...    .../dra-drivers/vllm-gemma4-cpu:latest             Running
 ```
 
 Inspect the logs of the replicas to verify that both model servers have initialized successfully:
@@ -567,11 +641,13 @@ kubectl port-forward svc/vllm-service 8000:8000 &
 Send completion requests to test inference:
 
 ```bash
-curl http://localhost:8000/v1/completions \
+curl http://localhost:8000/v1/chat/completions \
 -H "Content-Type: application/json" \
 -d '{
-    "model": "google/gemma-4-2b-it",
-    "prompt": "Explain workload fungibility in Kubernetes in two sentences.",
+    "model": "google/gemma-4-E2B-it",
+    "messages": [
+      {"role": "user", "content": "Explain workload fungibility in Kubernetes in two sentences."}
+    ],
     "max_tokens": 100,
     "temperature": 0.7
 }'
@@ -580,23 +656,23 @@ curl http://localhost:8000/v1/completions \
 You can also test individual Pods to observe the latency difference between GPU and CPU execution:
 
 ```bash
-POD_GPU=$(kubectl get pods -l app=vllm-fungible -o jsonpath='{.items[?(@.spec.containers[0].image=="vllm/vllm-openai:v0.7.2")].metadata.name}' | awk '{print $1}')
-POD_CPU=$(kubectl get pods -l app=vllm-fungible -o jsonpath='{.items[?(@.spec.containers[0].image=="vllm/vllm-cpu:v0.7.2")].metadata.name}' | awk '{print $1}')
+POD_GPU=$(kubectl get pods -l app=vllm-fungible -o jsonpath='{.items[?(@.spec.containers[0].image=="'${REPO_URI}'/vllm-gemma4-gpu:latest")].metadata.name}' | awk '{print $1}')
+POD_CPU=$(kubectl get pods -l app=vllm-fungible -o jsonpath='{.items[?(@.spec.containers[0].image=="'${REPO_URI}'/vllm-gemma4-cpu:latest")].metadata.name}' | awk '{print $1}')
 
 # Test GPU Pod
 kubectl port-forward pod/${POD_GPU} 8001:8000 &
-curl -s -w "\nTime: %{time_total}s\n" http://localhost:8001/v1/completions \
+curl -s -w "\nTime: %{time_total}s\n" http://localhost:8001/v1/chat/completions \
 -H "Content-Type: application/json" \
--d '{"model": "google/gemma-4-2b-it", "prompt": "Tell me a short joke", "max_tokens": 50}'
+-d '{"model": "google/gemma-4-E2B-it", "messages": [{"role": "user", "content": "Tell me a short joke"}], "max_tokens": 50}'
 
 # Test CPU Pod
 kubectl port-forward pod/${POD_CPU} 8002:8000 &
-curl -s -w "\nTime: %{time_total}s\n" http://localhost:8002/v1/completions \
+curl -s -w "\nTime: %{time_total}s\n" http://localhost:8002/v1/chat/completions \
 -H "Content-Type: application/json" \
--d '{"model": "google/gemma-4-2b-it", "prompt": "Tell me a short joke", "max_tokens": 50}'
+-d '{"model": "google/gemma-4-E2B-it", "messages": [{"role": "user", "content": "Tell me a short joke"}], "max_tokens": 50}'
 ```
 
-Both instances return valid completion responses from the `google/gemma-4-2b-it` model.
+Both instances return valid completion responses from the `google/gemma-4-E2B-it` model.
 
 ## **Understanding the Benefit**
 
